@@ -30,7 +30,7 @@ public class Grabbable
     public int[] size; // [x, y, z]
     public int[] rawVoxels;
     /*
-        "voxels": [
+        "rawVoxels": [
             Bottom Front,  Middle Front,  Top Front,
             Bottom Middle,  Middle Middle,  Top Middle,
             Bottom Back,  Middle Back,  Top Back
