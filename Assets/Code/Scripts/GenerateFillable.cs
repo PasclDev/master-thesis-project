@@ -6,8 +6,10 @@ public class GenerateFillable : MonoBehaviour
     public string jsonFileName = "levels.json"; // JSON file name
     public int currentLevel = 0; // Current level index
     public GameObject borderPrefab; // Border prefab
+    
+    public GameObject grabbablePrefab; // Grabbable prefab
     private LevelCollection levelCollection; // Level collection
-
+    private VoxelMeshGenerator voxelMeshGenerator;
     void Start()
     {
         if (borderPrefab == null)
@@ -15,7 +17,7 @@ public class GenerateFillable : MonoBehaviour
             Debug.LogError("Border Prefab is not assigned!");
             return;
         }
-
+        voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
         LoadLevelsFromJSON();
         GenerateFillGridObject(currentLevel);
     }
@@ -45,8 +47,9 @@ public class GenerateFillable : MonoBehaviour
             return;
         }
 
-        LevelData currentLevel = levelCollection.levels[levelIndex];
-        GenerateFillableObject(currentLevel.fillable, currentLevel.voxelSize);
+        LevelData currentLevelData = levelCollection.levels[levelIndex];
+        voxelMeshGenerator.GenerateMesh(currentLevelData);
+        GenerateFillableObject(currentLevelData.fillable, currentLevelData.voxelSize);
     }
     void GenerateFillableObject(Fillable fillable, float voxelSize)
     {

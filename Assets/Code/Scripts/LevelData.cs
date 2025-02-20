@@ -28,6 +28,14 @@ public class Grabbable
     // position is relative to voxelSize
     public float[] position; // [x, y, z]
     public int[] voxels;
+    /*
+        "voxels": [
+            Bottom Front,  Middle Front,  Top Front,
+            Bottom Middle,  Middle Middle,  Top Middle,
+            Bottom Back,  Middle Back,  Top Back
+        ],
+    */
+
 }
 
 

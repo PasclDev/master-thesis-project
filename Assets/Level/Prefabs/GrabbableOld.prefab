@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2587745596218708387}
   - component: {fileID: 1753029635807027037}
   m_Layer: 0
-  m_Name: Grabbable
+  m_Name: GrabbableOld
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
