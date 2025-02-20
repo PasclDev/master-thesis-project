@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 6058372616248966791}
   - component: {fileID: 9168212764636651975}
   - component: {fileID: 7839088368933838670}
+  - component: {fileID: 1610161578617506433}
   m_Layer: 0
-  m_Name: GridBorder
+  m_Name: Fillable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -86,3 +87,15 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1610161578617506433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2791289762559432273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 755695202cc139542bb87a2a99c0bbf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -7,7 +7,7 @@ public class GenerateGrabbables : MonoBehaviour
     public int currentLevel = 0; // Current level index
     public GameObject voxelPrefab; // Voxel prefab
     private LevelCollection levelCollection; // Level collection
-
+    /*
     void Start()
     {
         if (voxelPrefab == null)
@@ -59,7 +59,7 @@ public class GenerateGrabbables : MonoBehaviour
                         for (int z = 0; z < gridSize.z; z++)
                         {
                             int index = x + gridSize.x * (y + gridSize.y * z); // Convert 3D index to 1D
-                            if (grabbable.voxels[index] == 1)
+                            if (grabbable.rawVoxels[index] == 1)
                             {
                                 Vector3 position = (new Vector3(x, y, z) + grabbablePosition - gridCenter) * currentLevel.voxelSize;
                                 Instantiate(voxelPrefab, position, Quaternion.identity, transform).transform.localScale = size;
@@ -69,5 +69,5 @@ public class GenerateGrabbables : MonoBehaviour
                 }
         }
         
-    }
+    }*/
 }

@@ -5,16 +5,15 @@ public class GenerateFillable : MonoBehaviour
 {
     public string jsonFileName = "levels.json"; // JSON file name
     public int currentLevel = 0; // Current level index
-    public GameObject borderPrefab; // Border prefab
+    public GameObject fillablePrefab; // fillableObject prefab
     
-    public GameObject grabbablePrefab; // Grabbable prefab
     private LevelCollection levelCollection; // Level collection
     private VoxelMeshGenerator voxelMeshGenerator;
     void Start()
     {
-        if (borderPrefab == null)
+        if (fillablePrefab == null)
         {
-            Debug.LogError("Border Prefab is not assigned!");
+            Debug.LogError("fillableObject Prefab is not assigned!");
             return;
         }
         voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
@@ -30,11 +29,45 @@ public class GenerateFillable : MonoBehaviour
         {
             string jsonData = File.ReadAllText(filePath);
             levelCollection = JsonUtility.FromJson<LevelCollection>(jsonData);
+            ConvertRawVoxelsToVoxels(levelCollection);
             Debug.Log(JsonUtility.ToJson(levelCollection));
         }
         else
         {
             Debug.LogError("JSON file not found: " + filePath);
+        }
+    }
+    void ConvertRawVoxelsToVoxels(LevelCollection levelCollection){
+        foreach (var level in levelCollection.levels)
+        {
+            foreach (var grabbable in level.grabbables)
+            {
+                int[] rawVoxels = grabbable.rawVoxels;
+                int[] size = grabbable.size;
+                int[][][] voxels = new int[size[0]][][];
+
+                for (int x = 0; x < size[0]; x++)
+                {
+                    voxels[x] = new int[size[1]][];
+                    for (int y = 0; y < size[1]; y++)
+                    {
+                        voxels[x][y] = new int[size[2]];
+                    }
+                }
+                // Fill voxels with rawVoxels
+                for (int x = 0; x < size[0]; x++)
+                {
+                    for (int y = 0; y < size[1]; y++)
+                    {
+                        for (int z = 0; z < size[2]; z++)
+                        {
+                            int index = x + size[0] * (y + size[1] * z);
+                            voxels[x][y][z] = rawVoxels[index];
+                        }
+                    }
+                }
+                grabbable.voxels = voxels;
+            }
         }
     }
 
@@ -53,8 +86,10 @@ public class GenerateFillable : MonoBehaviour
     }
     void GenerateFillableObject(Fillable fillable, float voxelSize)
     {
-        GameObject border = Instantiate(borderPrefab, transform);
-        border.transform.position = voxelSize*new Vector3(fillable.position[0], fillable.position[1], fillable.position[2]); // Center it
-        border.transform.localScale = new Vector3(fillable.size[0], fillable.size[1], fillable.size[2]) * voxelSize; // Scale to fit grid
+        GameObject fillableObject = Instantiate(fillablePrefab, transform);
+        fillableObject.transform.position = voxelSize*new Vector3(fillable.position[0], fillable.position[1], fillable.position[2]); // Center it
+        fillableObject.transform.localScale = new Vector3(fillable.size[0], fillable.size[1], fillable.size[2]) * voxelSize; // Scale to fit grid
+        Vector3Int size = new Vector3Int(fillable.size[0], fillable.size[1], fillable.size[2]);
+        fillableObject.GetComponent<FillableManager>().Initialize(size, voxelSize);
     }
 }

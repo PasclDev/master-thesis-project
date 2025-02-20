@@ -10,21 +10,22 @@ public class VoxelMeshGenerator : MonoBehaviour
         
         float voxelSize = currentLevelData.voxelSize;
 
-        Vector3Int gridSize = new Vector3Int(
-            currentLevelData.fillable.size[0], 
-            currentLevelData.fillable.size[1], 
-            currentLevelData.fillable.size[2]
-        );
-
-        Vector3 gridCenter = (Vector3)gridSize  * 0.5f;
+        
 
         foreach (var grabbable in currentLevelData.grabbables)
         {
+            Vector3Int gridSize = new Vector3Int(
+            grabbable.size[0], 
+            grabbable.size[1], 
+            grabbable.size[2]
+            );
+            Vector3 gridCenter = (Vector3)gridSize  * 0.5f;
             Vector3 grabbablePosition = new Vector3(grabbable.position[0], grabbable.position[1], grabbable.position[2]);
             Vector3 position = grabbablePosition * currentLevelData.voxelSize;
             GameObject grabbableObject = Instantiate(grabbableBlankPrefab, position, Quaternion.identity, transform);
             MeshFilter meshFilter = grabbableObject.GetComponent<MeshFilter>();
-            MeshCollider meshCollider = grabbableObject.GetComponent<MeshCollider>();
+            grabbableObject.GetComponent<BoxCollider>().size = (Vector3)gridSize * voxelSize;
+            grabbableObject.GetComponent<GrabbableInformation>().Initialize(grabbable, voxelSize);
             List<Vector3> vertices = new List<Vector3>();
             List<int> triangles = new List<int>();
             List<Vector2> uvs = new List<Vector2>();
@@ -35,8 +36,7 @@ public class VoxelMeshGenerator : MonoBehaviour
                 {
                     for (int z = 0; z < gridSize.z; z++)
                     {
-                        int index = x + gridSize.x * (y + gridSize.y * z);
-                        if (grabbable.voxels[index] == 1)
+                        if (grabbable.voxels[x][y][z] == 1)
                         {
                             Vector3 voxelPosition = (new Vector3(x, y, z)- gridCenter) * voxelSize;
                             AddVoxelMesh(voxelPosition, voxelSize, vertices, triangles, uvs);
@@ -44,7 +44,7 @@ public class VoxelMeshGenerator : MonoBehaviour
                     }
                 }
             }
-            ApplyMesh(meshFilter, meshCollider, vertices, triangles, uvs);
+            ApplyMesh(meshFilter, vertices, triangles, uvs);
         }
     }
 
@@ -79,7 +79,7 @@ public class VoxelMeshGenerator : MonoBehaviour
         return (vertices, uvs, triangles);
     }
 
-    private void ApplyMesh(MeshFilter meshFilter, MeshCollider meshCollider, List<Vector3> vertices, List<int> triangles, List<Vector2> uvs)
+    private void ApplyMesh(MeshFilter meshFilter, List<Vector3> vertices, List<int> triangles, List<Vector2> uvs)
     {
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
@@ -88,6 +88,5 @@ public class VoxelMeshGenerator : MonoBehaviour
         mesh.RecalculateNormals();
 
         meshFilter.mesh = mesh;
-        meshCollider.sharedMesh = mesh;
     }
 }

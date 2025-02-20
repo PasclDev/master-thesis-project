@@ -27,7 +27,8 @@ public class Grabbable
 {
     // position is relative to voxelSize
     public float[] position; // [x, y, z]
-    public int[] voxels;
+    public int[] size; // [x, y, z]
+    public int[] rawVoxels;
     /*
         "voxels": [
             Bottom Front,  Middle Front,  Top Front,
@@ -35,6 +36,7 @@ public class Grabbable
             Bottom Back,  Middle Back,  Top Back
         ],
     */
+    public int[][][] voxels;
 
 }
 
