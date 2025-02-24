@@ -10,7 +10,7 @@ public class FillableManager : MonoBehaviour
 {
     private Vector3Int gridSize;
     private float voxelSize;
-    private float degreeTolerance = 5f; //5 degree in both directions. Max would be 45 degree
+    private float degreeTolerance = 10f; //5 degree in both directions. Max would be 45 degree
     private float distanceTolerance = 0.02f; // 2 cm tolerance for position
     public int[][][] fillableGrid;
     public GameObject filledVoxelVisual;
@@ -77,7 +77,7 @@ public class FillableManager : MonoBehaviour
             return;
         }
         // Check if Grabbable is overlapping with another Grabbable
-        int[][][] rotatedVoxels = RotationHelper.RotateMatrix(grabbable.voxels, (int)grabbableRotation.x/90%4, (int)grabbableRotation.y/90%4, (int)grabbableRotation.z/90%4);
+        int[][][] rotatedVoxels = RotationHelper.RotateMatrix(grabbable.voxels, (int)((360+grabbableRotation.x)/90%4), (int)((360+grabbableRotation.y)/90%4), (int)((360+grabbableRotation.z)/90%4));
         for (int x = 0; x < rotatedVoxels.Length; x++)
         {
             for (int y = 0; y < rotatedVoxels[x].Length; y++)
@@ -135,7 +135,7 @@ public class FillableManager : MonoBehaviour
                 }
             }
         }
-        DebugFillableGrid();
+        //DebugFillableGrid();
         Debug.Log("Grid Offset: " + gridOffset);
     }
     public void RemoveGrabbableFromFillable(GameObject grabbableObject){
