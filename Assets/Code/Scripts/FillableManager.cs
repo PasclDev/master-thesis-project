@@ -13,6 +13,7 @@ public class FillableManager : MonoBehaviour
     private float degreeTolerance = 5f; //5 degree in both directions. Max would be 45 degree
     private float distanceTolerance = 0.02f; // 2 cm tolerance for position
     public int[][][] fillableGrid;
+    public GameObject filledVoxelVisual;
 
     public void Initialize(Vector3Int gridSize, float voxelSize)
     {
@@ -114,6 +115,10 @@ public class FillableManager : MonoBehaviour
         grabbableObject.transform.rotation = Quaternion.Euler(grabbableRotation);
         grabbableObject.transform.position = transform.position - 0.5f * voxelSize * (Vector3)gridSize + (Vector3)gridOffset * voxelSize + 0.5f * voxelSize * new Vector3(grabbableInformation.grabbable.size[0], grabbableInformation.grabbable.size[1], grabbableInformation.grabbable.size[2]);
         
+        GameObject visualizerParent = new GameObject(grabbableObject.GetInstanceID().ToString());
+        visualizerParent.transform.position = transform.position - (transform.localScale / 2) + (Vector3.one * voxelSize / 2);
+        visualizerParent.transform.rotation = transform.rotation;
+        visualizerParent.transform.parent = transform;
         // Mark the fillableGrid with 1s
         for (int x = 0; x < rotatedVoxels.Length; x++)
         {
@@ -124,6 +129,7 @@ public class FillableManager : MonoBehaviour
                     if (rotatedVoxels[x][y][z] == 1)
                     {
                         Vector3Int fillableGridPosition = new Vector3Int(x + gridOffset.x, y + gridOffset.y, z + gridOffset.z);
+                        Instantiate(filledVoxelVisual, visualizerParent.transform.position + (Vector3)fillableGridPosition * voxelSize, Quaternion.identity, visualizerParent.transform).transform.localScale = new Vector3(voxelSize*0.9f, voxelSize*0.9f, voxelSize*0.9f);
                         fillableGrid[fillableGridPosition.x][fillableGridPosition.y][fillableGridPosition.z] = 1;
                     }
                 }
@@ -135,7 +141,6 @@ public class FillableManager : MonoBehaviour
     public void RemoveGrabbableFromFillable(GameObject grabbableObject){
         GrabbableInformation grabbableInformation = grabbableObject.GetComponent<GrabbableInformation>();
         Vector3Int gridOffset = grabbableInformation.insideFillable.gridOffset;
-        
         // Enable the BoxCollider of the Grabbable and move it to the corresponding position
         grabbableObject.GetComponent<BoxCollider>().enabled = true;
         grabbableObject.transform.position = transform.position - 0.5f * voxelSize * (Vector3)gridSize + (Vector3)gridOffset * voxelSize + 0.5f * voxelSize * new Vector3(grabbableInformation.grabbable.size[0], grabbableInformation.grabbable.size[1], grabbableInformation.grabbable.size[2]);
@@ -155,7 +160,8 @@ public class FillableManager : MonoBehaviour
             }
         }
         grabbableInformation.insideFillable = null;
-        DebugFillableGrid();
+        Destroy(transform.Find(grabbableObject.GetInstanceID().ToString()).gameObject); // Destroys the visualizerParent
+        //DebugFillableGrid();
         Debug.Log("Grid Offset: " + gridOffset);
     }
     // Debug the fillableGrid as a function
