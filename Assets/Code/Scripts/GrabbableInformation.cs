@@ -4,6 +4,7 @@ using UnityEngine;
 public class InsideFillable
 {
     public GameObject fillableObject;
+    public int[][][] rotatedVoxelMatrix;
     public Vector3Int gridOffset;
 }
 public class GrabbableInformation : MonoBehaviour
@@ -46,7 +47,7 @@ public class GrabbableInformation : MonoBehaviour
     // Triggers whenever the grabbable gets grabbed by the player
     public void OnSelectEnter(){
         Debug.Log(gameObject.name + "has been picked up!");
-        if (insideFillable.fillableObject != null)
+        if (null != insideFillable && null != insideFillable.fillableObject)
         {
             FillableManager fillableManager = insideFillable.fillableObject.GetComponent<FillableManager>();
             fillableManager.RemoveGrabbableFromFillable(gameObject);
