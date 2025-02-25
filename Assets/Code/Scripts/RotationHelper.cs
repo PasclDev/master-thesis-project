@@ -45,6 +45,7 @@ public class RotationHelper
         }
         return rotatedMatrix; 
     }
+
     //xRotation, yRotation, zRotation are either 0, 1, 2 or 3 and determine how often the matrix is rotated by 90 degrees
     //For example, if xRotation = 1, the matrix is rotated by 90 degrees around the x-axis
     // Rotate the size of a matrix int[][][], so if the matrix is (1,3,1) and is rotated once on the x-axis, the new size is (1,1,3)
@@ -93,27 +94,214 @@ public class RotationHelper
         }
         return (newX, newY, newZ);
     }
-    public static bool IsValidRotation(Transform grabbable, float rotationTolerancePercentage)
-    {
-        // Get the object's rotation as a matrix
-        Matrix4x4 matrix = Matrix4x4.Rotate(grabbable.rotation);
-        
-        // Extract the local axes
-        Vector3 right = matrix.GetColumn(0);  // Local X
-        Vector3 up = matrix.GetColumn(1);     // Local Y
-        Vector3 forward = matrix.GetColumn(2); // Local Z
 
-        // Check if all axes align to world axes (±1,0,0), (0,±1,0), (0,0,±1)
-        return IsAxisAligned(right, rotationTolerancePercentage) && IsAxisAligned(up, rotationTolerancePercentage) && IsAxisAligned(forward, rotationTolerancePercentage);
+    // Rotate a matrix of voxels by the orientation of the object
+    public static int[][][] RotateMatrix(int[][][] matrix, Vector3 up, Vector3 right, Vector3 forward)
+    {
+        int sizeX = matrix.Length;
+        int sizeY = matrix[0].Length;
+        int sizeZ = matrix[0][0].Length;
+
+        // Determine new dimensions based on axis swaps
+        int newSizeX = Mathf.Abs(Vector3.Dot(Vector3.right, up)) > 0 ? sizeY : (Mathf.Abs(Vector3.Dot(Vector3.forward, up)) > 0 ? sizeZ : sizeX);
+        int newSizeY = Mathf.Abs(Vector3.Dot(Vector3.up, up)) > 0 ? sizeY : (Mathf.Abs(Vector3.Dot(Vector3.forward, up)) > 0 ? sizeX : sizeZ);
+        int newSizeZ = Mathf.Abs(Vector3.Dot(Vector3.forward, up)) > 0 ? sizeY : (Mathf.Abs(Vector3.Dot(Vector3.up, up)) > 0 ? sizeZ : sizeX);
+
+        Debug.Log("Rotate Matrix, previous size: " + sizeX + " " + sizeY + " " + sizeZ + " and new size: " + newSizeX + " " + newSizeY + " " + newSizeZ+ " with up: " + up + " right: " + right + " forward: " + forward);
+        
+        // Create the new rotated matrix with the correct dimensions
+        int[][][] rotatedMatrix = new int[newSizeX][][];
+        for (int x = 0; x < newSizeX; x++)
+        {
+            rotatedMatrix[x] = new int[newSizeY][];
+            for (int y = 0; y < newSizeY; y++)
+            {
+                rotatedMatrix[x][y] = new int[newSizeZ];
+            }
+        }
+
+        // Rotate each voxel correctly
+        for (int x = 0; x < sizeX; x++)
+        {
+            for (int y = 0; y < sizeY; y++)
+            {
+                for (int z = 0; z < sizeZ; z++)
+                {
+                    Vector3 oldPos = new Vector3(x, y, z);
+                    Vector3 newPos = RotateVoxelPosition(oldPos, up, right, forward, sizeX, sizeY, sizeZ);
+
+                    rotatedMatrix[(int)newPos.x][(int)newPos.y][(int)newPos.z] = matrix[x][y][z];
+                }
+            }
+        }
+
+        return rotatedMatrix;
     }
 
+    private static Vector3 RotateVoxelPosition(Vector3 pos, Vector3 up, Vector3 right, Vector3 forward, int xLength, int yLength, int zLength)
+    {
+        int newX = 0, newY = 0, newZ = 0;
+
+        // Determine the new position based on orientation
+        //Default forward ist -z. up is y, right is x
+        (xLength, yLength, zLength) = RotateDimensionSize(xLength, yLength, zLength, up, right, forward);
+        if (up == Vector3.up) //only rotation around y-axis
+        {
+            if(forward == Vector3.forward){ //up is y, right is x, forward is z
+                (newX, newY, newZ) = ((int)pos.x, (int)pos.y, (int)pos.z);
+            }
+            else if(forward == Vector3.back){ //up = up, forward = back means a rotation of 180 degrees around the y-axis
+                (newX, newY, newZ) = (xLength - 1 - (int)pos.x, (int)pos.y, zLength - 1 - (int)pos.z);
+            }
+            else if(forward == Vector3.right){ //up = up, forward = right means a rotation of 90 degrees around the y-axis
+                (newX, newY, newZ) = (zLength - 1 - (int)pos.z, (int)pos.y, (int)pos.x);
+
+            }
+            else if(forward == Vector3.left){
+                (newX, newY, newZ) = ((int)pos.z, (int)pos.y, xLength - 1 - (int)pos.x);
+            }
+        }
+        else if (up == Vector3.down) // rotation of 180 degree on the x-axis
+        {
+            if(forward == Vector3.forward){ //up is -y, right is -x, forward is z
+                (newX, newY, newZ) = (xLength - 1 - (int)pos.x, yLength - 1 - (int)pos.y, (int)pos.z);
+            }
+            else if(forward == Vector3.back){ //up = down, forward = back means a rotation of 180 degrees around the y-axis
+                (newX, newY, newZ) = ((int)pos.x, yLength - 1 - (int)pos.y, zLength - 1 - (int)pos.z);
+            }
+            else if(forward == Vector3.right){ //up = down, forward = right means a rotation of 90 degrees around the y-axis
+                (newX, newY, newZ) = (zLength - 1 - (int)pos.z, yLength - 1 - (int)pos.y, (int)pos.x);
+            }
+            else if(forward == Vector3.left){
+                (newX, newY, newZ) = ((int)pos.z, yLength - 1 - (int)pos.y, xLength - 1 - (int)pos.x);
+            }
+        }
+        else if (up == Vector3.right)
+        {
+            if(forward == Vector3.forward){ //up is x, right is -y, forward is z
+                (newX, newY, newZ) = (yLength - 1 - (int)pos.y, (int)pos.x, (int)pos.z);
+            }
+            else if(forward == Vector3.back){ //up = right, forward = back means a rotation of 180 degrees around the y-axis
+                (newX, newY, newZ) = (yLength - 1 - (int)pos.y, xLength - 1 - (int)pos.x, zLength - 1 - (int)pos.z);
+                //TODO: check and do the rest
+            }
+            else if(forward == Vector3.up){
+        }
+            else if (up == Vector3.left)
+            {
+            
+            }
+            else if (up == Vector3.forward)
+            {
+                
+            }
+            else if (up == Vector3.back)
+            {
+                
+            }
+            }
+        return new Vector3(newX, newY, newZ);
+        
+    }
+    public static (int,int,int) RotateDimensionSize(int x, int y, int z, Vector3 up, Vector3 right, Vector3 forward)
+    {
+        int newX = 0, newY = 0, newZ = 0;
+
+        // Determine the new dimensions based on orientation
+        if (up == Vector3.up || up == Vector3.down)
+        {
+            newX = x;
+            newY = y;
+            newZ = z;
+        }
+        else if (up == Vector3.right || up == Vector3.left)
+        {
+            newX = y;
+            newY = x;
+            newZ = z;
+        }
+        else if (up == Vector3.forward || up == Vector3.back)
+        {
+            newX = x;
+            newY = z;
+            newZ = y;
+        }
+
+        // Handle forward axis flips
+        if (forward == Vector3.left){
+            newX = x;
+            newY = y;
+            newZ = z;
+        }
+        else if (forward == Vector3.up){
+            newX = x;
+            newY = y;
+            newZ = z;
+        }
+        else if (forward == Vector3.back){
+            newX = x;
+            newY = y;
+            newZ = z;
+        }
+
+        return (newX, newY, newZ);
+    }
+    public static (bool, Vector3, Vector3, Vector3) IsValidRotation(Transform grabbable, float rotationTolerancePercentage)
+    {
+        // Get the object's transform axes directly
+        Vector3 right = grabbable.transform.right;     // Local X
+        Vector3 up = grabbable.transform.up;           // Local Y
+        Vector3 forward = grabbable.transform.forward; // Local Z
+
+        // Define possible world-aligned axes
+        Vector3[] validAxes = { 
+            Vector3.right, Vector3.left, 
+            Vector3.up, Vector3.down, 
+            Vector3.forward, Vector3.back 
+        };
+
+        // Find the closest world-aligned vectors for each local axis
+        Vector3 closestRight = FindClosestAxis(right, validAxes);
+        Vector3 closestUp = FindClosestAxis(up, validAxes);
+        Vector3 closestForward = FindClosestAxis(forward, validAxes);
+
+        // Check if the object is aligned with world axes
+        bool isValid = 
+            IsAxisAligned(right, rotationTolerancePercentage) &&
+            IsAxisAligned(up, rotationTolerancePercentage) &&
+            IsAxisAligned(forward, rotationTolerancePercentage) &&
+            closestRight != closestUp && closestUp != closestForward && closestRight != closestForward; // Ensure perpendicularity
+
+        // Return validity and the full rotation axes
+        return (isValid, closestUp, closestRight, closestForward);
+    }
+
+    // Checks if a vector is close to a valid axis (±1,0,0), (0,±1,0), (0,0,±1)
     static bool IsAxisAligned(Vector3 v, float rotationTolerancePercentage)
     {
-        // percentage of tolerance, 0.1f equals 10% tolerance
-        // Check if the vector is approximately (±1,0,0), (0,±1,0), or (0,0,±1)
         float tolerance = rotationTolerancePercentage;
+        
         return (Mathf.Abs(Mathf.Abs(v.x) - 1) <= tolerance && Mathf.Abs(v.y) <= tolerance && Mathf.Abs(v.z) <= tolerance) ||
             (Mathf.Abs(Mathf.Abs(v.y) - 1) <= tolerance && Mathf.Abs(v.x) <= tolerance && Mathf.Abs(v.z) <= tolerance) ||
             (Mathf.Abs(Mathf.Abs(v.z) - 1) <= tolerance && Mathf.Abs(v.x) <= tolerance && Mathf.Abs(v.y) <= tolerance);
+    }
+
+    // Finds the closest world-aligned axis to a given vector
+    static Vector3 FindClosestAxis(Vector3 axis, Vector3[] validAxes)
+    {
+        Vector3 closest = validAxes[0];
+        float maxDot = -1f;
+
+        foreach (var valid in validAxes)
+        {
+            float dot = Vector3.Dot(axis, valid);
+            if (dot > maxDot) // Find best match
+            {
+                maxDot = dot;
+                closest = valid;
+            }
+        }
+
+        return closest;
     }
 }

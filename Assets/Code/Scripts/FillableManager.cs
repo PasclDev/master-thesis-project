@@ -10,7 +10,6 @@ public class FillableManager : MonoBehaviour
 {
     private Vector3Int gridSize;
     private float voxelSize;
-    private float degreeTolerance = LevelManager.degreeTolerance;
     private float distanceTolerance = LevelManager.distanceTolerance;
     public int[][][] fillableGrid;
     public GameObject filledVoxelVisual;
@@ -42,35 +41,35 @@ public class FillableManager : MonoBehaviour
         {
             if (fillableSizeList[i] < grabbableSizeList[i])
             {
-                Debug.Log("Grabbable cannot not fit in Fillable");
+                Debug.Log("Grabbable cannot fit in Fillable");
                 return;
             }
         }
-        Vector3 fillablePosition = transform.position;
-        Vector3 fillableStartingPoint = fillablePosition - 0.5f * voxelSize * (Vector3)gridSize;
-        Vector3 grabbablePosition = grabbableObject.transform.position;
-        Vector3Int grabbableGridSize = new Vector3Int(grabbable.size[0], grabbable.size[1], grabbable.size[2]);
-        Vector3 grabbableStartingPoint = grabbablePosition - 0.5f * voxelSize * (Vector3)grabbableGridSize;
 
-        Vector3 startingPointDifference = grabbableStartingPoint - fillableStartingPoint;
-        
-        //Check tolerances, if rotation is within tolerance, and if position is within tolerance
-        Vector3 grabbableRotation = grabbableObject.transform.rotation.eulerAngles;
-        if (grabbableRotation.x % 90 >= degreeTolerance && grabbableRotation.x % 90 <= 90 - degreeTolerance ||
-            grabbableRotation.y % 90 >= degreeTolerance && grabbableRotation.y % 90 <= 90 - degreeTolerance ||
-            grabbableRotation.z % 90 >= degreeTolerance && grabbableRotation.z % 90 <= 90 - degreeTolerance)
-        {
+        //Check rotation tolerance, if rotation is within tolerance, and if position is within tolerance
+        (bool isValidRotation, Vector3 up, Vector3 right, Vector3 forward) = RotationHelper.IsValidRotation(transform, LevelManager.rotationTolerancePercentage);
+        if (!isValidRotation){
             Debug.Log("Rotation is not within tolerance");
             return;
-        }else{
-            //Round each rotation to 90, 180, 270, or 0, no 360!
-            grabbableRotation.x = Mathf.RoundToInt(grabbableRotation.x / 90) * 90;
-            grabbableRotation.y = Mathf.RoundToInt(grabbableRotation.y / 90) * 90;
-            grabbableRotation.z = Mathf.RoundToInt(grabbableRotation.z / 90) * 90;
         }
+        // Rotate the Grabbable gridSize
+        (int rotatedGrabbableSizeX, int rotatedGrabbableSizeY, int rotatedGrabbableSizeZ) = RotationHelper.RotateDimensionSize(grabbable.size[0], grabbable.size[1], grabbable.size[2], up, right, forward);
+        Vector3Int rotatedGridSize = new Vector3Int(rotatedGrabbableSizeX, rotatedGrabbableSizeY, rotatedGrabbableSizeZ);
+        if (rotatedGridSize.x > gridSize.x || rotatedGridSize.y > gridSize.y || rotatedGridSize.z > gridSize.z)
+        {
+            Debug.Log("Grabbable cannot for in Fillable");
+            return;
+        }
+
         // TODO: Distance tolerance
         // TODO: Detects rotation 
         
+        Vector3 fillablePosition = transform.position;
+        Vector3 fillableStartingPoint = fillablePosition - 0.5f * voxelSize * (Vector3)gridSize;
+        Vector3 grabbablePosition = grabbableObject.transform.position;
+        Vector3 grabbableStartingPoint = grabbablePosition - 0.5f * voxelSize * (Vector3)rotatedGridSize;
+        Vector3 startingPointDifference = grabbableStartingPoint - fillableStartingPoint;
+
         Vector3Int gridOffset = new Vector3Int(Mathf.RoundToInt(startingPointDifference.x / voxelSize), Mathf.RoundToInt(startingPointDifference.y / voxelSize), Mathf.RoundToInt(startingPointDifference.z / voxelSize));
         if (gridOffset.x < 0 || gridOffset.y < 0 || gridOffset.z < 0)
         {
@@ -78,7 +77,7 @@ public class FillableManager : MonoBehaviour
             return;
         }
         // Check if Grabbable is overlapping with another Grabbable
-        int[][][] rotatedVoxels = RotationHelper.RotateMatrix(grabbable.voxels, (int)((360+grabbableRotation.x)/90%4), (int)((360+grabbableRotation.y)/90%4), (int)((360+grabbableRotation.z)/90%4));
+        int[][][] rotatedVoxels = RotationHelper.RotateMatrix(grabbable.voxels, up, right, forward);
         for (int x = 0; x < rotatedVoxels.Length; x++)
         {
             for (int y = 0; y < rotatedVoxels[x].Length; y++)
@@ -103,7 +102,7 @@ public class FillableManager : MonoBehaviour
             }
         }
         // If we reach here, Grabbable fits in Fillable
-        AddGrabbableToFillable(grabbableObject, gridOffset, grabbableRotation, rotatedVoxels);
+        AddGrabbableToFillable(grabbableObject, gridOffset, grabbableObject.transform.rotation.eulerAngles, rotatedVoxels);
     }
     public void AddGrabbableToFillable(GameObject grabbableObject, Vector3Int gridOffset, Vector3 grabbableRotation, int[][][] rotatedVoxels){
         GrabbableInformation grabbableInformation = grabbableObject.GetComponent<GrabbableInformation>();

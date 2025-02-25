@@ -7,7 +7,7 @@ public class LevelManager : MonoBehaviour
     public int currentLevel = 0; // Current level index
     public GameObject fillablePrefab; // fillableObject prefab
     public static bool isDebug = true; // Debug mode
-    public static float degreeTolerance = 20f; //5 degree in both directions. Max would be 45 degree
+    public static float rotationTolerancePercentage = 0.20f; // 20% tolerance for rotation
     public static float distanceTolerance = 0.02f; // 2 cm tolerance for position
     
     private LevelCollection levelCollection; // Level collection
