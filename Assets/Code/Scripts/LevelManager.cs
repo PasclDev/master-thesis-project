@@ -1,11 +1,14 @@
 using System.IO;
 using UnityEngine;
 
-public class GenerateFillable : MonoBehaviour
+public class LevelManager : MonoBehaviour
 {
     public string jsonFileName = "levels.json"; // JSON file name
     public int currentLevel = 0; // Current level index
     public GameObject fillablePrefab; // fillableObject prefab
+    public static bool isDebug = true; // Debug mode
+    public static float degreeTolerance = 20f; //5 degree in both directions. Max would be 45 degree
+    public static float distanceTolerance = 0.02f; // 2 cm tolerance for position
     
     private LevelCollection levelCollection; // Level collection
     private VoxelMeshGenerator voxelMeshGenerator;
@@ -18,7 +21,7 @@ public class GenerateFillable : MonoBehaviour
         }
         voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
         LoadLevelsFromJSON();
-        GenerateFillGridObject(currentLevel);
+        GenerateLevel(currentLevel);
     }
 
     void LoadLevelsFromJSON()
@@ -37,6 +40,7 @@ public class GenerateFillable : MonoBehaviour
             Debug.LogError("JSON file not found: " + filePath);
         }
     }
+    // converts all rawVoxels (int[]) into voxels (int[][][])
     void ConvertRawVoxelsToVoxels(LevelCollection levelCollection){
         foreach (var level in levelCollection.levels)
         {
@@ -71,7 +75,7 @@ public class GenerateFillable : MonoBehaviour
         }
     }
 
-    void GenerateFillGridObject(int levelIndex)
+    void GenerateLevel(int levelIndex)
     {
         Debug.Log("Generating level: " + levelIndex);
         if (levelCollection == null || levelCollection.levels.Count <= levelIndex)

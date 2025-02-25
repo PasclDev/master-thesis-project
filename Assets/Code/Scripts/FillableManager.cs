@@ -10,8 +10,8 @@ public class FillableManager : MonoBehaviour
 {
     private Vector3Int gridSize;
     private float voxelSize;
-    private float degreeTolerance = 10f; //5 degree in both directions. Max would be 45 degree
-    private float distanceTolerance = 0.02f; // 2 cm tolerance for position
+    private float degreeTolerance = LevelManager.degreeTolerance;
+    private float distanceTolerance = LevelManager.distanceTolerance;
     public int[][][] fillableGrid;
     public GameObject filledVoxelVisual;
 
@@ -69,6 +69,7 @@ public class FillableManager : MonoBehaviour
             grabbableRotation.z = Mathf.RoundToInt(grabbableRotation.z / 90) * 90;
         }
         // TODO: Distance tolerance
+        // TODO: Detects rotation 
         
         Vector3Int gridOffset = new Vector3Int(Mathf.RoundToInt(startingPointDifference.x / voxelSize), Mathf.RoundToInt(startingPointDifference.y / voxelSize), Mathf.RoundToInt(startingPointDifference.z / voxelSize));
         if (gridOffset.x < 0 || gridOffset.y < 0 || gridOffset.z < 0)
