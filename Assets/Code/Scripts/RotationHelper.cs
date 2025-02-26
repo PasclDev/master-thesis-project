@@ -13,7 +13,7 @@ public class RotationHelper
         int sizeZ = matrix[0][0].Length;
 
         // Determine new dimensions based on axis swaps
-        (int newSizeX, int newSizeY, int newSizeZ) = RotateDimensionSize(sizeX, sizeY, sizeZ, up, right, forward);
+        (int newSizeX, int newSizeY, int newSizeZ) = RotateDimensionSize(sizeX, sizeY, sizeZ, up, forward);
 
         Debug.Log("Rotate Matrix, previous size: " + sizeX + " " + sizeY + " " + sizeZ + " and new size: " + newSizeX + " " + newSizeY + " " + newSizeZ+ " with up: " + up + " right: " + right + " forward: " + forward);
         
@@ -45,12 +45,33 @@ public class RotationHelper
         return rotatedMatrix;
     }
     // Rotates dimension size depending on the up and forward axis of the object (depending on the orientation of the object)
-    public static (int,int,int) RotateDimensionSize(int x, int y, int z, Vector3 up, Vector3 right, Vector3 forward)
+    public static (int,int,int) RotateDimensionSize(int x, int y, int z, Vector3 up, Vector3 forward)
     {
-        int newSizeX = Mathf.Abs(Vector3.Dot(Vector3.right, up)) > 0 ? y : (Mathf.Abs(Vector3.Dot(Vector3.forward, up)) > 0 ? z : x);
-        int newSizeY = Mathf.Abs(Vector3.Dot(Vector3.up, up)) > 0 ? y : (Mathf.Abs(Vector3.Dot(Vector3.forward, up)) > 0 ? x : z);
-        int newSizeZ = Mathf.Abs(Vector3.Dot(Vector3.forward, up)) > 0 ? y : (Mathf.Abs(Vector3.Dot(Vector3.up, up)) > 0 ? z : x);
-        return (newSizeX, newSizeY, newSizeZ);
+        if (up == Vector3.up || up == Vector3.down){
+            if(forward == Vector3.forward || forward == Vector3.back){
+                return (x, y, z);
+            }
+            else if(forward == Vector3.right || forward == Vector3.left){
+                return (z, y, x);
+            }
+        }
+        else if (up == Vector3.right || up == Vector3.left){
+            if(forward == Vector3.forward || forward == Vector3.back){
+                return (y, x, z);
+            }
+            else if(forward == Vector3.up || forward == Vector3.down){
+                return (y, z, x);
+            }
+        }
+        else if (up == Vector3.forward || up == Vector3.back){
+            if(forward == Vector3.up || forward == Vector3.down){
+                return (x, z, y);
+            }
+            else if(forward == Vector3.right || forward == Vector3.left){
+                return (z, x, y);
+            }
+        }
+        return (x, y, z);
     }
     private static (int,int,int) RotateIndices(int x, int y, int z, int xRotation, int yRotation, int zRotation, int xLength, int yLength, int zLength)
     {
@@ -80,7 +101,7 @@ public class RotationHelper
         return (newX, newY, newZ);
     }
     //xRotation, yRotation, zRotation are either 0, 1, 2 or 3 and determine how often the matrix is rotated by 90 degrees
-    //For example, if xRotation = 1, the matrix is rotated by 90 degrees around the x-axis
+    //For example, if xRotation = 1, the matrix is rotated by 90 degrees around the x-axis, different from transform.rotation degrees, as they get calculated differently!
     // Rotate the size of a matrix int[][][], so if the matrix is (1,3,1) and is rotated once on the x-axis, the new size is (1,1,3)
     public static (int,int,int) RotateDimensionSize(int x, int y, int z, int xRotation, int yRotation, int zRotation){
         int newX = x;

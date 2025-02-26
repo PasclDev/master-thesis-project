@@ -40,35 +40,15 @@ public class GrabbableInformation : MonoBehaviour
         if(LevelManager.isDebug && isGrabbed){
             debugObjects.center.transform.position = gameObject.transform.position;
             Vector3Int grabbableGridSize = new Vector3Int(grabbable.size[0], grabbable.size[1], grabbable.size[2]);
-            
-
             Vector3 grabbableRotation = transform.rotation.eulerAngles;
-            /*if (grabbableRotation.x % 90 >= degreeTolerance && grabbableRotation.x % 90 <= 90 - degreeTolerance ||
-                grabbableRotation.y % 90 >= degreeTolerance && grabbableRotation.y % 90 <= 90 - degreeTolerance ||
-                grabbableRotation.z % 90 >= degreeTolerance && grabbableRotation.z % 90 <= 90 - degreeTolerance)
-            {
-                debugObjects.matrixOrigin.GetComponent<Renderer>().material.color = Color.red;
-            }
-            else
-            {
-                debugObjects.matrixOrigin.GetComponent<Renderer>().material.color = Color.green;
-                //Rounds values to 0,1,2 or 3. So 0, 90, 180, 270 degree. Rounds degrees to nearest 90 degrees
-                grabbableRotation.x = (Mathf.RoundToInt(grabbableRotation.x / 90)+4)%4;
-                grabbableRotation.y = (Mathf.RoundToInt(grabbableRotation.y / 90)+4)%4;
-                grabbableRotation.z = (Mathf.RoundToInt(grabbableRotation.z / 90)+4)%4;
-                //debugObjects.rotationText.text = "Rotation: " + grabbableRotation.ToString();
-            }*/
             float rotationTolerancePercentage = 0.1f; // 10% tolerance
             (bool isValidRotation, Vector3 up, Vector3 right, Vector3 forward) = RotationHelper.IsValidRotation(transform, rotationTolerancePercentage);
             debugObjects.matrixOrigin.GetComponent<Renderer>().material.color = isValidRotation ? Color.green : Color.red;
-            debugObjects.rotationText.text = "Rotation: " + transform.rotation.eulerAngles.ToString("F0") + "\nRounded: " + grabbableRotation.ToString("F0")+ "\nUp: " + up.ToString("F0")+ "\nRight: " + right.ToString("F0")+ "\nForward: " + forward.ToString("F0")+"\nNormalRightVector:"+Vector3.right;
-            (int rotatedX, int rotatedY, int rotatedZ) = RotationHelper.RotateDimensionSize(grabbableGridSize.x,grabbableGridSize.y, grabbableGridSize.z, (int)grabbableRotation.x, (int)grabbableRotation.y, (int)grabbableRotation.z);
+            (int rotatedX, int rotatedY, int rotatedZ) = RotationHelper.RotateDimensionSize(grabbableGridSize.x,grabbableGridSize.y, grabbableGridSize.z, up, forward);
             Vector3Int rotatedGridSize = new Vector3Int(rotatedX, rotatedY, rotatedZ);
-            //debugObjects.center.transform.up should be the Vector3 "up"
-            debugObjects.center.transform.forward = forward;
+            debugObjects.rotationText.text = "Rotation: " + transform.rotation.eulerAngles.ToString("F0") + "\nRounded: " + grabbableRotation.ToString("F0")+ "\nUp: " + up.ToString("F0")+ "\nRight: " + right.ToString("F0")+ "\nForward: " + forward.ToString("F0")+"\nRotated Grid Size:"+Vector3Int.RoundToInt(rotatedGridSize).ToString();
             debugObjects.center.transform.up = up;
-
-            debugObjects.matrixOrigin.transform.position = transform.position - 0.5f * voxelSize * (Vector3)rotatedGridSize;
+            debugObjects.matrixOrigin.transform.position = transform.position - 0.5f * voxelSize * (Vector3)rotatedGridSize; // Center - half of voxel size * rotatedGridSize
         }
     }
 
