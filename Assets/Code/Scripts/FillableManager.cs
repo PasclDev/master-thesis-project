@@ -102,9 +102,9 @@ public class FillableManager : MonoBehaviour
             }
         }
         // If we reach here, Grabbable fits in Fillable
-        AddGrabbableToFillable(grabbableObject, gridOffset, grabbableObject.transform.rotation.eulerAngles, rotatedVoxels);
+        AddGrabbableToFillable(grabbableObject, gridOffset, grabbableObject.transform.rotation.eulerAngles, rotatedVoxels, rotatedGridSize);
     }
-    public void AddGrabbableToFillable(GameObject grabbableObject, Vector3Int gridOffset, Vector3 grabbableRotation, int[][][] rotatedVoxels){
+    public void AddGrabbableToFillable(GameObject grabbableObject, Vector3Int gridOffset, Vector3 grabbableRotation, int[][][] rotatedVoxels, Vector3 rotatedVoxelGridSize){
         GrabbableInformation grabbableInformation = grabbableObject.GetComponent<GrabbableInformation>();
         grabbableInformation.insideFillable = new(){
             fillableObject = gameObject,
@@ -113,7 +113,7 @@ public class FillableManager : MonoBehaviour
         };
         // Disable the BoxCollider of the Grabbable and move it to the corresponding position
         grabbableObject.transform.rotation = Quaternion.Euler(grabbableRotation);
-        grabbableObject.transform.position = transform.position - 0.5f * voxelSize * (Vector3)gridSize + (Vector3)gridOffset * voxelSize + 0.5f * voxelSize * new Vector3(grabbableInformation.grabbable.size[0], grabbableInformation.grabbable.size[1], grabbableInformation.grabbable.size[2]);
+        grabbableObject.transform.position = transform.position - 0.5f * voxelSize * (Vector3)gridSize + (Vector3)gridOffset * voxelSize + 0.5f * voxelSize * rotatedVoxelGridSize;
         
         GameObject visualizerParent = new GameObject(grabbableObject.GetInstanceID().ToString());
         visualizerParent.transform.position = transform.position - (transform.localScale / 2) + (Vector3.one * voxelSize / 2);
