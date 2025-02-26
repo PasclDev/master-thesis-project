@@ -123,7 +123,7 @@ public class RotationHelper
     }
 
     //Return how many x, y and z rotations (1 unit = 90 degree) are needed to align the matrix with the object orientation
-    private static (int,int,int) AxisRotationAmount(Vector3 up, Vector3 right, Vector3 forward){
+    public static (int,int,int) AxisRotationAmount(Vector3 up, Vector3 right, Vector3 forward){
         if (up == Vector3.up) {
             if (forward == Vector3.forward) return (0, 0, 0);
             else if (forward == Vector3.back) return (0, 2, 0);
@@ -221,5 +221,8 @@ public class RotationHelper
         }
 
         return closest;
+    }
+    public static Quaternion OrientationToQuaternion(Vector3 up, Vector3 forward, Vector3 right){
+        return Quaternion.LookRotation(forward, up);
     }
 }

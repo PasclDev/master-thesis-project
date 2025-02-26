@@ -69,6 +69,8 @@ public class FillableManager : MonoBehaviour
         Vector3 grabbablePosition = grabbableObject.transform.position;
         Vector3 grabbableStartingPoint = grabbablePosition - 0.5f * voxelSize * (Vector3)rotatedGridSize;
         Vector3 startingPointDifference = grabbableStartingPoint - fillableStartingPoint;
+        Quaternion newRotation = RotationHelper.OrientationToQuaternion(up, forward, right);
+
         // TODO: rework
         Vector3Int gridOffset = new Vector3Int(Mathf.RoundToInt(startingPointDifference.x / voxelSize), Mathf.RoundToInt(startingPointDifference.y / voxelSize), Mathf.RoundToInt(startingPointDifference.z / voxelSize));
         if (gridOffset.x < 0 || gridOffset.y < 0 || gridOffset.z < 0)
@@ -102,9 +104,9 @@ public class FillableManager : MonoBehaviour
             }
         }
         // If we reach here, Grabbable fits in Fillable
-        AddGrabbableToFillable(grabbableObject, gridOffset, grabbableObject.transform.rotation.eulerAngles, rotatedVoxels, rotatedGridSize);
+        AddGrabbableToFillable(grabbableObject, gridOffset, grabbableObject.transform.rotation.eulerAngles, rotatedVoxels, rotatedGridSize, newRotation);
     }
-    public void AddGrabbableToFillable(GameObject grabbableObject, Vector3Int gridOffset, Vector3 grabbableRotation, int[][][] rotatedVoxels, Vector3 rotatedVoxelGridSize){
+    public void AddGrabbableToFillable(GameObject grabbableObject, Vector3Int gridOffset, Vector3 grabbableRotation, int[][][] rotatedVoxels, Vector3 rotatedVoxelGridSize, Quaternion newRotation){
         GrabbableInformation grabbableInformation = grabbableObject.GetComponent<GrabbableInformation>();
         grabbableInformation.insideFillable = new(){
             fillableObject = gameObject,
@@ -112,7 +114,7 @@ public class FillableManager : MonoBehaviour
             gridOffset = gridOffset
         };
         // Disable the BoxCollider of the Grabbable and move it to the corresponding position
-        grabbableObject.transform.rotation = Quaternion.Euler(grabbableRotation);
+        grabbableObject.transform.rotation = newRotation;
         grabbableObject.transform.position = transform.position - 0.5f * voxelSize * (Vector3)gridSize + (Vector3)gridOffset * voxelSize + 0.5f * voxelSize * rotatedVoxelGridSize;
         
         GameObject visualizerParent = new GameObject(grabbableObject.GetInstanceID().ToString());
