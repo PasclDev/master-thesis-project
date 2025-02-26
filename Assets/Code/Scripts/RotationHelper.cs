@@ -1,74 +1,57 @@
 using System;
+using System.Linq.Expressions;
 using UnityEngine;
 
 
 public class RotationHelper
 {
+    // Rotate a matrix of voxels by the orientation of the object
+    public static int[][][] RotateMatrix(int[][][] matrix, Vector3 up, Vector3 right, Vector3 forward)
+    {
+        int sizeX = matrix.Length;
+        int sizeY = matrix[0].Length;
+        int sizeZ = matrix[0][0].Length;
 
+        // Determine new dimensions based on axis swaps
+        (int newSizeX, int newSizeY, int newSizeZ) = RotateDimensionSize(sizeX, sizeY, sizeZ, up, right, forward);
 
-    // OLD, unused
-    // Used to rotate the voxel matrix of a grabbable object
-    //Rotate a xyz matrix by xRotation, yRotation, zRotation, where each rotation is either 0, 1, 2 or 3, standing for 0, 90, 180, or 270 degrees
-    //Return the rotated matrix
-    public static int[][][] RotateMatrix (int[][][] matrix, int xRotation, int yRotation, int zRotation){
-        Debug.Log ("Rotating matrix by " + xRotation + " " + yRotation + " " + zRotation);
-        (int newXSize, int newYSize, int newZSize) = RotateDimensionSize(matrix.Length, matrix[0].Length, matrix[0][0].Length, xRotation, yRotation, zRotation);
-        int[][][] rotatedMatrix = new int[newXSize][][];
-        // Create new rotated matrix-array
-        for (int x = 0; x < newXSize; x++)
+        Debug.Log("Rotate Matrix, previous size: " + sizeX + " " + sizeY + " " + sizeZ + " and new size: " + newSizeX + " " + newSizeY + " " + newSizeZ+ " with up: " + up + " right: " + right + " forward: " + forward);
+        
+        // Create the new rotated int[][][] matrix with the correct dimensions
+        int[][][] rotatedMatrix = new int[newSizeX][][];
+        for (int x = 0; x < newSizeX; x++)
         {
-            rotatedMatrix[x] = new int[newYSize][];
-            for (int y = 0; y < newYSize; y++)
+            rotatedMatrix[x] = new int[newSizeY][];
+            for (int y = 0; y < newSizeY; y++)
             {
-                rotatedMatrix[x][y] = new int[newZSize];
+                rotatedMatrix[x][y] = new int[newSizeZ];
             }
         }
-        Debug.Log ("Previous Matrix Size: " + matrix.Length + " " + matrix[0].Length + " " + matrix[0][0].Length + " and new Matrix Size: " + newXSize + " " + newYSize + " " + newZSize);
-        //fill new matrix-array
-        for (int x = 0; x < matrix.Length; x++)
+
+        // Rotate each voxel correctly
+        for (int x = 0; x < sizeX; x++)
         {
-            for (int y = 0; y < matrix[x].Length; y++)
+            for (int y = 0; y < sizeY; y++)
             {
-                for (int z = 0; z < matrix[x][y].Length; z++)
+                for (int z = 0; z < sizeZ; z++)
                 {
-                    (int newX, int newY, int newZ) = RotateIndices(x, y, z, xRotation, yRotation, zRotation, newXSize, newYSize, newZSize);
-                    try{
-                       rotatedMatrix[newX][newY][newZ] = matrix[x][y][z];
-                    }
-                    catch (IndexOutOfRangeException e){
-                        //TODO: fix bug here
-                        Debug.Log("matrix size: " + matrix.Length + " " + matrix[x].Length + " " + matrix[x][y].Length +" and rotatedMatrixSize: " + newXSize + " " + newYSize + " " + newZSize + " and old coords:"+x+" "+y+" "+z+" and new Coords: " + newX + " " + newY + " " + newZ);
-                        Debug.Log("Index out of range: " + e);
-                        
-                    }
+                    (int xRotation, int yRotation, int zRotation) = AxisRotationAmount(up, right, forward);
+                    (int newX, int newY, int newZ) = RotateIndices(x, y, z, xRotation,yRotation,zRotation, sizeX, sizeY, sizeZ);
+                    rotatedMatrix[newX][newY][newZ] = matrix[x][y][z];
                 }
             }
         }
-        return rotatedMatrix; 
-    }
-    
-    //xRotation, yRotation, zRotation are either 0, 1, 2 or 3 and determine how often the matrix is rotated by 90 degrees
-    //For example, if xRotation = 1, the matrix is rotated by 90 degrees around the x-axis
-    // Rotate the size of a matrix int[][][], so if the matrix is (1,3,1) and is rotated once on the x-axis, the new size is (1,1,3)
-    public static (int,int,int) RotateDimensionSize(int x, int y, int z, int xRotation, int yRotation, int zRotation){
-        int newX = x;
-        int newY = y;
-        int newZ = z;
-        if (xRotation % 2 == 1)
-        {
-            (newY, newZ) = (newZ, newY);
-        }
-        if (yRotation % 2 == 1)
-        {
-            (newX, newZ) = (newZ, newX);
-        }
-        if (zRotation % 2 == 1)
-        {
-            (newX, newY) = (newY, newX);
-        }
-        return (newX, newY, newZ);
-    }
 
+        return rotatedMatrix;
+    }
+    // Rotates dimension size depending on the up and forward axis of the object (depending on the orientation of the object)
+    public static (int,int,int) RotateDimensionSize(int x, int y, int z, Vector3 up, Vector3 right, Vector3 forward)
+    {
+        int newSizeX = Mathf.Abs(Vector3.Dot(Vector3.right, up)) > 0 ? y : (Mathf.Abs(Vector3.Dot(Vector3.forward, up)) > 0 ? z : x);
+        int newSizeY = Mathf.Abs(Vector3.Dot(Vector3.up, up)) > 0 ? y : (Mathf.Abs(Vector3.Dot(Vector3.forward, up)) > 0 ? x : z);
+        int newSizeZ = Mathf.Abs(Vector3.Dot(Vector3.forward, up)) > 0 ? y : (Mathf.Abs(Vector3.Dot(Vector3.up, up)) > 0 ? z : x);
+        return (newSizeX, newSizeY, newSizeZ);
+    }
     private static (int,int,int) RotateIndices(int x, int y, int z, int xRotation, int yRotation, int zRotation, int xLength, int yLength, int zLength)
     {
         int newX = x;
@@ -94,222 +77,71 @@ public class RotationHelper
             (newX, newY) = (yLength - 1 - newY, newX); //(x,y,z) = (!y,x,z)
             (xLength, yLength, zLength) = RotateDimensionSize(xLength, yLength, zLength, 0, 0, 1);
         }
-        //if(x == 0 && y == 0 && z == 0){
-            Debug.Log("Rotating indices: " + x + " " + y + " " + z + " by " + xRotation + " " + yRotation + " " + zRotation + " to " + newX + " " + newY + " " + newZ);
-        //}
+        return (newX, newY, newZ);
+    }
+    //xRotation, yRotation, zRotation are either 0, 1, 2 or 3 and determine how often the matrix is rotated by 90 degrees
+    //For example, if xRotation = 1, the matrix is rotated by 90 degrees around the x-axis
+    // Rotate the size of a matrix int[][][], so if the matrix is (1,3,1) and is rotated once on the x-axis, the new size is (1,1,3)
+    public static (int,int,int) RotateDimensionSize(int x, int y, int z, int xRotation, int yRotation, int zRotation){
+        int newX = x;
+        int newY = y;
+        int newZ = z;
+        if (xRotation % 2 == 1)
+        {
+            (newY, newZ) = (newZ, newY);
+        }
+        if (yRotation % 2 == 1)
+        {
+            (newX, newZ) = (newZ, newX);
+        }
+        if (zRotation % 2 == 1)
+        {
+            (newX, newY) = (newY, newX);
+        }
         return (newX, newY, newZ);
     }
 
-    // Rotate a matrix of voxels by the orientation of the object
-    public static int[][][] RotateMatrix(int[][][] matrix, Vector3 up, Vector3 right, Vector3 forward)
-    {
-        int sizeX = matrix.Length;
-        int sizeY = matrix[0].Length;
-        int sizeZ = matrix[0][0].Length;
-
-        // Determine new dimensions based on axis swaps
-        int newSizeX = Mathf.Abs(Vector3.Dot(Vector3.right, up)) > 0 ? sizeY : (Mathf.Abs(Vector3.Dot(Vector3.forward, up)) > 0 ? sizeZ : sizeX);
-        int newSizeY = Mathf.Abs(Vector3.Dot(Vector3.up, up)) > 0 ? sizeY : (Mathf.Abs(Vector3.Dot(Vector3.forward, up)) > 0 ? sizeX : sizeZ);
-        int newSizeZ = Mathf.Abs(Vector3.Dot(Vector3.forward, up)) > 0 ? sizeY : (Mathf.Abs(Vector3.Dot(Vector3.up, up)) > 0 ? sizeZ : sizeX);
-
-        Debug.Log("Rotate Matrix, previous size: " + sizeX + " " + sizeY + " " + sizeZ + " and new size: " + newSizeX + " " + newSizeY + " " + newSizeZ+ " with up: " + up + " right: " + right + " forward: " + forward);
-        
-        // Create the new rotated matrix with the correct dimensions
-        int[][][] rotatedMatrix = new int[newSizeX][][];
-        for (int x = 0; x < newSizeX; x++)
-        {
-            rotatedMatrix[x] = new int[newSizeY][];
-            for (int y = 0; y < newSizeY; y++)
-            {
-                rotatedMatrix[x][y] = new int[newSizeZ];
-            }
+    //Return how many x, y and z rotations (1 unit = 90 degree) are needed to align the matrix with the object orientation
+    private static (int,int,int) AxisRotationAmount(Vector3 up, Vector3 right, Vector3 forward){
+        if (up == Vector3.up) {
+            if (forward == Vector3.forward) return (0, 0, 0);
+            else if (forward == Vector3.back) return (0, 2, 0);
+            else if (forward == Vector3.right) return (0, 1, 0);
+            else if (forward == Vector3.left) return (0, 3, 0);
         }
-
-        // Rotate each voxel correctly
-        for (int x = 0; x < sizeX; x++)
-        {
-            for (int y = 0; y < sizeY; y++)
-            {
-                for (int z = 0; z < sizeZ; z++)
-                {
-                    Vector3 oldPos = new Vector3(x, y, z);
-                    Vector3 newPos = RotateVoxelPosition(oldPos, up, right, forward, sizeX, sizeY, sizeZ);
-
-                    rotatedMatrix[(int)newPos.x][(int)newPos.y][(int)newPos.z] = matrix[x][y][z];
-                }
-            }
+        else if (up == Vector3.down) {
+            if (forward == Vector3.forward) return (0, 0, 2);
+            else if (forward == Vector3.back) return (2, 0, 0);
+            else if (forward == Vector3.right) return (2, 3, 0);
+            else if (forward == Vector3.left) return (0, 1, 2);
         }
-
-        return rotatedMatrix;
+        else if (up == Vector3.right) {
+            if (forward == Vector3.forward) return (0, 0, 3);
+            else if (forward == Vector3.back) return (2, 0, 1);
+            else if (forward == Vector3.up) return (3, 3, 0);
+            else if (forward == Vector3.down) return (1, 1, 0);
+        }
+        else if (up == Vector3.left) {
+            if (forward == Vector3.forward) return (0, 0, 1);
+            else if (forward == Vector3.back) return (2, 0, 3);
+            else if (forward == Vector3.up) return (3, 1, 0);
+            else if (forward == Vector3.down) return (1, 3, 0);
+        }
+        else if (up == Vector3.forward) {
+            if (forward == Vector3.down) return (1, 0, 0);
+            else if (forward == Vector3.up) return (3, 2, 0);
+            else if (forward == Vector3.left) return (1, 0, 3);
+            else if (forward == Vector3.right) return (1, 0, 1);
+        }
+        else if (up == Vector3.back) {
+            if (forward == Vector3.down) return (1, 2, 0);
+            else if (forward == Vector3.up) return (3, 0, 0);
+            else if (forward == Vector3.left) return (3, 0, 1);
+            else if (forward == Vector3.right) return (3, 0, 3);
+        }
+        return (0,0,0);
     }
-
-    private static Vector3 RotateVoxelPosition(Vector3 pos, Vector3 up, Vector3 right, Vector3 forward, int xLength, int yLength, int zLength)
-    {
-        int newX = 0, newY = 0, newZ = 0;
-
-        // Determine the new position based on orientation
-        //Default forward is z. up is y, right is x
-        //do not rotate before, changes usage of _length, without its _length of the pos._, otherwise its the _length of the new variable (xLength, yLength, zLength) = RotateDimensionSize(xLength, yLength, zLength, up, right, forward);
-        if (up == Vector3.up) //only rotation around y-axis
-        {
-            if(forward == Vector3.forward){ // Rotation in degrees: (0, 0, 0)
-                (newX, newY, newZ) = ((int)pos.x, (int)pos.y, (int)pos.z); //checked
-            }
-            else if(forward == Vector3.back){ // Rotation in degrees: (0, 180, 0)
-                //(newX, newY, newZ) = (xLength - 1 - (int)pos.x, (int)pos.y, zLength - 1 - (int)pos.z); // (!x,y,!z)
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 2, 0, xLength, yLength, zLength);
-            }
-            else if(forward == Vector3.right){ // Rotation in degrees: (0, 90, 0)
-                //(newX, newY, newZ) = ((int)pos.z, (int)pos.y, xLength - 1 - (int)pos.x); // (z,y,!x) 
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 1, 0, xLength, yLength, zLength);
-
-            }
-            else if(forward == Vector3.left){ // Rotation in degrees: (0, 270, 0)
-                //(newX, newY, newZ) = (zLength - 1 - (int)pos.z, (int)pos.y, (int)pos.x); // (!z,y,x)
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 3, 0, xLength, yLength, zLength);
-            }
-        }
-        else if (up == Vector3.down) // Base-Rotation of 180 degree on the x-axis or 180 degree on the z-axis
-        {
-            if(forward == Vector3.forward){ // Rotation in degrees: (180, 180, 0) or (0, 0, 180)
-                //(newX, newY, newZ) = (xLength - 1 - (int)pos.x, yLength - 1 - (int)pos.y, (int)pos.z); // checked
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 0, 2, xLength, yLength, zLength);
-            }
-            else if(forward == Vector3.back){ // Rotation in degrees: (180, 0, 0) or (0, 180, 180)
-                //(newX, newY, newZ) = ((int)pos.x, yLength - 1 - (int)pos.y, zLength - 1 - (int)pos.z);  // checked
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 2, 0, 0, xLength, yLength, zLength);
-            }
-            else if(forward == Vector3.right){ // Rotation in degrees: (180, 270, 0) or (0, 90, 180)
-                //(newX, newY, newZ) = ((int)pos.z, yLength - 1 - (int)pos.y, xLength - 1 - (int)pos.x); // checked
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 2, 3, 0, xLength, yLength, zLength);
-            }
-            else if(forward == Vector3.left){ // Rotation in degrees: (180, 90, 0) or (0, 270, 180)
-                //(newX, newY, newZ) = (zLength - 1 - (int)pos.z, yLength - 1 - (int)pos.y, (int)pos.x); // checked
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 1, 2, xLength, yLength, zLength);
-            }
-        }
-        else if (up == Vector3.right) //Base rotation of 270 of degrees on the z axis
-        {
-            if(forward == Vector3.forward){ // Rotation in degrees: (0, 0, 270)
-                // if original lengths are (4x3x3) and the up is right and forward forward, the new lengths are (3x4x3))
-                //in a 4x3x3 grid, the voxel at (3,2,0) would be at (2,0,0) after the rotation
-                //(newX, newY, newZ) = ((int)pos.y, xLength - 1 - (int)pos.x, (int)pos.z); // checked
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 0, 3, xLength, yLength, zLength);
-            }
-            else if(forward == Vector3.back){ // Rotation in degrees: (180, 0, 270) or (0, 180, 90)
-                //(newX, newY, newZ) = ((int)pos.y, (int)pos.x, zLength - 1 - (int)pos.z); // checked 
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 2, 0, 1, xLength, yLength, zLength);
-            }
-            else if(forward == Vector3.up){ // Rotation in degrees: (270, 0, 270) 
-                //(newX, newY, newZ) = ((int)pos.y, (int)pos.z, (int)pos.x); // (y,z,x) [270, 270, 0 may look the same, but doesn't work for this calculation!]
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 3, 3, 0, xLength, yLength, zLength);
-            }
-            else if(forward == Vector3.down){ // Rotation in degrees: (90, 90, 0) [90, 0, 270 may look the same, but doesn't work!]
-                //(newX, newY, newZ) = ((int)pos.y, zLength - 1 - (int)pos.z, xLength - 1 - (int)pos.x);
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 1, 1, 0, xLength, yLength, zLength);
-            }
-        }
-        else if (up == Vector3.left)
-        {
-            if (forward == Vector3.forward) // Rotation in degrees: (0, 0, 90)
-            {
-                //(newX, newY, newZ) = (yLength - 1 - (int)pos.y, (int)pos.x, (int)pos.z);
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 0, 1, xLength, yLength, zLength);
-            }
-            else if (forward == Vector3.back) // Rotation in degrees: (180, 0, 90)
-            {
-                //(newX, newY, newZ) = (yLength - 1 - (int)pos.y, xLength - 1 - (int)pos.x, zLength - 1 - (int)pos.z);
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 2, 0, 3, xLength, yLength, zLength);
-                
-            }
-            else if (forward == Vector3.up) // Rotation in degrees: (270, 0, 90) or (90, 270, 0)
-            {
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 3, 1, 0, xLength, yLength, zLength);
-            }
-            else if (forward == Vector3.down) // Rotation in degrees: (90, 0, 90)
-            {
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 1, 3, 0, xLength, yLength, zLength);
-            }
-            
-        }
-        else if (up == Vector3.forward)
-        {
-            if (forward == Vector3.down){ // Rotation in degrees: (90, 0, 0) [creates gimbal lock with y and z]
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 1, 0, 0, xLength, yLength, zLength);
-            }
-            else if(forward == Vector3.up){ // Rotation in degrees: (270, 180, 0)
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 3, 2, 0, xLength, yLength, zLength);
-            }
-            else if(forward == Vector3.left){ // Rotation in degrees: (0, 270, 270)
-                //(newX, newY, newZ) = (zLength - 1 - (int)pos.z, xLength - 1 - (int)pos.x, (int)pos.y); //checked
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 1, 0, 3, xLength, yLength, zLength);
-            }
-            else if(forward == Vector3.right){ // Rotation in degrees: (180, 270, 270) (0, 90, 90) 
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 1, 0, 1, xLength, yLength, zLength); // the input differs from the rotation in degrees, because the rotation axis of z changes when rotating around the y-axis
-            }
-        }
-        else if (up == Vector3.back)
-        {
-            if (forward == Vector3.down){ // Rotation in degrees: (90, 180, 0)
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 1, 2, 0, xLength, yLength, zLength);
-            }
-            else if(forward == Vector3.up){ // Rotation in degrees: (270, 0, 0) [creates gimbal lock with y and z]
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 3, 0, 0, xLength, yLength, zLength);
-            }
-            else if(forward == Vector3.left){ // Rotation in degrees: (0, 270, 90)
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 3, 0, 1, xLength, yLength, zLength); //input differs, we want to rotate around x 270, then around z 90, the normal transform.rotation doesnt handle rotation seperately
-            }
-            else if(forward == Vector3.right){ // Rotation in degrees: (0, 90, 270)
-                //(newX, newY, newZ) = ((int)pos.z, xLength - 1 - (int)pos.x, yLength - 1 - (int)pos.y);
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 3, 0, 3, xLength, yLength, zLength);
-            }
-        }    
-        return new Vector3(newX, newY, newZ);
-        
-    }
-    public static (int,int,int) RotateDimensionSize(int x, int y, int z, Vector3 up, Vector3 right, Vector3 forward)
-    {
-        int newX = 0, newY = 0, newZ = 0;
-
-        // Determine the new dimensions based on orientation
-        if (up == Vector3.up || up == Vector3.down)
-        {
-            newX = x;
-            newY = y;
-            newZ = z;
-        }
-        else if (up == Vector3.right || up == Vector3.left)
-        {
-            newX = y;
-            newY = x;
-            newZ = z;
-        }
-        else if (up == Vector3.forward || up == Vector3.back)
-        {
-            newX = x;
-            newY = z;
-            newZ = y;
-        }
-
-        // Handle forward axis flips
-        if (forward == Vector3.left){
-            newX = x;
-            newY = y;
-            newZ = z;
-        }
-        else if (forward == Vector3.up){
-            newX = x;
-            newY = y;
-            newZ = z;
-        }
-        else if (forward == Vector3.back){
-            newX = x;
-            newY = y;
-            newZ = z;
-        }
-
-        return (newX, newY, newZ);
-    }
+    // Checks if the orientation of the object is within the rotationTolerancePercentage
     public static (bool, Vector3, Vector3, Vector3) IsValidRotation(Transform grabbable, float rotationTolerancePercentage)
     {
         // Get the object's transform axes directly
