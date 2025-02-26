@@ -78,20 +78,20 @@ public class RotationHelper
         //Rotation around the x-axis, if i had an empty 3x3x3 grid with a 1 at (2,0,0), rotating it once would result with the 1 being at (2,2,0), once again at (2,2,2), and finally at (2,0,2)
         for (int ix = 0; ix < xRotation; ix++)
         {
-            (newY, newZ) = (zLength - 1 - newZ, newY);
+            (newY, newZ) = (zLength - 1 - newZ, newY); //(x,y,z) = (x,!z,y)
             (xLength, yLength, zLength) = RotateDimensionSize(xLength, yLength, zLength, 1, 0, 0);
             
         }
         //Rotation around the y-axis, if i had an empty 3x3x3 grid with a 1 at (2,0,0), rotating it once would result with the 1 being at (0,0,0), once again at (0,0,2), and finally at (2,0,2)
         for (int iy = 0; iy < yRotation; iy++)
         {
-            (newX, newZ) = (newZ, xLength - 1 - newX);
+            (newX, newZ) = (newZ, xLength - 1 - newX); //(x,y,z) = (z,y,!x)
             (xLength, yLength, zLength) = RotateDimensionSize(xLength, yLength, zLength, 0, 1, 0);
         }
         //Rotation around the z-axis, if i had an empty 3x3x3 grid with a 1 at (2,0,0), rotating it once would result with the 1 being at (2,2,0), once again at (0,2,0), and finally at (0,0,0)
         for (int iz = 0; iz < zRotation; iz++)
         {
-            (newX, newY) = (yLength - 1 - newY, newX);
+            (newX, newY) = (yLength - 1 - newY, newX); //(x,y,z) = (!y,x,z)
             (xLength, yLength, zLength) = RotateDimensionSize(xLength, yLength, zLength, 0, 0, 1);
         }
         //if(x == 0 && y == 0 && z == 0){
@@ -152,66 +152,62 @@ public class RotationHelper
         //do not rotate before, changes usage of _length, without its _length of the pos._, otherwise its the _length of the new variable (xLength, yLength, zLength) = RotateDimensionSize(xLength, yLength, zLength, up, right, forward);
         if (up == Vector3.up) //only rotation around y-axis
         {
-            Debug.Log("Up is Vector3.up!");
             if(forward == Vector3.forward){ // Rotation in degrees: (0, 0, 0)
-                Debug.Log("Forward is Vector3.forward!");
                 (newX, newY, newZ) = ((int)pos.x, (int)pos.y, (int)pos.z); //checked
-
             }
             else if(forward == Vector3.back){ // Rotation in degrees: (0, 180, 0)
-                (newX, newY, newZ) = (xLength - 1 - (int)pos.x, (int)pos.y, zLength - 1 - (int)pos.z); // checked
+                (newX, newY, newZ) = (xLength - 1 - (int)pos.x, (int)pos.y, zLength - 1 - (int)pos.z); // (!x,y,!z)
                 //(newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 2, 0, xLength, yLength, zLength);
             }
             else if(forward == Vector3.right){ // Rotation in degrees: (0, 90, 0)
-                (newX, newY, newZ) = (zLength - 1 - (int)pos.z, (int)pos.y, (int)pos.x); // checked
+                (newX, newY, newZ) = ((int)pos.z, (int)pos.y, xLength - 1 - (int)pos.x); // (z,y,!x) 
                 //(newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 1, 0, xLength, yLength, zLength);
 
             }
             else if(forward == Vector3.left){ // Rotation in degrees: (0, 270, 0)
-                (newX, newY, newZ) = ((int)pos.z, (int)pos.y, xLength - 1 - (int)pos.x); // checked
+                (newX, newY, newZ) = (zLength - 1 - (int)pos.z, (int)pos.y, (int)pos.x); // (!z,y,x)
                 //(newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 3, 0, xLength, yLength, zLength);
             }
         }
         else if (up == Vector3.down) // Base-Rotation of 180 degree on the x-axis or 180 degree on the z-axis
         {
             if(forward == Vector3.forward){ // Rotation in degrees: (180, 180, 0) or (0, 0, 180)
-                //(newX, newY, newZ) = (xLength - 1 - (int)pos.x, yLength - 1 - (int)pos.y, (int)pos.z); // checked
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 0, 2, xLength, yLength, zLength);
+                (newX, newY, newZ) = (xLength - 1 - (int)pos.x, yLength - 1 - (int)pos.y, (int)pos.z); // checked
+                //(newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 0, 2, xLength, yLength, zLength);
             }
             else if(forward == Vector3.back){ // Rotation in degrees: (180, 0, 0) or (0, 180, 180)
-                //(newX, newY, newZ) = ((int)pos.x, yLength - 1 - (int)pos.y, zLength - 1 - (int)pos.z);  // checked
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 2, 0, 0, xLength, yLength, zLength);
+                (newX, newY, newZ) = ((int)pos.x, yLength - 1 - (int)pos.y, zLength - 1 - (int)pos.z);  // checked
+                //(newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 2, 0, 0, xLength, yLength, zLength);
             }
             else if(forward == Vector3.right){ // Rotation in degrees: (180, 270, 0) or (0, 90, 180)
-                //(newX, newY, newZ) = (zLength - 1 - (int)pos.z, yLength - 1 - (int)pos.y, (int)pos.x); // checked
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 1, 2, xLength, yLength, zLength);
+                (newX, newY, newZ) = ((int)pos.z, yLength - 1 - (int)pos.y, xLength - 1 - (int)pos.x); // checked
+                //(newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 1, 2, xLength, yLength, zLength);
             }
             else if(forward == Vector3.left){ // Rotation in degrees: (180, 90, 0) or (0, 270, 180)
-                //(newX, newY, newZ) = ((int)pos.z, yLength - 1 - (int)pos.y, xLength - 1 - (int)pos.x); // checked
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 2, 1, 0, xLength, yLength, zLength);
+                (newX, newY, newZ) = (zLength - 1 - (int)pos.z, yLength - 1 - (int)pos.y, (int)pos.x); // checked
+                //(newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 2, 1, 0, xLength, yLength, zLength);
             }
         }
         else if (up == Vector3.right) //Base rotation of 270 of degrees on the z axis
         {
-
             if(forward == Vector3.forward){ // Rotation in degrees: (0, 0, 270)
                 // if original lengths are (4x3x3) and the up is right and forward forward, the new lengths are (3x4x3))
                 //in a 4x3x3 grid, the voxel at (3,2,0) would be at (2,0,0) after the rotation
-                //(newX, newY, newZ) = ((int)pos.y, xLength - 1 - (int)pos.x, (int)pos.z); // checked
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 0, 3, xLength, yLength, zLength);
-
+                (newX, newY, newZ) = ((int)pos.y, xLength - 1 - (int)pos.x, (int)pos.z); // checked
+                //(newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 0, 3, xLength, yLength, zLength);
             }
             else if(forward == Vector3.back){ // Rotation in degrees: (180, 0, 270) or (0, 180, 90)
+                (newX, newY, newZ) = ((int)pos.y, (int)pos.x, zLength - 1 - (int)pos.z); // checked 
                 //(newX, newY, newZ) = (yLength - 1 - (int)pos.y, xLength - 1 - (int)pos.x, zLength - 1 - (int)pos.z);
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 2, 0, 3, xLength, yLength, zLength);
+                //(newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 2, 0, 3, xLength, yLength, zLength);
             }
-            else if(forward == Vector3.up){ // Rotation in degrees: (270, 0, 270)
-                //(newX, newY, newZ) = (zLength - 1 - (int)pos.z, xLength - 1 - (int)pos.x, (int)pos.y);
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 3, 0, 3, xLength, yLength, zLength);
+            else if(forward == Vector3.up){ // Rotation in degrees: (270, 0, 270) [270, 270, 0 may look the same, but doesn't work!]
+                (newX, newY, newZ) = ((int)pos.y, (int)pos.z, (int)pos.x); // (y,z,x)
+                //(newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 3, 0, 3, xLength, yLength, zLength);
             }
-            else if(forward == Vector3.down){ // Rotation in degrees: (90, 0, 270)
-                //(newX, newY, newZ) = ((int)pos.z, xLength - 1 - (int)pos.x, yLength - 1 - (int)pos.y);
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 1, 0, 3, xLength, yLength, zLength);
+            else if(forward == Vector3.down){ // Rotation in degrees: (90, 90, 0) [90, 0, 270 may look the same, but doesn't work!]
+                (newX, newY, newZ) = ((int)pos.y, zLength - 1 - (int)pos.z, xLength - 1 - (int)pos.x);
+                //(newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 1, 0, 3, xLength, yLength, zLength);
             }
         }
         else if (up == Vector3.left)
@@ -223,16 +219,17 @@ public class RotationHelper
             }
             else if (forward == Vector3.back) // Rotation in degrees: (180, 0, 90)
             {
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 2, 0, 1, xLength, yLength, zLength);
+                (newX, newY, newZ) = (yLength - 1 - (int)pos.y, xLength - 1 - (int)pos.x, zLength - 1 - (int)pos.z);
+                //(newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 2, 0, 1, xLength, yLength, zLength);
                 
             }
-            else if (forward == Vector3.up) // Rotation in degrees: (270, 0, 90)
+            else if (forward == Vector3.up) // Rotation in degrees: (270, 0, 90) or (90, 270, 0)
             {
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 3, 0, 1, xLength, yLength, zLength);
+                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 3, 1, 0, xLength, yLength, zLength);
             }
             else if (forward == Vector3.down) // Rotation in degrees: (90, 0, 90)
             {
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 1, 0, 1, xLength, yLength, zLength);
+                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 1, 1, 0, xLength, yLength, zLength);
             }
             
         }
@@ -245,10 +242,11 @@ public class RotationHelper
                 (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 3, 2, 0, xLength, yLength, zLength);
             }
             else if(forward == Vector3.left){ // Rotation in degrees: (0, 270, 270)
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 3, 3, xLength, yLength, zLength);
+                (newX, newY, newZ) = (zLength - 1 - (int)pos.z, xLength - 1 - (int)pos.x, (int)pos.y); //checked
+                //(newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 3, 3, xLength, yLength, zLength);
             }
-            else if(forward == Vector3.right){ // Rotation in degrees: (180, 270, 270) (0, 90, 90)
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 0, 1, 1, xLength, yLength, zLength);
+            else if(forward == Vector3.right){ // Rotation in degrees: (180, 270, 270) (0, 90, 90) 
+                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 1, 0, 1, xLength, yLength, zLength); // the input differs from the rotation in degrees, because the rotation axis of z changes when rotating around the y-axis
             }
         }
         else if (up == Vector3.back)
@@ -259,11 +257,12 @@ public class RotationHelper
             else if(forward == Vector3.up){ // Rotation in degrees: (270, 0, 0) [creates gimbal lock with y and z]
                 (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 3, 0, 0, xLength, yLength, zLength);
             }
-            else if(forward == Vector3.left){ // Rotation in degrees: (90, 270, 0)
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 1, 3, 0, xLength, yLength, zLength);
+            else if(forward == Vector3.left){ // Rotation in degrees: (0, 270, 90)
+                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 3, 0, 1, xLength, yLength, zLength); //input differs, we want to rotate around x 270, then around z 90, the normal transform.rotation doesnt handle rotation seperately
             }
             else if(forward == Vector3.right){ // Rotation in degrees: (90, 90, 0)
-                (newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 1, 1, 0, xLength, yLength, zLength);
+                (newX, newY, newZ) = ((int)pos.z, xLength - 1 - (int)pos.x, yLength - 1 - (int)pos.y);
+                //(newX, newY, newZ) = RotateIndices((int)pos.x, (int)pos.y, (int)pos.z, 1, 1, 0, xLength, yLength, zLength);
             }
         }    
         return new Vector3(newX, newY, newZ);
