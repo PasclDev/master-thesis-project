@@ -47,7 +47,7 @@ public class FillableManager : MonoBehaviour
         }
 
         //Check rotation tolerance, if rotation is within tolerance, and if position is within tolerance
-        (bool isValidRotation, Vector3 up, Vector3 right, Vector3 forward) = RotationHelper.IsValidRotation(transform, LevelManager.rotationTolerancePercentage);
+        (bool isValidRotation, Vector3 up, Vector3 right, Vector3 forward) = RotationHelper.IsValidRotation(grabbableObject.transform, LevelManager.rotationTolerancePercentage);
         if (!isValidRotation){
             Debug.Log("Rotation is not within tolerance");
             return;

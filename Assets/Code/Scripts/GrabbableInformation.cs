@@ -61,7 +61,7 @@ public class GrabbableInformation : MonoBehaviour
             float rotationTolerancePercentage = 0.1f; // 10% tolerance
             (bool isValidRotation, Vector3 up, Vector3 right, Vector3 forward) = RotationHelper.IsValidRotation(transform, rotationTolerancePercentage);
             debugObjects.matrixOrigin.GetComponent<Renderer>().material.color = isValidRotation ? Color.green : Color.red;
-            debugObjects.rotationText.text = "Rotation: " + transform.rotation.eulerAngles.ToString("F0") + "\nRounded: " + grabbableRotation.ToString("F0")+ "\nUp: " + up.ToString("F0")+ "\nRight: " + right.ToString("F0")+ "\nForward: " + forward.ToString("F0");
+            debugObjects.rotationText.text = "Rotation: " + transform.rotation.eulerAngles.ToString("F0") + "\nRounded: " + grabbableRotation.ToString("F0")+ "\nUp: " + up.ToString("F0")+ "\nRight: " + right.ToString("F0")+ "\nForward: " + forward.ToString("F0")+"\nNormalRightVector:"+Vector3.right;
             (int rotatedX, int rotatedY, int rotatedZ) = RotationHelper.RotateDimensionSize(grabbableGridSize.x,grabbableGridSize.y, grabbableGridSize.z, (int)grabbableRotation.x, (int)grabbableRotation.y, (int)grabbableRotation.z);
             Vector3Int rotatedGridSize = new Vector3Int(rotatedX, rotatedY, rotatedZ);
             //debugObjects.center.transform.up should be the Vector3 "up"
