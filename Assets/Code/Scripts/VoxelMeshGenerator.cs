@@ -10,10 +10,11 @@ public class VoxelMeshGenerator : MonoBehaviour
         
         float voxelSize = currentLevelData.voxelSize;
 
-        
 
-        foreach (var grabbable in currentLevelData.grabbables)
+
+        for (int i = 0; i < currentLevelData.grabbables.Count; i++)
         {
+            Grabbable grabbable = currentLevelData.grabbables[i];
             Vector3Int gridSize = new Vector3Int(
             grabbable.size[0], 
             grabbable.size[1], 
@@ -23,6 +24,7 @@ public class VoxelMeshGenerator : MonoBehaviour
             Vector3 grabbablePosition = new Vector3(grabbable.position[0], grabbable.position[1], grabbable.position[2]);
             Vector3 position = grabbablePosition * currentLevelData.voxelSize;
             GameObject grabbableObject = Instantiate(grabbableBlankPrefab, position, Quaternion.identity, transform);
+            grabbableObject.name = "Grabbable_" + i;
             Material mat = grabbableObject.GetComponent<Renderer>().material;
             Color newColor = grabbable.GetColor();
             newColor.a = mat.color.a;

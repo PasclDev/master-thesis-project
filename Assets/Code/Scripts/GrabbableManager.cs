@@ -21,12 +21,10 @@ public class GrabbableManager : MonoBehaviour
     public Grabbable grabbable;
     public float voxelSize;
     public InsideFillable insideFillable;
-    public bool isGrabbed = false;
+    public bool isGrabbed = true;
     public DebugObjects debugObjects;
 
     private FillableManager lastTouchedFillable;
-    private float distanceTolerance = LevelManager.distanceTolerance;
-
     public void Initialize(Grabbable grabbable, float voxelSize)
     {
         this.grabbable = grabbable;

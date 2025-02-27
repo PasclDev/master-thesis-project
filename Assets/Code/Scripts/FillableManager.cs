@@ -10,7 +10,6 @@ public class FillableManager : MonoBehaviour
 {
     private Vector3Int gridSize;
     private float voxelSize;
-    private float distanceTolerance = LevelManager.distanceTolerance;
     public int[][][] fillableGrid;
     public GameObject filledVoxelVisual;
 
@@ -41,7 +40,7 @@ public class FillableManager : MonoBehaviour
         {
             if (fillableSizeList[i] < grabbableSizeList[i])
             {
-                Debug.Log("Fillable Message: Grabbable cannot fit in Fillable");
+                Debug.Log("Fillable: Grabbable cannot fit in Fillable");
                 return;
             }
         }
@@ -49,7 +48,7 @@ public class FillableManager : MonoBehaviour
         //Check rotation tolerance, if rotation is within tolerance, and if position is within tolerance
         (bool isValidRotation, Vector3 up, Vector3 right, Vector3 forward) = RotationHelper.IsValidRotation(grabbableObject.transform, LevelManager.rotationTolerancePercentage);
         if (!isValidRotation){
-            Debug.Log("Fillable Message: Rotation is not within tolerance");
+            Debug.Log("Fillable: Rotation is not within tolerance");
             return;
         }
         // Rotate the Grabbable gridSize
@@ -57,7 +56,7 @@ public class FillableManager : MonoBehaviour
         Vector3Int rotatedGridSize = new Vector3Int(rotatedGrabbableSizeX, rotatedGrabbableSizeY, rotatedGrabbableSizeZ);
         if (rotatedGridSize.x > gridSize.x || rotatedGridSize.y > gridSize.y || rotatedGridSize.z > gridSize.z)
         {
-            Debug.Log("Fillable Message: Grabbable cannot fit in Fillable");
+            Debug.Log("Fillable: Grabbable cannot fit in Fillable");
             return;
         }
 
@@ -75,7 +74,7 @@ public class FillableManager : MonoBehaviour
         Vector3Int gridOffset = new Vector3Int(Mathf.RoundToInt(startingPointDifference.x / voxelSize), Mathf.RoundToInt(startingPointDifference.y / voxelSize), Mathf.RoundToInt(startingPointDifference.z / voxelSize));
         if (gridOffset.x < 0 || gridOffset.y < 0 || gridOffset.z < 0)
         {
-            Debug.Log("Fillable Message: Grabbable is outside Fillable");
+            Debug.Log("Fillable: Grabbable is outside Fillable");
             return;
         }
         // Check if Grabbable is overlapping with another Grabbable
@@ -91,12 +90,12 @@ public class FillableManager : MonoBehaviour
                         Vector3Int fillableGridPosition = new Vector3Int(x + gridOffset.x, y + gridOffset.y, z + gridOffset.z);
                         if (fillableGridPosition.x >= gridSize.x || fillableGridPosition.y >= gridSize.y || fillableGridPosition.z >= gridSize.z)
                         {
-                            Debug.Log("Fillable Message: Grabbable is outside Fillable");
+                            Debug.Log("Fillable Grabbable is outside Fillable");
                             return;
                         }
                         if (fillableGrid[fillableGridPosition.x][fillableGridPosition.y][fillableGridPosition.z] == 1)
                         {
-                            Debug.Log("Fillable Message: Grabbable is overlapping with another Grabbable");
+                            Debug.Log("Fillable: Grabbable is overlapping with another Grabbable");
                             return;
                         }
                     }
@@ -138,7 +137,8 @@ public class FillableManager : MonoBehaviour
             }
         }
         //DebugFillableGrid();
-        Debug.Log("Grid Offset: " + gridOffset);
+        Debug.Log("Fillable: "+grabbableObject.name+" Grid Offset: " + gridOffset);
+                CheckIfFillableIsFilled();
     }
     public void RemoveGrabbableFromFillable(GameObject grabbableObject){
         GrabbableManager grabbableInformation = grabbableObject.GetComponent<GrabbableManager>();
@@ -163,8 +163,6 @@ public class FillableManager : MonoBehaviour
         }
         grabbableInformation.insideFillable = null;
         Destroy(transform.Find(grabbableObject.GetInstanceID().ToString()).gameObject); // Destroys the visualizerParent
-        //DebugFillableGrid();
-        Debug.Log("Grid Offset: " + gridOffset);
     }
     // Debug the fillableGrid as a function
     public void DebugFillableGrid(){
@@ -175,9 +173,26 @@ public class FillableManager : MonoBehaviour
             {
                 for (int z = 0; z < gridSize.z; z++)
                 {
-                    Debug.Log("Fillable Grid Position: " + x + ", " + y + ", " + z + " Value: " + fillableGrid[x][y][z]);
+                    Debug.Log("Fillable: Grid Position: " + x + ", " + y + ", " + z + " Value: " + fillableGrid[x][y][z]);
                 }
             }
         }
+    }
+    private void CheckIfFillableIsFilled(){
+        for (int x = 0; x < gridSize.x; x++)
+        {
+            for (int y = 0; y < gridSize.y; y++)
+            {
+                for (int z = 0; z < gridSize.z; z++)
+                {
+                    if (fillableGrid[x][y][z] == 0)
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+        Debug.Log("Fillable: Fillable is filled!");
+        LevelManager.instance.FillablesFilled();
     }
 }

@@ -6,12 +6,26 @@ public class LevelManager : MonoBehaviour
     public string jsonFileName = "levels.json"; // JSON file name
     public int currentLevel = 0; // Current level index
     public GameObject fillablePrefab; // fillableObject prefab
-    public static bool isDebug = false; // Debug mode
+    public static bool isDebug = true; // Debug mode
     public static float rotationTolerancePercentage = 0.20f; // 20% tolerance for rotation
-    public static float distanceTolerance = 0.02f; // 2 cm tolerance for position
+    public static float distanceTolerancePercentage = 0.20f; // 20% tolerance for position
     
     private LevelCollection levelCollection; // Level collection
     private VoxelMeshGenerator voxelMeshGenerator;
+
+    //Single instance of LevelManager
+    public static LevelManager instance;
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     void Start()
     {
         Debug.Log ("LevelManager: Start");
@@ -96,7 +110,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    void GenerateLevel(int levelIndex)
+    private void GenerateLevel(int levelIndex)
     {
         Debug.Log("Current Level: " + levelIndex);
         if (levelCollection == null || levelCollection.levels.Count <= levelIndex)
@@ -109,12 +123,30 @@ public class LevelManager : MonoBehaviour
         voxelMeshGenerator.GenerateMesh(currentLevelData);
         GenerateFillableObject(currentLevelData.fillable, currentLevelData.voxelSize);
     }
-    void GenerateFillableObject(Fillable fillable, float voxelSize)
+    private void GenerateFillableObject(Fillable fillable, float voxelSize)
     {
         GameObject fillableObject = Instantiate(fillablePrefab, transform);
         fillableObject.transform.position = voxelSize*new Vector3(fillable.position[0], fillable.position[1], fillable.position[2]); // Center it
         fillableObject.transform.localScale = new Vector3(fillable.size[0], fillable.size[1], fillable.size[2]) * voxelSize; // Scale to fit grid
         Vector3Int size = new Vector3Int(fillable.size[0], fillable.size[1], fillable.size[2]);
         fillableObject.GetComponent<FillableManager>().Initialize(size, voxelSize);
+    }
+    public void FillablesFilled()
+    {
+        Debug.Log("LevelManager: Fillables filled!");
+        currentLevel++;
+        if (currentLevel < levelCollection.levels.Count)
+        {
+            //delete all children
+            foreach (Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
+            GenerateLevel(currentLevel);
+        }
+        else
+        {
+            Debug.Log("LevelManager: All levels completed!");
+        }
     }
 }
