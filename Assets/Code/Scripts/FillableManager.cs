@@ -33,7 +33,7 @@ public class FillableManager : MonoBehaviour
     }
 
     public void CheckIfGrabbableFitsFillable(GameObject grabbableObject){
-        Grabbable grabbable = grabbableObject.GetComponent<GrabbableInformation>().grabbable;
+        Grabbable grabbable = grabbableObject.GetComponent<GrabbableManager>().grabbable;
         // Check if Grabbable fits in Fillable, for example (1, 4, 1) Fillable and (4, 1, 1) Grabbable would fit, as Grabbable can be rotated
         int[] fillableSizeList = new int[]{gridSize.x, gridSize.y, gridSize.z}.OrderByDescending(x => x).ToArray();
         int[] grabbableSizeList = grabbable.size.OrderByDescending(x => x).ToArray();
@@ -41,7 +41,7 @@ public class FillableManager : MonoBehaviour
         {
             if (fillableSizeList[i] < grabbableSizeList[i])
             {
-                Debug.Log("Grabbable cannot fit in Fillable");
+                Debug.Log("Fillable Message: Grabbable cannot fit in Fillable");
                 return;
             }
         }
@@ -49,7 +49,7 @@ public class FillableManager : MonoBehaviour
         //Check rotation tolerance, if rotation is within tolerance, and if position is within tolerance
         (bool isValidRotation, Vector3 up, Vector3 right, Vector3 forward) = RotationHelper.IsValidRotation(grabbableObject.transform, LevelManager.rotationTolerancePercentage);
         if (!isValidRotation){
-            Debug.Log("Rotation is not within tolerance");
+            Debug.Log("Fillable Message: Rotation is not within tolerance");
             return;
         }
         // Rotate the Grabbable gridSize
@@ -57,7 +57,7 @@ public class FillableManager : MonoBehaviour
         Vector3Int rotatedGridSize = new Vector3Int(rotatedGrabbableSizeX, rotatedGrabbableSizeY, rotatedGrabbableSizeZ);
         if (rotatedGridSize.x > gridSize.x || rotatedGridSize.y > gridSize.y || rotatedGridSize.z > gridSize.z)
         {
-            Debug.Log("Grabbable cannot for in Fillable");
+            Debug.Log("Fillable Message: Grabbable cannot fit in Fillable");
             return;
         }
 
@@ -75,7 +75,7 @@ public class FillableManager : MonoBehaviour
         Vector3Int gridOffset = new Vector3Int(Mathf.RoundToInt(startingPointDifference.x / voxelSize), Mathf.RoundToInt(startingPointDifference.y / voxelSize), Mathf.RoundToInt(startingPointDifference.z / voxelSize));
         if (gridOffset.x < 0 || gridOffset.y < 0 || gridOffset.z < 0)
         {
-            Debug.Log("Grabbable is outside Fillable");
+            Debug.Log("Fillable Message: Grabbable is outside Fillable");
             return;
         }
         // Check if Grabbable is overlapping with another Grabbable
@@ -91,12 +91,12 @@ public class FillableManager : MonoBehaviour
                         Vector3Int fillableGridPosition = new Vector3Int(x + gridOffset.x, y + gridOffset.y, z + gridOffset.z);
                         if (fillableGridPosition.x >= gridSize.x || fillableGridPosition.y >= gridSize.y || fillableGridPosition.z >= gridSize.z)
                         {
-                            Debug.Log("Grabbable is outside Fillable");
+                            Debug.Log("Fillable Message: Grabbable is outside Fillable");
                             return;
                         }
                         if (fillableGrid[fillableGridPosition.x][fillableGridPosition.y][fillableGridPosition.z] == 1)
                         {
-                            Debug.Log("Grabbable is overlapping with another Grabbable");
+                            Debug.Log("Fillable Message: Grabbable is overlapping with another Grabbable");
                             return;
                         }
                     }
@@ -107,7 +107,7 @@ public class FillableManager : MonoBehaviour
         AddGrabbableToFillable(grabbableObject, gridOffset, grabbableObject.transform.rotation.eulerAngles, rotatedVoxels, rotatedGridSize, newRotation);
     }
     public void AddGrabbableToFillable(GameObject grabbableObject, Vector3Int gridOffset, Vector3 grabbableRotation, int[][][] rotatedVoxels, Vector3 rotatedVoxelGridSize, Quaternion newRotation){
-        GrabbableInformation grabbableInformation = grabbableObject.GetComponent<GrabbableInformation>();
+        GrabbableManager grabbableInformation = grabbableObject.GetComponent<GrabbableManager>();
         grabbableInformation.insideFillable = new(){
             fillableObject = gameObject,
             rotatedVoxelMatrix = rotatedVoxels,
@@ -141,7 +141,7 @@ public class FillableManager : MonoBehaviour
         Debug.Log("Grid Offset: " + gridOffset);
     }
     public void RemoveGrabbableFromFillable(GameObject grabbableObject){
-        GrabbableInformation grabbableInformation = grabbableObject.GetComponent<GrabbableInformation>();
+        GrabbableManager grabbableInformation = grabbableObject.GetComponent<GrabbableManager>();
         Vector3Int gridOffset = grabbableInformation.insideFillable.gridOffset;
         // Enable the BoxCollider of the Grabbable and move it to the corresponding position
         grabbableObject.GetComponent<BoxCollider>().enabled = true;

@@ -16,7 +16,7 @@ public class LevelManager : MonoBehaviour
     {
         if (fillablePrefab == null)
         {
-            Debug.LogError("fillableObject Prefab is not assigned!");
+            Debug.LogError("LevelManager Error: fillableObject Prefab is not assigned!");
             return;
         }
         voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
@@ -33,7 +33,7 @@ public class LevelManager : MonoBehaviour
             string jsonData = File.ReadAllText(filePath);
             levelCollection = JsonUtility.FromJson<LevelCollection>(jsonData);
             ConvertRawVoxelsToVoxels(levelCollection);
-            Debug.Log(JsonUtility.ToJson(levelCollection));
+            //Debug.Log(JsonUtility.ToJson(levelCollection));
         }
         else
         {
@@ -77,10 +77,10 @@ public class LevelManager : MonoBehaviour
 
     void GenerateLevel(int levelIndex)
     {
-        Debug.Log("Generating level: " + levelIndex);
+        Debug.Log("Current Level: " + levelIndex);
         if (levelCollection == null || levelCollection.levels.Count <= levelIndex)
         {
-            Debug.LogError("Invalid level index!");
+            Debug.LogError("LevelManager Error: Invalid level index!");
             return;
         }
 

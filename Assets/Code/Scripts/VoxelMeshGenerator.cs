@@ -25,7 +25,7 @@ public class VoxelMeshGenerator : MonoBehaviour
             GameObject grabbableObject = Instantiate(grabbableBlankPrefab, position, Quaternion.identity, transform);
             MeshFilter meshFilter = grabbableObject.GetComponent<MeshFilter>();
             grabbableObject.GetComponent<BoxCollider>().size = (Vector3)gridSize * voxelSize;
-            grabbableObject.GetComponent<GrabbableInformation>().Initialize(grabbable, voxelSize);
+            grabbableObject.GetComponent<GrabbableManager>().Initialize(grabbable, voxelSize);
             List<Vector3> vertices = new List<Vector3>();
             List<int> triangles = new List<int>();
             List<Vector2> uvs = new List<Vector2>();

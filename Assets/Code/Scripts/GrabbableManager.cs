@@ -16,7 +16,7 @@ public class DebugObjects
     public GameObject matrixOrigin;
     public TextMeshPro rotationText;
 }
-public class GrabbableInformation : MonoBehaviour
+public class GrabbableManager : MonoBehaviour
 {
     public Grabbable grabbable;
     public float voxelSize;
@@ -56,7 +56,7 @@ public class GrabbableInformation : MonoBehaviour
     {
         if(other.CompareTag("Fillable"))
         {
-            Debug.Log("Grabbable has entered " + other.name);
+            Debug.Log("Grabbable Message: Grabbable has entered " + other.name);
             lastTouchedFillable = other.GetComponent<FillableManager>();
         }
     }
@@ -68,12 +68,12 @@ public class GrabbableInformation : MonoBehaviour
     }
     public void OnSelectExit(){
         isGrabbed = false;
-        Debug.Log(gameObject.name + "has been dropped!");
+        Debug.Log("Grabbable Message: "+gameObject.name + "has been dropped!");
         if(lastTouchedFillable != null){
             lastTouchedFillable.CheckIfGrabbableFitsFillable(gameObject);
         }
         else{
-            Debug.Log("Grabbable is not inside any Fillable");
+            Debug.Log("Grabbable Message: Grabbable is not inside any Fillable");
         }
         if(LevelManager.isDebug){
             debugObjects.center.SetActive(false);
@@ -83,7 +83,7 @@ public class GrabbableInformation : MonoBehaviour
     // Triggers whenever the grabbable gets grabbed by the player
     public void OnSelectEnter(){
         isGrabbed = true;
-        Debug.Log(gameObject.name + "has been picked up!");
+        Debug.Log("Grabbable Message: "+gameObject.name + "has been picked up!");
         if (null != insideFillable && null != insideFillable.fillableObject)
         {
             FillableManager fillableManager = insideFillable.fillableObject.GetComponent<FillableManager>();

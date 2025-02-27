@@ -15,7 +15,7 @@ public class RotationHelper
         // Determine new dimensions based on axis swaps
         (int newSizeX, int newSizeY, int newSizeZ) = RotateDimensionSize(sizeX, sizeY, sizeZ, up, forward);
 
-        Debug.Log("Rotate Matrix, previous size: " + sizeX + " " + sizeY + " " + sizeZ + " and new size: " + newSizeX + " " + newSizeY + " " + newSizeZ+ " with up: " + up + " right: " + right + " forward: " + forward);
+        Debug.Log("RotationHelper: Rotate Matrix, previous size: " + sizeX + " " + sizeY + " " + sizeZ + " and new size: " + newSizeX + " " + newSizeY + " " + newSizeZ+ " with up: " + up + " right: " + right + " forward: " + forward);
         
         // Create the new rotated int[][][] matrix with the correct dimensions
         int[][][] rotatedMatrix = new int[newSizeX][][];
