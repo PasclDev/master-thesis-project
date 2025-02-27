@@ -22,7 +22,7 @@ public class VoxelMeshGenerator : MonoBehaviour
             );
             Vector3 gridCenter = (Vector3)gridSize  * 0.5f;
             Vector3 grabbablePosition = new Vector3(grabbable.position[0], grabbable.position[1], grabbable.position[2]);
-            Vector3 position = grabbablePosition * currentLevelData.voxelSize;
+            Vector3 position = transform.position + grabbablePosition * currentLevelData.voxelSize;
             GameObject grabbableObject = Instantiate(grabbableBlankPrefab, position, Quaternion.identity, transform);
             grabbableObject.name = "Grabbable_" + i;
             Material mat = grabbableObject.GetComponent<Renderer>().material;

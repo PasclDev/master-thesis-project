@@ -1,3 +1,4 @@
+using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -6,12 +7,13 @@ public class LevelManager : MonoBehaviour
     public string jsonFileName = "levels.json"; // JSON file name
     public int currentLevel = 0; // Current level index
     public GameObject fillablePrefab; // fillableObject prefab
-    public static bool isDebug = true; // Debug mode
+    public static bool isDebug = false; // Debug mode
     public static float rotationTolerancePercentage = 0.20f; // 20% tolerance for rotation
     public static float distanceTolerancePercentage = 0.20f; // 20% tolerance for position
     
     private LevelCollection levelCollection; // Level collection
     private VoxelMeshGenerator voxelMeshGenerator;
+    public GameObject lastLevelWindow;
 
     //Single instance of LevelManager
     public static LevelManager instance;
@@ -36,10 +38,12 @@ public class LevelManager : MonoBehaviour
         }
         voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
         LoadLevelsFromJSON();
-        GenerateLevel(currentLevel);
+        GenerateLevel(currentLevel); 
     }
-
-    void LoadLevelsFromJSON()
+    public void ResetLevelHeight(){
+        transform.position = new Vector3(transform.position.x, Camera.main.transform.position.y - (levelCollection.levels[currentLevel].fillable.size[1] * levelCollection.levels[currentLevel].voxelSize), transform.position.z);
+    }
+    public void LoadLevelsFromJSON()
     {
         Debug.Log("LevelManager: Loading levels from JSON");
         string filePath = Path.Combine(Application.streamingAssetsPath, jsonFileName);
@@ -122,11 +126,22 @@ public class LevelManager : MonoBehaviour
         LevelData currentLevelData = levelCollection.levels[levelIndex];
         voxelMeshGenerator.GenerateMesh(currentLevelData);
         GenerateFillableObject(currentLevelData.fillable, currentLevelData.voxelSize);
+        StartCoroutine(WaitForCameraPositionChange());
+    }
+    //First camera height change sets the level to the camera height
+    private IEnumerator WaitForCameraPositionChange()
+    {
+        Vector3 cameraPosition = Camera.main.transform.position;
+        while (cameraPosition == Camera.main.transform.position && Camera.main.transform.position.y < 1)
+        {
+            yield return null;
+        }
+        ResetLevelHeight();
     }
     private void GenerateFillableObject(Fillable fillable, float voxelSize)
     {
         GameObject fillableObject = Instantiate(fillablePrefab, transform);
-        fillableObject.transform.position = voxelSize*new Vector3(fillable.position[0], fillable.position[1], fillable.position[2]); // Center it
+        fillableObject.transform.position = transform.position + voxelSize*new Vector3(fillable.position[0], fillable.position[1], fillable.position[2]); // Center it
         fillableObject.transform.localScale = new Vector3(fillable.size[0], fillable.size[1], fillable.size[2]) * voxelSize; // Scale to fit grid
         Vector3Int size = new Vector3Int(fillable.size[0], fillable.size[1], fillable.size[2]);
         fillableObject.GetComponent<FillableManager>().Initialize(size, voxelSize);
@@ -134,19 +149,27 @@ public class LevelManager : MonoBehaviour
     public void FillablesFilled()
     {
         Debug.Log("LevelManager: Fillables filled!");
-        currentLevel++;
-        if (currentLevel < levelCollection.levels.Count)
+        NextLevel();
+    }
+    public void NextLevel(){
+        
+        //delete all children (level content)
+        foreach (Transform child in transform)
         {
-            //delete all children
-            foreach (Transform child in transform)
-            {
-                Destroy(child.gameObject);
-            }
+            Destroy(child.gameObject);
+        }
+        if (currentLevel+1 < levelCollection.levels.Count)
+        {
+            currentLevel++;
             GenerateLevel(currentLevel);
         }
         else
         {
             Debug.Log("LevelManager: All levels completed!");
+            if (lastLevelWindow != null)
+            {
+                lastLevelWindow.SetActive(true);
+            }
         }
     }
 }
