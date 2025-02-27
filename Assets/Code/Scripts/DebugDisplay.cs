@@ -9,7 +9,7 @@ public class DebugDisplay : MonoBehaviour
     public TextMeshProUGUI display;
     void Start()
     {
-        display.gameObject.SetActive(LevelManager.isDebug);
+        gameObject.SetActive(LevelManager.isDebug);
     }
     void OnEnable()
     {

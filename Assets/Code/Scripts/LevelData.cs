@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Numerics;
+using UnityEngine;
 
 [System.Serializable]
 public class LevelCollection
@@ -28,6 +29,12 @@ public class Grabbable
     // position is relative to voxelSize
     public float[] position; // [x, y, z]
     public int[] size; // [x, y, z]
+    public string color;
+    public Color GetColor()
+    {
+        ColorUtility.TryParseHtmlString(color, out Color c);
+        return c;
+    }
     public int[] rawVoxels;
     /*
         "rawVoxels": [
