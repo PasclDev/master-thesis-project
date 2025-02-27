@@ -2,10 +2,15 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+// Made with the help of this tutorial: https://www.youtube.com/watch?v=Pi4SHO0IEQY
 public class DebugDisplay : MonoBehaviour
 {
     Dictionary<string, string> debugTexts = new Dictionary<string, string>();
     public TextMeshProUGUI display;
+    void Start()
+    {
+        display.gameObject.SetActive(LevelManager.isDebug);
+    }
     void OnEnable()
     {
         Application.logMessageReceived += HandleLog;

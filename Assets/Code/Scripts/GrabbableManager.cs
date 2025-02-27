@@ -56,7 +56,7 @@ public class GrabbableManager : MonoBehaviour
     {
         if(other.CompareTag("Fillable"))
         {
-            Debug.Log("Grabbable Message: Grabbable has entered " + other.name);
+            Debug.Log("Grabbable: Has entered " + other.name);
             lastTouchedFillable = other.GetComponent<FillableManager>();
         }
     }
@@ -68,12 +68,12 @@ public class GrabbableManager : MonoBehaviour
     }
     public void OnSelectExit(){
         isGrabbed = false;
-        Debug.Log("Grabbable Message: "+gameObject.name + "has been dropped!");
+        Debug.Log("Grabbable: "+gameObject.name + "has been dropped!");
         if(lastTouchedFillable != null){
             lastTouchedFillable.CheckIfGrabbableFitsFillable(gameObject);
         }
         else{
-            Debug.Log("Grabbable Message: Grabbable is not inside any Fillable");
+            Debug.Log("Grabbable: Is not inside any Fillable");
         }
         if(LevelManager.isDebug){
             debugObjects.center.SetActive(false);
@@ -83,7 +83,7 @@ public class GrabbableManager : MonoBehaviour
     // Triggers whenever the grabbable gets grabbed by the player
     public void OnSelectEnter(){
         isGrabbed = true;
-        Debug.Log("Grabbable Message: "+gameObject.name + "has been picked up!");
+        Debug.Log("Grabbable: "+gameObject.name + "has been picked up!");
         if (null != insideFillable && null != insideFillable.fillableObject)
         {
             FillableManager fillableManager = insideFillable.fillableObject.GetComponent<FillableManager>();
