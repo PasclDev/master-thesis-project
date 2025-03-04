@@ -17,6 +17,7 @@ public class LevelManager : MonoBehaviour
 
     //Single instance of LevelManager
     public static LevelManager instance;
+    private DataGatherer dataGatherer;
     private void Awake()
     {
         if (instance == null)
@@ -37,6 +38,7 @@ public class LevelManager : MonoBehaviour
             return;
         }
         voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
+        dataGatherer = GetComponent<DataGatherer>();
         LoadLevelsFromJSON();
         GenerateLevel(currentLevel); 
     }
@@ -152,8 +154,7 @@ public class LevelManager : MonoBehaviour
         NextLevel();
     }
     public void NextLevel(){
-        
-        //delete all children (level content)
+        dataGatherer.WriteLog("Level " + currentLevel + " completed");
         foreach (Transform child in transform)
         {
             Destroy(child.gameObject);
@@ -161,6 +162,7 @@ public class LevelManager : MonoBehaviour
         if (currentLevel+1 < levelCollection.levels.Count)
         {
             currentLevel++;
+
             GenerateLevel(currentLevel);
         }
         else
