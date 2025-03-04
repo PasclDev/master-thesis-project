@@ -9,7 +9,14 @@ public class DataGatherer : MonoBehaviour
     private System.IO.StreamWriter logFile;
     void Awake()
     {
-        logFilePath = Application.persistentDataPath + "/" + System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".txt";
+        if(Application.platform == RuntimePlatform.Android){ //Path to Downloads in Meta Quest 3
+            logFilePath = "/storage/emulated/0/Documents/" + System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".txt";
+        }
+        /*else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer)
+        {*/
+        else{
+            logFilePath = Application.persistentDataPath + "/" + System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".txt";
+        }
         logFile = new System.IO.StreamWriter(logFilePath, true);
         WriteLog("Log file created");
     }
