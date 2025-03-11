@@ -24,10 +24,13 @@ public class VoxelMeshGenerator : MonoBehaviour
             Vector3 position = transform.position + grabbablePosition * voxelSize;
             GameObject grabbableObject = Instantiate(grabbableBlankPrefab, position, Quaternion.identity, transform);
             grabbableObject.name = "Grabbable_" + i;
-            Material mat = grabbableObject.GetComponent<Renderer>().material;
+            Material normalMaterial = grabbableObject.GetComponent<Renderer>().material;
+            Material transparentMaterial = new Material(grabbableObject.GetComponent<GrabbableManager>().transparentMaterial);
             Color newColor = grabbable.GetColor();
-            newColor.a = mat.color.a;
-            mat.color = newColor;
+            newColor.a = transparentMaterial.color.a;
+            normalMaterial.color = newColor;
+            transparentMaterial.color = newColor;
+            grabbableObject.GetComponent<GrabbableManager>().transparentMaterial = transparentMaterial;
             MeshFilter meshFilter = grabbableObject.GetComponent<MeshFilter>();
             grabbableObject.GetComponent<BoxCollider>().size = (Vector3)gridSize * voxelSize;
             grabbableObject.GetComponent<GrabbableManager>().Initialize(grabbable, voxelSize);

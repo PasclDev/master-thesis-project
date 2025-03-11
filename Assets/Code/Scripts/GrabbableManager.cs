@@ -1,7 +1,10 @@
 using System.Collections;
+using System.Text.RegularExpressions;
 using TMPro;
 using Unity.XR.CoreUtils;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit;
 
 [System.Serializable]
 public class InsideFillable
@@ -23,13 +26,17 @@ public class GrabbableManager : MonoBehaviour
     public float voxelSize;
     public InsideFillable insideFillable;
     public bool isGrabbed = true;
+    public int isInHand = 0; // 1 for left hand, 2 for right hand
     public DebugObjects debugObjects;
+    public Material transparentMaterial;
+    private Material defaultMaterial;
 
     private FillableManager lastTouchedFillable;
     public void Initialize(Grabbable grabbable, float voxelSize)
     {
         this.grabbable = grabbable;
         this.voxelSize = voxelSize;
+        defaultMaterial = GetComponent<Renderer>().material;
         //Debug.Log(transform.forward + " IS FORWARD" + transform.up + " IS UP" + transform.right + " IS RIGHT");
         
     }
@@ -79,6 +86,8 @@ public class GrabbableManager : MonoBehaviour
     }
     public void OnSelectExit(){
         isGrabbed = false;
+        isInHand = 0;
+        SetVisualization(false);
         Debug.Log("Grabbable: "+gameObject.name + "has been dropped!");
         if(lastTouchedFillable != null){
             lastTouchedFillable.CheckIfGrabbableFitsFillable(gameObject);
@@ -92,9 +101,10 @@ public class GrabbableManager : MonoBehaviour
         }
     }
     // Triggers whenever the grabbable gets grabbed by the player
-    public void OnSelectEnter(){
+    public void OnSelectEnter(SelectEnterEventArgs args){
         isGrabbed = true;
-        Debug.Log("Grabbable: "+gameObject.name + "has been picked up!");
+        isInHand = args.interactorObject.transform.name.Contains("Left") ? 1 : 2;
+        Debug.Log("Grabbable: "+gameObject.name + "has been picked up! In hand: "+(isInHand == 1 ? "Left" : "Right"));
         if (null != insideFillable && null != insideFillable.fillableObject)
         {
             FillableManager fillableManager = insideFillable.fillableObject.GetComponent<FillableManager>();
@@ -104,5 +114,22 @@ public class GrabbableManager : MonoBehaviour
             debugObjects.center.SetActive(true);
             debugObjects.matrixOrigin.SetActive(true);
         }
+    }
+
+    public void OnActivate(ActivateEventArgs args){
+        Debug.Log("Grabbable: "+gameObject.name + "has been activated!"+args.interactorObject.transform.name);
+        if((args.interactorObject.transform.name.Contains("Left") && isInHand == 1) || (args.interactorObject.transform.name.Contains("Right") && isInHand == 2)){
+            SetVisualization(true);
+        }
+    }
+    public void OnDeactivate(DeactivateEventArgs args){
+        Debug.Log("Grabbable: "+gameObject.name + "has been deactivated!");
+        if((args.interactorObject.transform.name.Contains("Left") && isInHand == 1) || (args.interactorObject.transform.name.Contains("Right") && isInHand == 2)){
+            SetVisualization(false);
+        }
+    }
+    public void SetVisualization(bool isSeethrough){
+        Debug.Log("Grabbable: "+gameObject.name + "has been toggled! Seethrough: "+isSeethrough);
+        GetComponent<Renderer>().material = isSeethrough ? transparentMaterial : defaultMaterial;
     }
 }
