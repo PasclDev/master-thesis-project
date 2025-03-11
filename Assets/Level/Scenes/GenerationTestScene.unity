@@ -182,6 +182,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grabbableBlankPrefab: {fileID: 175672152838179538, guid: b4b4c97ef118b32449d94373a739a45d, type: 3}
+  fillableBlankPrefab: {fileID: 2791289762559432273, guid: a909bcb1916778d4391d591e326ef1a6, type: 3}
 --- !u!114 &348509149
 MonoBehaviour:
   m_ObjectHideFlags: 0

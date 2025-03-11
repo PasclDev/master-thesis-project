@@ -126,8 +126,8 @@ public class LevelManager : MonoBehaviour
         }
 
         LevelData currentLevelData = levelCollection.levels[levelIndex];
-        voxelMeshGenerator.GenerateMesh(currentLevelData);
-        GenerateFillableObject(currentLevelData.fillable, currentLevelData.voxelSize);
+        voxelMeshGenerator.GenerateGrabbableObjects(currentLevelData);
+        voxelMeshGenerator.GenerateFillableObject(currentLevelData);
         StartCoroutine(WaitForCameraPositionChange());
     }
     //First camera height change sets the level to the camera height
@@ -136,17 +136,10 @@ public class LevelManager : MonoBehaviour
         Vector3 cameraPosition = Camera.main.transform.position;
         while (cameraPosition == Camera.main.transform.position && Camera.main.transform.position.y < 1)
         {
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
+            cameraPosition = Camera.main.transform.position;
         }
         ResetLevelHeight();
-    }
-    private void GenerateFillableObject(Fillable fillable, float voxelSize)
-    {
-        GameObject fillableObject = Instantiate(fillablePrefab, transform);
-        fillableObject.transform.position = transform.position + voxelSize*new Vector3(fillable.position[0], fillable.position[1], fillable.position[2]); // Center it
-        fillableObject.transform.localScale = new Vector3(fillable.size[0], fillable.size[1], fillable.size[2]) * voxelSize; // Scale to fit grid
-        Vector3Int size = new Vector3Int(fillable.size[0], fillable.size[1], fillable.size[2]);
-        fillableObject.GetComponent<FillableManager>().Initialize(size, voxelSize);
     }
     public void FillablesFilled()
     {

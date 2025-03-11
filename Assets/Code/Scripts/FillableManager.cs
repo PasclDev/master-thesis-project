@@ -13,8 +13,11 @@ public class FillableManager : MonoBehaviour
     public int[][][] fillableGrid;
     public GameObject filledVoxelVisual;
 
-    public void Initialize(Vector3Int gridSize, float voxelSize)
+    public void Initialize(Vector3 position, Vector3Int gridSize, float voxelSize)
     {
+        transform.position = position; 
+        //transform.localScale = (Vector3)gridSize * voxelSize* 1.01f; // Scale to fit grid, make it slightly bigger
+        GetComponent<BoxCollider>().size = (Vector3)gridSize * voxelSize;
         this.gridSize = gridSize;
         this.voxelSize = voxelSize;
         InitializeFillableGrid();
