@@ -1410,11 +1410,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6240676003888394152, guid: 5728b3f3487602842ae4d96017b4f092, type: 3}
       propertyPath: m_PermissionRequests.Array.size
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6240676003888394152, guid: 5728b3f3487602842ae4d96017b4f092, type: 3}
       propertyPath: m_PermissionRequests.Array.data[1].m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6240676003888394152, guid: 5728b3f3487602842ae4d96017b4f092, type: 3}
+      propertyPath: m_PermissionRequests.Array.data[5].m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6240676003888394152, guid: 5728b3f3487602842ae4d96017b4f092, type: 3}
       propertyPath: m_PermissionRequests.Array.data[1].m_PermissionId
@@ -1431,6 +1435,10 @@ PrefabInstance:
     - target: {fileID: 6240676003888394152, guid: 5728b3f3487602842ae4d96017b4f092, type: 3}
       propertyPath: m_PermissionRequests.Array.data[4].m_PermissionId
       value: android.permission.EYE_TRACKING_FINE
+      objectReference: {fileID: 0}
+    - target: {fileID: 6240676003888394152, guid: 5728b3f3487602842ae4d96017b4f092, type: 3}
+      propertyPath: m_PermissionRequests.Array.data[5].m_PermissionId
+      value: com.oculus.feature.BOUNDARYLESS_APP
       objectReference: {fileID: 0}
     - target: {fileID: 6240676003888394152, guid: 5728b3f3487602842ae4d96017b4f092, type: 3}
       propertyPath: m_PermissionRequests.Array.data[1].m_PermissionDenied.m_PersistentCalls.m_Calls.Array.size

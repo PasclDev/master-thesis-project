@@ -119,10 +119,11 @@ public class FillableManager : MonoBehaviour
         grabbableObject.transform.rotation = newRotation;
         grabbableObject.transform.position = transform.position - 0.5f * voxelSize * (Vector3)gridSize + (Vector3)gridOffset * voxelSize + 0.5f * voxelSize * rotatedVoxelGridSize;
         
+        /* Debug Visualizer
         GameObject visualizerParent = new GameObject(grabbableObject.GetInstanceID().ToString());
         visualizerParent.transform.position = transform.position - (transform.localScale / 2) + (Vector3.one * voxelSize / 2);
         visualizerParent.transform.rotation = transform.rotation;
-        visualizerParent.transform.parent = transform;
+        visualizerParent.transform.parent = transform;*/
         // Mark the fillableGrid with 1s
         for (int x = 0; x < rotatedVoxels.Length; x++)
         {
@@ -133,7 +134,7 @@ public class FillableManager : MonoBehaviour
                     if (rotatedVoxels[x][y][z] == 1)
                     {
                         Vector3Int fillableGridPosition = new Vector3Int(x + gridOffset.x, y + gridOffset.y, z + gridOffset.z);
-                        Instantiate(filledVoxelVisual, visualizerParent.transform.position + (Vector3)fillableGridPosition * voxelSize, Quaternion.identity, visualizerParent.transform).transform.localScale = new Vector3(voxelSize*0.9f, voxelSize*0.9f, voxelSize*0.9f);
+                        //Debug Visualizer: Instantiate(filledVoxelVisual, visualizerParent.transform.position + (Vector3)fillableGridPosition * voxelSize, Quaternion.identity, visualizerParent.transform).transform.localScale = new Vector3(voxelSize*0.9f, voxelSize*0.9f, voxelSize*0.9f);
                         fillableGrid[fillableGridPosition.x][fillableGridPosition.y][fillableGridPosition.z] = 1;
                     }
                 }
@@ -165,7 +166,7 @@ public class FillableManager : MonoBehaviour
             }
         }
         grabbableInformation.insideFillable = null;
-        Destroy(transform.Find(grabbableObject.GetInstanceID().ToString()).gameObject); // Destroys the visualizerParent
+        // Visualizer Destroy: Destroy(transform.Find(grabbableObject.GetInstanceID().ToString()).gameObject); // Destroys the visualizerParent
     }
     // Debug the fillableGrid as a function
     public void DebugFillableGrid(){
