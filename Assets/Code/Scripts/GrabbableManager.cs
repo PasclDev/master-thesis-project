@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using Unity.XR.CoreUtils;
 using UnityEngine;
@@ -48,6 +49,18 @@ public class GrabbableManager : MonoBehaviour
             debugObjects.center.transform.up = up;
             debugObjects.matrixOrigin.transform.position = transform.position - 0.5f * voxelSize * (Vector3)rotatedGridSize; // Center - half of voxel size * rotatedGridSize
         }
+    }
+    public void Despawn(){
+        StartCoroutine(DespawnCoroutine());
+    }
+    private IEnumerator DespawnCoroutine()
+    {
+        // Animator sidenote: It needs "Apply Root Motion" so that the object is movable with XR. This is the reason why the objects spawn with semi-random rotations.
+        Animator animator = GetComponent<Animator>();
+        animator.SetTrigger("Despawn");
+        // Wait for the animation to finish
+        yield return new WaitForSeconds(0.3f);
+        Destroy(gameObject);
     }
 
     void OnTriggerEnter(Collider other)

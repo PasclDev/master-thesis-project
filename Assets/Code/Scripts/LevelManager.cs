@@ -151,18 +151,21 @@ public class LevelManager : MonoBehaviour
     public void FillablesFilled()
     {
         Debug.Log("LevelManager: Fillables filled!");
-        NextLevel();
+        StartCoroutine(NextLevel());
     }
-    public void NextLevel(){
+    public IEnumerator NextLevel(){
         dataGatherer.WriteLog("Level " + currentLevel + " completed");
         foreach (Transform child in transform)
         {
-            Destroy(child.gameObject);
+            if (child.gameObject.CompareTag("Grabbable"))
+                child.gameObject.GetComponent<GrabbableManager>().Despawn();
+            else
+                Destroy(child.gameObject);
         }
+        yield return new WaitForSeconds(0.3f);
         if (currentLevel+1 < levelCollection.levels.Count)
         {
             currentLevel++;
-
             GenerateLevel(currentLevel);
         }
         else
