@@ -58,26 +58,53 @@ public class VoxelMeshGenerator : MonoBehaviour
     {
         int startIndex = vertices.Count;
 
+        // Needs to use 24 vertices instead of 8 to have different UVs for each face
         Vector3[] cubeVertices = {
+            // Front face
             new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(1, 1, 0), new Vector3(0, 1, 0),
-            new Vector3(0, 0, 1), new Vector3(1, 0, 1), new Vector3(1, 1, 1), new Vector3(0, 1, 1)
+            // Back face
+            new Vector3(0, 0, 1), new Vector3(1, 0, 1), new Vector3(1, 1, 1), new Vector3(0, 1, 1),
+            // Top face
+            new Vector3(0, 1, 0), new Vector3(1, 1, 0), new Vector3(1, 1, 1), new Vector3(0, 1, 1),
+            // Bottom face
+            new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(1, 0, 1), new Vector3(0, 0, 1),
+            // Right face
+            new Vector3(1, 0, 0), new Vector3(1, 1, 0), new Vector3(1, 1, 1), new Vector3(1, 0, 1),
+            // Left face
+            new Vector3(0, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 1, 1), new Vector3(0, 0, 1)
         };
 
         int[] cubeTriangles = {
-            0, 2, 1, 0, 3, 2, // Front
-            5, 6, 4, 6, 7, 4, // Back
-            3, 7, 2, 7, 6, 2, // Top
-            0, 1, 4, 1, 5, 4, // Bottom
-            1, 2, 5, 2, 6, 5, // Right
-            0, 4, 3, 3, 4, 7  // Left
+            0, 2, 1,  0, 3, 2,   // Front (Clockwise)
+            4, 5, 6,  4, 6, 7,   // Back  (Clockwise)
+            8, 11, 10,  8, 10, 9, // Top  (Clockwise)
+            12, 13, 14,  12, 14, 15, // Bottom (Clockwise)
+            16, 17, 18,  16, 18, 19, // Right  (Clockwise)
+            20, 23, 22,  20, 22, 21  // Left  (Clockwise)
+        };
+
+        // Different UVs for each face
+        Vector2[] cubeUVs = {
+            // Front face
+            new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
+            // Back face
+            new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
+            // Top face
+            new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
+            // Bottom face
+            new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
+            // Right face
+            new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
+            // Left face
+            new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1)
         };
 
         for (int i = 0; i < cubeVertices.Length; i++)
         {
             vertices.Add(cubeVertices[i] * voxelSize + position);
-            uvs.Add(new Vector2(cubeVertices[i].x, cubeVertices[i].y));
+            uvs.Add(cubeUVs[i%4]);
+            
         }
-
         for (int i = 0; i < cubeTriangles.Length; i++)
         {
             triangles.Add(startIndex + cubeTriangles[i]);
