@@ -307,6 +307,7 @@ GameObject:
   - component: {fileID: 348509143}
   - component: {fileID: 348509148}
   - component: {fileID: 348509149}
+  - component: {fileID: 348509150}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
@@ -327,7 +328,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jsonFileName: levels.json
-  currentLevel: 5
+  currentLevel: 0
   fillablePrefab: {fileID: 2791289762559432273, guid: a909bcb1916778d4391d591e326ef1a6, type: 3}
   lastLevelWindow: {fileID: 497797836}
 --- !u!4 &348509144
@@ -371,6 +372,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8142e29dbef139c458872e3f3bc5f306, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &348509150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348509142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc6262786f7747b4185fe1e3377bf078, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  disableBoundary: 1
 --- !u!1 &398055580
 GameObject:
   m_ObjectHideFlags: 0
