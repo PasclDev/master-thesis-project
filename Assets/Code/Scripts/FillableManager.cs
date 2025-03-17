@@ -114,6 +114,7 @@ public class FillableManager : MonoBehaviour
             rotatedVoxelMatrix = rotatedVoxels,
             gridOffset = gridOffset
         };
+        grabbableInformation.SetInsideMaterial(true);
         // Move it to the corresponding position
         grabbableObject.transform.rotation = newRotation;
         grabbableObject.transform.position = transform.position - 0.5f * voxelSize * (Vector3)gridSize + (Vector3)gridOffset * voxelSize + 0.5f * voxelSize * rotatedVoxelGridSize;
@@ -145,6 +146,7 @@ public class FillableManager : MonoBehaviour
     }
     public void RemoveGrabbableFromFillable(GameObject grabbableObject){
         GrabbableManager grabbableInformation = grabbableObject.GetComponent<GrabbableManager>();
+        grabbableInformation.SetInsideMaterial(false);
         Vector3Int gridOffset = grabbableInformation.insideFillable.gridOffset;
         // Mark the fillableGrid with 0s
         for (int x = 0; x < grabbableInformation.insideFillable.rotatedVoxelMatrix.Length; x++)

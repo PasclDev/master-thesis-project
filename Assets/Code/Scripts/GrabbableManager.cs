@@ -30,6 +30,7 @@ public class GrabbableManager : MonoBehaviour
     public DebugObjects debugObjects;
     public Material transparentMaterial;
     private Material defaultMaterial;
+    private Material insideMaterial; // Material for when the object is inside a fillable. Pastel-like version of the default material
 
     private FillableManager lastTouchedFillable;
     public void Initialize(Grabbable grabbable, float voxelSize)
@@ -37,6 +38,7 @@ public class GrabbableManager : MonoBehaviour
         this.grabbable = grabbable;
         this.voxelSize = voxelSize;
         defaultMaterial = GetComponent<Renderer>().material;
+        GenerateInsideMaterial(defaultMaterial);
         //Debug.Log(transform.forward + " IS FORWARD" + transform.up + " IS UP" + transform.right + " IS RIGHT");
         
     }
@@ -59,6 +61,14 @@ public class GrabbableManager : MonoBehaviour
             debugObjects.center.transform.up = up;
             debugObjects.matrixOrigin.transform.position = transform.position - 0.5f * voxelSize * (Vector3)rotatedGridSize; // Center - half of voxel size * rotatedGridSize
         }
+    }
+    public void SetInsideMaterial(bool isInside){
+        GetComponent<Renderer>().material = isInside ? insideMaterial : defaultMaterial;
+    }
+    private void GenerateInsideMaterial(Material material){
+        insideMaterial = new Material(material);
+        Color.RGBToHSV(material.color, out float h, out float s, out float v);
+        insideMaterial.color = Color.HSVToRGB(h, s*0.75f , 1); // "Pastel" the color
     }
     public void Despawn(){
         StartCoroutine(DespawnCoroutine());
