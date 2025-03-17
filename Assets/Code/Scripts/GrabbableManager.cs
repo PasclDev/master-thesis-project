@@ -29,15 +29,16 @@ public class GrabbableManager : MonoBehaviour
     public int isInHand = 0; // 1 for left hand, 2 for right hand
     public DebugObjects debugObjects;
     public Material transparentMaterial;
-    private Material defaultMaterial;
-    private Material insideMaterial; // Material for when the object is inside a fillable. Pastel-like version of the default material
+    public Material defaultMaterial;
+    public Material insideMaterial; // Material for when the object is inside a fillable. Pastel-like version of the default material
+    private int animateMaterialChange = 0; //0 is off, 1 is to defaultMaterial, 2 is to insideMaterial
 
     private FillableManager lastTouchedFillable;
     public void Initialize(Grabbable grabbable, float voxelSize)
     {
         this.grabbable = grabbable;
         this.voxelSize = voxelSize;
-        defaultMaterial = GetComponent<Renderer>().material;
+        defaultMaterial = new Material(GetComponent<Renderer>().material);
         GenerateInsideMaterial(defaultMaterial);
         //Debug.Log(transform.forward + " IS FORWARD" + transform.up + " IS UP" + transform.right + " IS RIGHT");
         
@@ -45,6 +46,18 @@ public class GrabbableManager : MonoBehaviour
 
     public void FixedUpdate()
     {
+        if(animateMaterialChange == 1){
+            GetComponent<Renderer>().material.Lerp(GetComponent<Renderer>().material, defaultMaterial, 0.1f);
+            if(GetComponent<Renderer>().material.color == defaultMaterial.color){
+                animateMaterialChange = 0;
+            }
+        }
+        else if(animateMaterialChange == 2){
+            GetComponent<Renderer>().material.Lerp(GetComponent<Renderer>().material, insideMaterial, 0.1f);
+            if(GetComponent<Renderer>().material.color == insideMaterial.color){
+                animateMaterialChange = 0;
+            }
+        }
         if(LevelManager.isDebug && isGrabbed){
             //Always display center at center of the object
             debugObjects.center.transform.position = gameObject.transform.position;
@@ -63,12 +76,14 @@ public class GrabbableManager : MonoBehaviour
         }
     }
     public void SetInsideMaterial(bool isInside){
-        GetComponent<Renderer>().material = isInside ? insideMaterial : defaultMaterial;
+        //GetComponent<Renderer>().material = isInside ? insideMaterial : defaultMaterial;
+        animateMaterialChange = isInside ? 2 : 1;
+        Debug.Log("Animator: "+gameObject.name + "has been set to "+(isInside ? "Inside" : "Default"));
     }
     private void GenerateInsideMaterial(Material material){
         insideMaterial = new Material(material);
         Color.RGBToHSV(material.color, out float h, out float s, out float v);
-        insideMaterial.color = Color.HSVToRGB(h, s*0.75f , 1); // "Pastel" the color
+        insideMaterial.color = Color.HSVToRGB(h, s * 0.50f + 0.1f , 1); // "Pastel" the color
     }
     public void Despawn(){
         StartCoroutine(DespawnCoroutine());
