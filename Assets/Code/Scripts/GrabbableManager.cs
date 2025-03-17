@@ -170,6 +170,7 @@ public class GrabbableManager : MonoBehaviour
         }
     }
     public void SetVisualization(bool isSeethrough){
+        animateMaterialChange = 0;
         Debug.Log("Grabbable: "+gameObject.name + "has been toggled! Seethrough: "+isSeethrough);
         GetComponent<Renderer>().material = isSeethrough ? transparentMaterial : defaultMaterial;
     }

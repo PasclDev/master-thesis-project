@@ -49,8 +49,15 @@ public class VoxelMeshGenerator : MonoBehaviour
                     {
                         if (grabbable.voxels[x][y][z] == 1)
                         {
-                            Vector3 voxelPosition = (new Vector3(x, y, z)- gridCenter) * voxelSize;
-                            AddVoxelToMesh(voxelPosition, voxelSize, vertices, triangles, uvs);
+                            Vector3 voxelPosition = (new Vector3(x, y, z) - gridCenter) * voxelSize;
+                            bool[] outerFaces = new bool[6]; // Front, Back, Top, Bottom, Right, Left
+                            if (x == 0 || grabbable.voxels[x - 1][y][z] == 0) outerFaces[5] = true;
+                            if (x == gridSize.x - 1 || grabbable.voxels[x + 1][y][z] == 0) outerFaces[4] = true;
+                            if (y == 0 || grabbable.voxels[x][y - 1][z] == 0) outerFaces[3] = true;
+                            if (y == gridSize.y - 1 || grabbable.voxels[x][y + 1][z] == 0) outerFaces[2] = true;
+                            if (z == 0 || grabbable.voxels[x][y][z - 1] == 0) outerFaces[0] = true;
+                            if (z == gridSize.z - 1 || grabbable.voxels[x][y][z + 1] == 0) outerFaces[1] = true;
+                            AddOuterFacesToMesh(voxelPosition, voxelSize, vertices, triangles, uvs, outerFaces);
                         }
                     }
                 }
@@ -62,6 +69,7 @@ public class VoxelMeshGenerator : MonoBehaviour
         }
     }
 
+    // Add a voxel to the mesh, with all 6 faces
     private void AddVoxelToMesh(Vector3 position, float voxelSize, List<Vector3> vertices, List<int> triangles, List<Vector2> uvs)
     {
         int startIndex = vertices.Count;
