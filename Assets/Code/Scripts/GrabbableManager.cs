@@ -44,12 +44,15 @@ public class GrabbableManager : MonoBehaviour
     public void FixedUpdate()
     {
         if(LevelManager.isDebug && isGrabbed){
+            //Always display center at center of the object
             debugObjects.center.transform.position = gameObject.transform.position;
+
+            // Display the matrix origin at the bottom left corner of the object and display if it is a valid rotation
             Vector3Int grabbableGridSize = new Vector3Int(grabbable.size[0], grabbable.size[1], grabbable.size[2]);
             Vector3 grabbableRotation = transform.rotation.eulerAngles;
-            float rotationTolerancePercentage = 0.1f; // 10% tolerance
-            (bool isValidRotation, Vector3 up, Vector3 right, Vector3 forward) = RotationHelper.IsValidRotation(transform, rotationTolerancePercentage);
+            (bool isValidRotation, Vector3 up, Vector3 right, Vector3 forward) = RotationHelper.IsValidRotation(transform, LevelManager.rotationTolerancePercentage);
             debugObjects.matrixOrigin.GetComponent<Renderer>().material.color = isValidRotation ? Color.green : Color.red;
+
             (int rotatedX, int rotatedY, int rotatedZ) = RotationHelper.RotateDimensionSize(grabbableGridSize.x,grabbableGridSize.y, grabbableGridSize.z, up, forward);
             Vector3Int rotatedGridSize = new Vector3Int(rotatedX, rotatedY, rotatedZ);
             debugObjects.rotationText.text = "Rotation: " + transform.rotation.eulerAngles.ToString("F0") + "\nRounded: " + grabbableRotation.ToString("F0")+ "\nUp: " + up.ToString("F0")+ "\nRight: " + right.ToString("F0")+ "\nForward: " + forward.ToString("F0")+"\nRotated Grid Size:"+Vector3Int.RoundToInt(rotatedGridSize).ToString();
@@ -74,16 +77,29 @@ public class GrabbableManager : MonoBehaviour
     {
         if(other.CompareTag("Fillable"))
         {
-            Debug.Log("Grabbable: Has entered " + other.name);
+            Debug.Log("GrabbableLastTouched: Has entered " + other.name);
             lastTouchedFillable = other.GetComponent<FillableManager>();
+        }
+    }
+    // Needs to be done in OnTriggerStay because OnTriggerExit triggering on meshes can also happen when only part of the mesh is outside the fillable, this ensures that the last touched fillable is always the correct state
+    void OnTriggerStay(Collider other)
+    {
+        if(other.CompareTag("Fillable")){
+            Debug.Log("GrabbableLastTouched: Is Inside " + other.name);
+            if (lastTouchedFillable == null)
+            {
+                lastTouchedFillable = other.GetComponent<FillableManager>();
+            }
         }
     }
     void OnTriggerExit(Collider other)
     {
         if(other.CompareTag("Fillable")){
+            Debug.Log("GrabbableLastTouched: Has exited " + other.name);
             lastTouchedFillable = null;
         }
     }
+
     public void OnSelectExit(){
         isGrabbed = false;
         isInHand = 0;

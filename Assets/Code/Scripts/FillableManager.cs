@@ -43,7 +43,7 @@ public class FillableManager : MonoBehaviour
         {
             if (fillableSizeList[i] < grabbableSizeList[i])
             {
-                Debug.Log("Fillable: Grabbable cannot fit in Fillable");
+                Debug.Log("Fillable: Grabbable cannot fit in Fillable (Check 1)");
                 return;
             }
         }
@@ -59,12 +59,11 @@ public class FillableManager : MonoBehaviour
         Vector3Int rotatedGridSize = new Vector3Int(rotatedGrabbableSizeX, rotatedGrabbableSizeY, rotatedGrabbableSizeZ);
         if (rotatedGridSize.x > gridSize.x || rotatedGridSize.y > gridSize.y || rotatedGridSize.z > gridSize.z)
         {
-            Debug.Log("Fillable: Grabbable cannot fit in Fillable");
+            Debug.Log("Fillable: Grabbable cannot fit in Fillable (Check 2)");
             return;
         }
 
         // TODO: Distance tolerance
-        // TODO: Detects rotation 
         
         Vector3 fillablePosition = transform.position;
         Vector3 fillableStartingPoint = fillablePosition - 0.5f * voxelSize * (Vector3)gridSize;
@@ -77,7 +76,7 @@ public class FillableManager : MonoBehaviour
         Vector3Int gridOffset = new Vector3Int(Mathf.RoundToInt(startingPointDifference.x / voxelSize), Mathf.RoundToInt(startingPointDifference.y / voxelSize), Mathf.RoundToInt(startingPointDifference.z / voxelSize));
         if (gridOffset.x < 0 || gridOffset.y < 0 || gridOffset.z < 0)
         {
-            Debug.Log("Fillable: Grabbable is outside Fillable");
+            Debug.Log("Fillable: Grabbable is outside Fillable (Check 1)");
             return;
         }
         // Check if Grabbable is overlapping with another Grabbable
@@ -93,7 +92,7 @@ public class FillableManager : MonoBehaviour
                         Vector3Int fillableGridPosition = new Vector3Int(x + gridOffset.x, y + gridOffset.y, z + gridOffset.z);
                         if (fillableGridPosition.x >= gridSize.x || fillableGridPosition.y >= gridSize.y || fillableGridPosition.z >= gridSize.z)
                         {
-                            Debug.Log("Fillable Grabbable is outside Fillable");
+                            Debug.Log("Fillable: Grabbable is outside Fillable (Check 2)");
                             return;
                         }
                         if (fillableGrid[fillableGridPosition.x][fillableGridPosition.y][fillableGridPosition.z] == 1)
