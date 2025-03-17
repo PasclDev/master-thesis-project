@@ -32,7 +32,8 @@ public class VoxelMeshGenerator : MonoBehaviour
             transparentMaterial.color = newColor;
             grabbableObject.GetComponent<GrabbableManager>().transparentMaterial = transparentMaterial;
             MeshFilter meshFilter = grabbableObject.GetComponent<MeshFilter>();
-            grabbableObject.GetComponent<BoxCollider>().size = (Vector3)gridSize * voxelSize;
+            MeshCollider meshCollider = grabbableObject.GetComponent<MeshCollider>();
+            //grabbableObject.GetComponent<BoxCollider>().size = (Vector3)gridSize * voxelSize;
             grabbableObject.GetComponent<GrabbableManager>().Initialize(grabbable, voxelSize);
 
             // Generate Mesh
@@ -54,7 +55,10 @@ public class VoxelMeshGenerator : MonoBehaviour
                     }
                 }
             }
-            ApplyMesh(meshFilter, vertices, triangles, uvs);
+            Mesh mesh = GetMesh(vertices, triangles, uvs);
+            meshFilter.mesh = mesh;
+            meshCollider.sharedMesh = mesh;
+
         }
     }
 
@@ -141,7 +145,7 @@ public class VoxelMeshGenerator : MonoBehaviour
                 }
             }
         }
-        ApplyMesh(meshFilter, vertices, triangles, uvs);
+        meshFilter.mesh = GetMesh(vertices, triangles, uvs);
     }
     //Only add the vertices of the outer faces of the voxel grid
     private void AddOuterFacesToMesh(Vector3 position, float voxelSize, List<Vector3> vertices, List<int> triangles, List<Vector2> uvs, bool[] outerFaces){
@@ -203,7 +207,7 @@ public class VoxelMeshGenerator : MonoBehaviour
 
     
 
-    private void ApplyMesh(MeshFilter meshFilter, List<Vector3> vertices, List<int> triangles, List<Vector2> uvs)
+    private Mesh GetMesh(List<Vector3> vertices, List<int> triangles, List<Vector2> uvs)
     {
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
@@ -211,6 +215,6 @@ public class VoxelMeshGenerator : MonoBehaviour
         mesh.uv = uvs.ToArray();
         mesh.RecalculateNormals();
 
-        meshFilter.mesh = mesh;
+        return mesh;
     }
 }

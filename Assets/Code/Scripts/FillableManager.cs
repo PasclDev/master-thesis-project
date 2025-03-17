@@ -115,7 +115,7 @@ public class FillableManager : MonoBehaviour
             rotatedVoxelMatrix = rotatedVoxels,
             gridOffset = gridOffset
         };
-        // Disable the BoxCollider of the Grabbable and move it to the corresponding position
+        // Move it to the corresponding position
         grabbableObject.transform.rotation = newRotation;
         grabbableObject.transform.position = transform.position - 0.5f * voxelSize * (Vector3)gridSize + (Vector3)gridOffset * voxelSize + 0.5f * voxelSize * rotatedVoxelGridSize;
         
@@ -142,14 +142,11 @@ public class FillableManager : MonoBehaviour
         }
         //DebugFillableGrid();
         Debug.Log("Fillable: "+grabbableObject.name+" Grid Offset: " + gridOffset);
-                CheckIfFillableIsFilled();
+        CheckIfFillableIsFilled();
     }
     public void RemoveGrabbableFromFillable(GameObject grabbableObject){
         GrabbableManager grabbableInformation = grabbableObject.GetComponent<GrabbableManager>();
         Vector3Int gridOffset = grabbableInformation.insideFillable.gridOffset;
-        // Enable the BoxCollider of the Grabbable and move it to the corresponding position
-        grabbableObject.GetComponent<BoxCollider>().enabled = true;
-        grabbableObject.transform.position = transform.position - 0.5f * voxelSize * (Vector3)gridSize + (Vector3)gridOffset * voxelSize + 0.5f * voxelSize * new Vector3(grabbableInformation.grabbable.size[0], grabbableInformation.grabbable.size[1], grabbableInformation.grabbable.size[2]);
         // Mark the fillableGrid with 0s
         for (int x = 0; x < grabbableInformation.insideFillable.rotatedVoxelMatrix.Length; x++)
         {
