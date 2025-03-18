@@ -470,6 +470,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grabbableBlankPrefab: {fileID: 175672152838179538, guid: b4b4c97ef118b32449d94373a739a45d, type: 3}
   fillableBlankPrefab: {fileID: 2791289762559432273, guid: a909bcb1916778d4391d591e326ef1a6, type: 3}
+  fillableMissingHighlightPrefab: {fileID: 2791289762559432273, guid: 9057a0bb6da4ec845a71d3e9d0ce4f75, type: 3}
 --- !u!114 &348509149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1476,6 +1477,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7642187433264719638, guid: 86a5bf68cb51f4e44bd3893bd22a2ba7, type: 3}
   m_PrefabInstance: {fileID: 2086454082}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1036900341 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2507556046408374799, guid: 86a5bf68cb51f4e44bd3893bd22a2ba7, type: 3}
+  m_PrefabInstance: {fileID: 2086454082}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25a07ef133a37d140a87cdf1f1c75fdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1127759134
 GameObject:
   m_ObjectHideFlags: 0
@@ -2365,6 +2377,14 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 1074df4bca008f74a89c5809e22ef3f7, type: 2}
+    - target: {fileID: 6119050434896609382, guid: 86a5bf68cb51f4e44bd3893bd22a2ba7, type: 3}
+      propertyPath: m_StartingGroupMembers.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6119050434896609382, guid: 86a5bf68cb51f4e44bd3893bd22a2ba7, type: 3}
+      propertyPath: 'm_StartingGroupMembers.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1036900341}
     - target: {fileID: 6391579207171690961, guid: 86a5bf68cb51f4e44bd3893bd22a2ba7, type: 3}
       propertyPath: m_RootOrder
       value: 2

@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.XR.CoreUtils;
 using UnityEngine;
-
+using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 
 
@@ -12,14 +15,24 @@ public class FillableManager : MonoBehaviour
     private float voxelSize;
     public int[][][] fillableGrid;
     public GameObject filledVoxelVisual;
+    public InputActionReference leftTriggerAction;
+    public InputActionReference rightTriggerAction;
 
-    public void Initialize(Vector3 position, Vector3Int gridSize, float voxelSize)
+    private VoxelMeshGenerator voxelMeshGenerator;
+    private List<GrabbableManager> currentGrabbableObjects = new List<GrabbableManager>();
+  
+    public void Initialize(Vector3 position, Vector3Int gridSize, float voxelSize, VoxelMeshGenerator voxelMeshGenerator)
     {
         transform.position = position; 
-        //transform.localScale = (Vector3)gridSize * voxelSize* 1.01f; // Scale to fit grid, make it slightly bigger
         GetComponent<BoxCollider>().size = (Vector3)gridSize * voxelSize;
         this.gridSize = gridSize;
         this.voxelSize = voxelSize;
+        this.voxelMeshGenerator = voxelMeshGenerator;
+        leftTriggerAction.action.performed += LeftTriggerPressed;
+        leftTriggerAction.action.canceled += LeftTriggerPressed;
+        rightTriggerAction.action.performed += RightTriggerPressed;
+        rightTriggerAction.action.canceled += RightTriggerPressed;
+
         InitializeFillableGrid();
     }
     public void InitializeFillableGrid(){
@@ -114,6 +127,7 @@ public class FillableManager : MonoBehaviour
             rotatedVoxelMatrix = rotatedVoxels,
             gridOffset = gridOffset
         };
+        currentGrabbableObjects.Add(grabbableInformation);
         grabbableInformation.SetInsideMaterial(true);
         // Move it to the corresponding position
         grabbableObject.transform.rotation = newRotation;
@@ -146,6 +160,7 @@ public class FillableManager : MonoBehaviour
     }
     public void RemoveGrabbableFromFillable(GameObject grabbableObject){
         GrabbableManager grabbableInformation = grabbableObject.GetComponent<GrabbableManager>();
+        currentGrabbableObjects.Remove(grabbableInformation);
         grabbableInformation.SetInsideMaterial(false);
         Vector3Int gridOffset = grabbableInformation.insideFillable.gridOffset;
         // Mark the fillableGrid with 0s
@@ -196,5 +211,47 @@ public class FillableManager : MonoBehaviour
         }
         Debug.Log("Fillable: Fillable is filled!");
         LevelManager.instance.FillablesFilled();
+    }
+    public void LeftTriggerPressed(InputAction.CallbackContext context){
+        OnFillableMissingHighlight(context, true);
+    }
+    public void RightTriggerPressed(InputAction.CallbackContext context){
+        OnFillableMissingHighlight(context, false);
+    }
+
+    public void OnFillableMissingHighlight(InputAction.CallbackContext context, bool isLeft){
+        if(context.performed){
+            try{
+            XRBaseInteractor interactor = isLeft ? GameObject.Find("Left Near-Far Interactor").GetComponent<XRDirectInteractor>() : GameObject.Find("Right Near-Far Interactor").GetComponent<NearFarInteractor>();
+            if(interactor.interactablesSelected == null){
+                throw new System.Exception("Interactor has no interactables selected.");
+            }else{
+                Debug.Log("Fillable: Highlight not activated! Holding objects"+interactor.interactablesSelected.Count+" "+interactor.interactablesSelected.FirstOrDefault().transform.name);
+            }
+        }catch{
+            HighlightMissingVoxels();
+        }
+        }else if(context.canceled){
+            Debug.Log("Fillable: Highlight deactivated");
+            // Deletes highlight
+            foreach (Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
+            foreach (GrabbableManager grabbableInformation in currentGrabbableObjects)
+            {
+                grabbableInformation.SetTransparent(false);
+            }
+        }
+    }
+    public void HighlightMissingVoxels(){
+        Debug.Log("Fillable: Highlight activated");
+        // Generate a mesh of the missing voxels with VoxelMeshGenerator and set each grabbable object to transparent
+        voxelMeshGenerator.GenerateFillableMissingHighlight(transform, gridSize, voxelSize, fillableGrid);
+        foreach (GrabbableManager grabbableInformation in currentGrabbableObjects)
+        {
+            grabbableInformation.SetTransparent(true);
+        }
+
     }
 }

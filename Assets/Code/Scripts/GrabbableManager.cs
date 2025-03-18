@@ -46,6 +46,7 @@ public class GrabbableManager : MonoBehaviour
 
     public void FixedUpdate()
     {
+        // Animation for material change between normal and inside a fillable
         if(animateMaterialChange == 1){
             GetComponent<Renderer>().material.Lerp(GetComponent<Renderer>().material, defaultMaterial, 0.1f);
             if(GetComponent<Renderer>().material.color == defaultMaterial.color){
@@ -128,7 +129,7 @@ public class GrabbableManager : MonoBehaviour
     public void OnSelectExit(){
         isGrabbed = false;
         isInHand = 0;
-        SetVisualization(false);
+        SetTransparent(false);
         Debug.Log("Grabbable: "+gameObject.name + "has been dropped!");
         if(lastTouchedFillable != null){
             lastTouchedFillable.CheckIfGrabbableFitsFillable(gameObject);
@@ -160,16 +161,16 @@ public class GrabbableManager : MonoBehaviour
     public void OnActivate(ActivateEventArgs args){
         Debug.Log("Grabbable: "+gameObject.name + "has been activated!"+args.interactorObject.transform.name);
         if((args.interactorObject.transform.name.Contains("Left") && isInHand == 1) || (args.interactorObject.transform.name.Contains("Right") && isInHand == 2)){
-            SetVisualization(true);
+            SetTransparent(true);
         }
     }
     public void OnDeactivate(DeactivateEventArgs args){
         Debug.Log("Grabbable: "+gameObject.name + "has been deactivated!");
         if((args.interactorObject.transform.name.Contains("Left") && isInHand == 1) || (args.interactorObject.transform.name.Contains("Right") && isInHand == 2)){
-            SetVisualization(false);
+            SetTransparent(false);
         }
     }
-    public void SetVisualization(bool isSeethrough){
+    public void SetTransparent(bool isSeethrough){
         animateMaterialChange = 0;
         Debug.Log("Grabbable: "+gameObject.name + "has been toggled! Seethrough: "+isSeethrough);
         GetComponent<Renderer>().material = isSeethrough ? transparentMaterial : defaultMaterial;
