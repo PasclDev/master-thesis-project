@@ -128,7 +128,7 @@ public class FillableManager : MonoBehaviour
             gridOffset = gridOffset
         };
         currentGrabbableObjects.Add(grabbableInformation);
-        grabbableInformation.SetInsideMaterial(true);
+        grabbableInformation.SetMaterial(false, true);
         // Move it to the corresponding position
         grabbableObject.transform.rotation = newRotation;
         grabbableObject.transform.position = transform.position - 0.5f * voxelSize * (Vector3)gridSize + (Vector3)gridOffset * voxelSize + 0.5f * voxelSize * rotatedVoxelGridSize;
@@ -161,7 +161,6 @@ public class FillableManager : MonoBehaviour
     public void RemoveGrabbableFromFillable(GameObject grabbableObject){
         GrabbableManager grabbableInformation = grabbableObject.GetComponent<GrabbableManager>();
         currentGrabbableObjects.Remove(grabbableInformation);
-        grabbableInformation.SetInsideMaterial(false);
         Vector3Int gridOffset = grabbableInformation.insideFillable.gridOffset;
         // Mark the fillableGrid with 0s
         for (int x = 0; x < grabbableInformation.insideFillable.rotatedVoxelMatrix.Length; x++)
@@ -222,7 +221,7 @@ public class FillableManager : MonoBehaviour
     public void OnFillableMissingHighlight(InputAction.CallbackContext context, bool isLeft){
         if(context.performed){
             try{
-            XRBaseInteractor interactor = isLeft ? GameObject.Find("Left Near-Far Interactor").GetComponent<XRDirectInteractor>() : GameObject.Find("Right Near-Far Interactor").GetComponent<NearFarInteractor>();
+            XRBaseInteractor interactor = isLeft ? GameObject.Find("Left Near-Far Interactor").GetComponent<NearFarInteractor>() : GameObject.Find("Right Near-Far Interactor").GetComponent<NearFarInteractor>();
             if(interactor.interactablesSelected == null){
                 throw new System.Exception("Interactor has no interactables selected.");
             }else{
@@ -240,7 +239,7 @@ public class FillableManager : MonoBehaviour
             }
             foreach (GrabbableManager grabbableInformation in currentGrabbableObjects)
             {
-                grabbableInformation.SetTransparent(false);
+                grabbableInformation.SetMaterial(false, true);
             }
         }
     }
@@ -250,7 +249,7 @@ public class FillableManager : MonoBehaviour
         voxelMeshGenerator.GenerateFillableMissingHighlight(transform, gridSize, voxelSize, fillableGrid);
         foreach (GrabbableManager grabbableInformation in currentGrabbableObjects)
         {
-            grabbableInformation.SetTransparent(true);
+            grabbableInformation.SetMaterial(true, true);
         }
 
     }

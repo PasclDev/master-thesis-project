@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Text.RegularExpressions;
+using NUnit.Framework;
 using TMPro;
 using Unity.XR.CoreUtils;
 using UnityEngine;
@@ -20,6 +21,7 @@ public class DebugObjects
     public GameObject matrixOrigin;
     public TextMeshPro rotationText;
 }
+
 public class GrabbableManager : MonoBehaviour
 {
     public Grabbable grabbable;
@@ -31,7 +33,8 @@ public class GrabbableManager : MonoBehaviour
     public Material transparentMaterial;
     public Material defaultMaterial;
     public Material insideMaterial; // Material for when the object is inside a fillable. Pastel-like version of the default material
-    private int animateMaterialChange = 0; //0 is off, 1 is to defaultMaterial, 2 is to insideMaterial
+    private int lastMaterial = 0; //0 is off, 1 is to defaultMaterial, 2 is to insideMaterial, 3 is transparentMaterial
+    private int targetMaterial = 0; 
 
     private FillableManager lastTouchedFillable;
     public void Initialize(Grabbable grabbable, float voxelSize)
@@ -46,17 +49,16 @@ public class GrabbableManager : MonoBehaviour
 
     public void FixedUpdate()
     {
-        // Animation for material change between normal and inside a fillable
-        if(animateMaterialChange == 1){
-            GetComponent<Renderer>().material.Lerp(GetComponent<Renderer>().material, defaultMaterial, 0.1f);
-            if(GetComponent<Renderer>().material.color == defaultMaterial.color){
-                animateMaterialChange = 0;
-            }
-        }
-        else if(animateMaterialChange == 2){
-            GetComponent<Renderer>().material.Lerp(GetComponent<Renderer>().material, insideMaterial, 0.1f);
-            if(GetComponent<Renderer>().material.color == insideMaterial.color){
-                animateMaterialChange = 0;
+        if(lastMaterial != targetMaterial){ // If the material is not the target material
+            if (lastMaterial == 3 || targetMaterial == 3){ //if it was transparent before, instantly change it to the target material, as transparency is not lerpable
+                GetComponent<Renderer>().material = GetMaterialById(targetMaterial);
+                lastMaterial = targetMaterial;
+            } else {
+                GetComponent<Renderer>().material.Lerp(GetComponent<Renderer>().material, GetMaterialById(targetMaterial), 0.1f);
+                if(GetComponent<Renderer>().material.color == GetMaterialById(targetMaterial).color){
+                    Debug.Log ("SetMaterial: "+lastMaterial+" to "+targetMaterial+" has been completed");
+                    lastMaterial = targetMaterial;
+                }
             }
         }
         if(LevelManager.isDebug && isGrabbed){
@@ -76,10 +78,33 @@ public class GrabbableManager : MonoBehaviour
             debugObjects.matrixOrigin.transform.position = transform.position - 0.5f * voxelSize * (Vector3)rotatedGridSize; // Center - half of voxel size * rotatedGridSize
         }
     }
-    public void SetInsideMaterial(bool isInside){
-        //GetComponent<Renderer>().material = isInside ? insideMaterial : defaultMaterial;
-        animateMaterialChange = isInside ? 2 : 1;
-        Debug.Log("Animator: "+gameObject.name + "has been set to "+(isInside ? "Inside" : "Default"));
+    private Material GetMaterialById(int id){
+        switch(id){
+            case 1:
+                return defaultMaterial;
+            case 2:
+                return insideMaterial;
+            case 3:
+                return transparentMaterial;
+            default:
+                return defaultMaterial;
+        }
+    }
+    public void SetMaterial(bool isTransparent, bool isInsideFillable){
+        if (lastMaterial != targetMaterial) lastMaterial = targetMaterial;
+        if (isTransparent)
+        {
+            targetMaterial = 3;
+        }
+        else if (isInsideFillable)
+        {
+            targetMaterial = 2;
+        }
+        else
+        {
+            targetMaterial = 1;
+        }
+        Debug.Log ("SetMaterial: "+lastMaterial+" to "+targetMaterial);
     }
     private void GenerateInsideMaterial(Material material){
         insideMaterial = new Material(material);
@@ -99,6 +124,7 @@ public class GrabbableManager : MonoBehaviour
         Destroy(gameObject);
     }
 
+    /* ---- Event Handler ---- */
     void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Fillable"))
@@ -126,26 +152,12 @@ public class GrabbableManager : MonoBehaviour
         }
     }
 
-    public void OnSelectExit(){
-        isGrabbed = false;
-        isInHand = 0;
-        SetTransparent(false);
-        Debug.Log("Grabbable: "+gameObject.name + "has been dropped!");
-        if(lastTouchedFillable != null){
-            lastTouchedFillable.CheckIfGrabbableFitsFillable(gameObject);
-        }
-        else{
-            Debug.Log("Grabbable: Is not inside any Fillable");
-        }
-        if(LevelManager.isDebug){
-            debugObjects.center.SetActive(false);
-            debugObjects.matrixOrigin.SetActive(false);
-        }
-    }
+    
     // Triggers whenever the grabbable gets grabbed by the player
     public void OnSelectEnter(SelectEnterEventArgs args){
         isGrabbed = true;
         isInHand = args.interactorObject.transform.name.Contains("Left") ? 1 : 2;
+        SetMaterial(false, false);
         Debug.Log("Grabbable: "+gameObject.name + "has been picked up! In hand: "+(isInHand == 1 ? "Left" : "Right"));
         if (null != insideFillable && null != insideFillable.fillableObject)
         {
@@ -157,22 +169,34 @@ public class GrabbableManager : MonoBehaviour
             debugObjects.matrixOrigin.SetActive(true);
         }
     }
+    public void OnSelectExit(){
+        isGrabbed = false;
+        isInHand = 0;
+        SetMaterial(false, false);
+        Debug.Log("Grabbable: "+gameObject.name + "has been dropped!");
+        if(lastTouchedFillable != null){
+            lastTouchedFillable.CheckIfGrabbableFitsFillable(gameObject);
+        }
+        else{
+            
+            Debug.Log("Grabbable: Is not inside any Fillable");
+        }
+        if(LevelManager.isDebug){
+            debugObjects.center.SetActive(false);
+            debugObjects.matrixOrigin.SetActive(false);
+        }
+    }
 
     public void OnActivate(ActivateEventArgs args){
         Debug.Log("Grabbable: "+gameObject.name + "has been activated!"+args.interactorObject.transform.name);
         if((args.interactorObject.transform.name.Contains("Left") && isInHand == 1) || (args.interactorObject.transform.name.Contains("Right") && isInHand == 2)){
-            SetTransparent(true);
+            SetMaterial(true, false);
         }
     }
     public void OnDeactivate(DeactivateEventArgs args){
         Debug.Log("Grabbable: "+gameObject.name + "has been deactivated!");
         if((args.interactorObject.transform.name.Contains("Left") && isInHand == 1) || (args.interactorObject.transform.name.Contains("Right") && isInHand == 2)){
-            SetTransparent(false);
+            SetMaterial(false, false);
         }
-    }
-    public void SetTransparent(bool isSeethrough){
-        animateMaterialChange = 0;
-        Debug.Log("Grabbable: "+gameObject.name + "has been toggled! Seethrough: "+isSeethrough);
-        GetComponent<Renderer>().material = isSeethrough ? transparentMaterial : defaultMaterial;
     }
 }
