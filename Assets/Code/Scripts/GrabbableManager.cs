@@ -157,6 +157,8 @@ public class GrabbableManager : MonoBehaviour
     public void OnSelectEnter(SelectEnterEventArgs args){
         isGrabbed = true;
         isInHand = args.interactorObject.transform.name.Contains("Left") ? 1 : 2;
+        StatisticManager.instance.levelStatistic.numberOfGrabs++;
+        StatisticManager.instance.SetTimeTilFirstGrab();
         SetMaterial(false, false);
         Debug.Log("Grabbable: "+gameObject.name + "has been picked up! In hand: "+(isInHand == 1 ? "Left" : "Right"));
         if (null != insideFillable && null != insideFillable.fillableObject)
@@ -190,6 +192,7 @@ public class GrabbableManager : MonoBehaviour
     public void OnActivate(ActivateEventArgs args){
         Debug.Log("Grabbable: "+gameObject.name + "has been activated!"+args.interactorObject.transform.name);
         if((args.interactorObject.transform.name.Contains("Left") && isInHand == 1) || (args.interactorObject.transform.name.Contains("Right") && isInHand == 2)){
+            StatisticManager.instance.levelStatistic.numberOfGrabbableTransparency++;
             SetMaterial(true, false);
         }
     }

@@ -437,7 +437,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jsonFileName: levels.json
-  currentLevel: 5
+  currentLevel: 0
   fillablePrefab: {fileID: 2791289762559432273, guid: a909bcb1916778d4391d591e326ef1a6, type: 3}
   lastLevelWindow: {fileID: 497797836}
 --- !u!4 &348509144
@@ -483,6 +483,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8142e29dbef139c458872e3f3bc5f306, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelStatistic:
+    levelId: 0
+    numberOfFillables: 0
+    numberOfGrabbables: 0
+    numberOfGrabs: 0
+    numberOfSnapsToFillables: 0
 --- !u!54 &348509151
 Rigidbody:
   m_ObjectHideFlags: 0

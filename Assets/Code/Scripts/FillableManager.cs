@@ -122,6 +122,7 @@ public class FillableManager : MonoBehaviour
     }
     public void AddGrabbableToFillable(GameObject grabbableObject, Vector3Int gridOffset, Vector3 grabbableRotation, int[][][] rotatedVoxels, Vector3 rotatedVoxelGridSize, Quaternion newRotation){
         GrabbableManager grabbableInformation = grabbableObject.GetComponent<GrabbableManager>();
+        StatisticManager.instance.levelStatistic.numberOfSnapsToFillables++;
         grabbableInformation.insideFillable = new(){
             fillableObject = gameObject,
             rotatedVoxelMatrix = rotatedVoxels,
@@ -222,10 +223,10 @@ public class FillableManager : MonoBehaviour
         if(context.performed){
             try{
             XRBaseInteractor interactor = isLeft ? GameObject.Find("Left Near-Far Interactor").GetComponent<NearFarInteractor>() : GameObject.Find("Right Near-Far Interactor").GetComponent<NearFarInteractor>();
-            if(interactor.interactablesSelected == null){
+            if(interactor.interactablesSelected == null){ // Currently excluding the case when heightchanger is grabbed (as something is grabbed)
                 throw new System.Exception("Interactor has no interactables selected.");
             }else{
-                Debug.Log("Fillable: Highlight not activated! Holding objects"+interactor.interactablesSelected.Count+" "+interactor.interactablesSelected.FirstOrDefault().transform.name);
+                Debug.Log("Fillable: Highlight not activated! Holding objects"+interactor.interactablesSelected.Count+" "+interactor.interactablesSelected.FirstOrDefault().transform.name); 
             }
         }catch{
             HighlightMissingVoxels();
@@ -247,6 +248,7 @@ public class FillableManager : MonoBehaviour
         Debug.Log("Fillable: Highlight activated");
         // Generate a mesh of the missing voxels with VoxelMeshGenerator and set each grabbable object to transparent
         voxelMeshGenerator.GenerateFillableMissingHighlight(transform, gridSize, voxelSize, fillableGrid);
+        StatisticManager.instance.levelStatistic.numberOfFillableTransparency++;
         foreach (GrabbableManager grabbableInformation in currentGrabbableObjects)
         {
             grabbableInformation.SetMaterial(true, true);

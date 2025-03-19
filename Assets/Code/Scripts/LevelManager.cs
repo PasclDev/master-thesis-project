@@ -7,7 +7,7 @@ public class LevelManager : MonoBehaviour
     public string jsonFileName = "levels.json"; // JSON file name
     public int currentLevel = 0; // Current level index
     public GameObject fillablePrefab; // fillableObject prefab
-    public static bool isDebug = true; // Debug mode
+    public static bool isDebug = false; // Debug mode
     public static float rotationTolerancePercentage = 1.00f; // 20% tolerance for rotation
     public static float distanceTolerancePercentage = 0.20f; // 20% tolerance for position
     
@@ -17,7 +17,6 @@ public class LevelManager : MonoBehaviour
 
     //Single instance of LevelManager
     public static LevelManager instance;
-    private DataGatherer dataGatherer;
     private void Awake()
     {
         if (instance == null)
@@ -38,7 +37,6 @@ public class LevelManager : MonoBehaviour
             return;
         }
         voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
-        dataGatherer = GetComponent<DataGatherer>();
         LoadLevelsFromJSON();
         GenerateLevel(currentLevel); 
     }
@@ -128,6 +126,10 @@ public class LevelManager : MonoBehaviour
         LevelData currentLevelData = levelCollection.levels[levelIndex];
         voxelMeshGenerator.GenerateGrabbableObjects(currentLevelData);
         voxelMeshGenerator.GenerateFillableObject(currentLevelData);
+        StatisticManager statisticsManager = StatisticManager.instance;
+        statisticsManager.levelStatistic.levelId = levelIndex;
+        statisticsManager.levelStatistic.numberOfFillables = 1; // Currently still only one fillable per level
+        statisticsManager.levelStatistic.numberOfGrabbables = currentLevelData.grabbables.Count;
         StartCoroutine(WaitForCameraPositionChange());
     }
     //First camera height change sets the level to the camera height
@@ -147,7 +149,7 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(NextLevel());
     }
     public IEnumerator NextLevel(){
-        dataGatherer.WriteLog("Level " + currentLevel + " completed");
+        StatisticManager.instance.WriteLevelLog();
         foreach (Transform child in transform)
         {
             if (child.gameObject.CompareTag("Grabbable"))
