@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Classes;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -111,6 +112,7 @@ public class FillableManager : MonoBehaviour
                         if (fillableGrid[fillableGridPosition.x][fillableGridPosition.y][fillableGridPosition.z] == 1)
                         {
                             Debug.Log("Fillable: Grabbable is overlapping with another Grabbable");
+                            AudioManager.instance.Play("Fillable_Overlap");
                             return;
                         }
                     }
@@ -123,6 +125,7 @@ public class FillableManager : MonoBehaviour
     public void AddGrabbableToFillable(GameObject grabbableObject, Vector3Int gridOffset, Vector3 grabbableRotation, int[][][] rotatedVoxels, Vector3 rotatedVoxelGridSize, Quaternion newRotation){
         GrabbableManager grabbableInformation = grabbableObject.GetComponent<GrabbableManager>();
         StatisticManager.instance.levelStatistic.numberOfSnapsToFillables++;
+        AudioManager.instance.Play("Fillable_Snap");
         grabbableInformation.insideFillable = new(){
             fillableObject = gameObject,
             rotatedVoxelMatrix = rotatedVoxels,
@@ -162,6 +165,7 @@ public class FillableManager : MonoBehaviour
     public void RemoveGrabbableFromFillable(GameObject grabbableObject){
         GrabbableManager grabbableInformation = grabbableObject.GetComponent<GrabbableManager>();
         currentGrabbableObjects.Remove(grabbableInformation);
+        AudioManager.instance.Play("Fillable_Unsnap");
         Vector3Int gridOffset = grabbableInformation.insideFillable.gridOffset;
         // Mark the fillableGrid with 0s
         for (int x = 0; x < grabbableInformation.insideFillable.rotatedVoxelMatrix.Length; x++)
