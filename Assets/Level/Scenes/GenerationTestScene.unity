@@ -1030,6 +1030,16 @@ MonoBehaviour:
     volume: 0.2
     pitch: 0.2
     source: {fileID: 0}
+  - name: Fillable_Highlight
+    clip: {fileID: 8300000, guid: f3310f0e6becaf046b3b0023e0dd6016, type: 3}
+    volume: 0.2
+    pitch: 1
+    source: {fileID: 0}
+  - name: Fillable_Unhighlight
+    clip: {fileID: 8300000, guid: e63db745f9695b046b8c1af86e952b45, type: 3}
+    volume: 0.2
+    pitch: 1
+    source: {fileID: 0}
   aus: {fileID: 0}
 --- !u!4 &548111216
 Transform:

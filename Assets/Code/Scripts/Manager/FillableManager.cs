@@ -21,6 +21,7 @@ public class FillableManager : MonoBehaviour
 
     private VoxelMeshGenerator voxelMeshGenerator;
     public List<GrabbableManager> currentGrabbableObjects = new List<GrabbableManager>();
+    private bool isCurrentlyHighlighted = false;
   
     public void Initialize(Vector3 position, Vector3Int gridSize, float voxelSize, VoxelMeshGenerator voxelMeshGenerator)
     {
@@ -232,11 +233,12 @@ public class FillableManager : MonoBehaviour
             }else{
                 Debug.Log("Fillable: Highlight not activated! Holding objects"+interactor.interactablesSelected.Count+" "+interactor.interactablesSelected.FirstOrDefault().transform.name); 
             }
-        }catch{
-            HighlightMissingVoxels();
-        }
-        }else if(context.canceled){
+            }catch{
+                HighlightMissingVoxels();
+            }
+        }else if(context.canceled && isCurrentlyHighlighted){
             Debug.Log("Fillable: Highlight deactivated");
+            AudioManager.instance.Play("Fillable_Unhighlight");
             // Deletes highlight
             foreach (Transform child in transform)
             {
@@ -250,6 +252,8 @@ public class FillableManager : MonoBehaviour
     }
     public void HighlightMissingVoxels(){
         Debug.Log("Fillable: Highlight activated");
+        isCurrentlyHighlighted = true;
+        AudioManager.instance.Play("Fillable_Highlight");
         // Generate a mesh of the missing voxels with VoxelMeshGenerator and set each grabbable object to transparent
         voxelMeshGenerator.GenerateFillableMissingHighlight(transform, gridSize, voxelSize, fillableGrid);
         StatisticManager.instance.levelStatistic.numberOfFillableTransparency++;

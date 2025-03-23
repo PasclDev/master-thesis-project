@@ -150,6 +150,7 @@ public class LevelManager : MonoBehaviour
         Debug.Log("LevelManager: Fillables filled!");
         if (currentLevel != 0){
             StartCoroutine(LoadLevel(currentLevel++));
+            AudioManager.instance.Play("Level_Complete");
         }
     }
     public void TutorialFinished()
