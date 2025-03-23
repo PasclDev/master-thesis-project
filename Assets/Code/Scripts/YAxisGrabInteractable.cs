@@ -22,12 +22,14 @@ public class YAxisGrabInteractable : XRGrabInteractable
 
         // Get the interactors transform (controller position)
         grabOffset = transform.position - args.interactorObject.transform.position;
+        Debug.Log("HeightInteractable: Grabbed");
     }
 
     protected override void OnSelectExiting(SelectExitEventArgs args)
     {
         base.OnSelectExiting(args);
         isGrabbing = false;
+        Debug.Log("HeightInteractable: Released");
     }
 
     private void Update()

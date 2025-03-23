@@ -175,7 +175,7 @@ public class GrabbableManager : MonoBehaviour
         isGrabbed = false;
         isInHand = 0;
         SetMaterial(false, false);
-        Debug.Log("Grabbable: "+gameObject.name + "has been dropped!");
+        Debug.Log("Grabbable: "+gameObject.name + " has been dropped!");
         if(lastTouchedFillable != null){
             lastTouchedFillable.CheckIfGrabbableFitsFillable(gameObject);
         }
@@ -190,14 +190,14 @@ public class GrabbableManager : MonoBehaviour
     }
 
     public void OnActivate(ActivateEventArgs args){
-        Debug.Log("Grabbable: "+gameObject.name + "has been activated!"+args.interactorObject.transform.name);
+        Debug.Log("Grabbable: "+gameObject.name + " has been activated! "+args.interactorObject.transform.name);
         if((args.interactorObject.transform.name.Contains("Left") && isInHand == 1) || (args.interactorObject.transform.name.Contains("Right") && isInHand == 2)){
             StatisticManager.instance.levelStatistic.numberOfGrabbableTransparency++;
             SetMaterial(true, false);
         }
     }
     public void OnDeactivate(DeactivateEventArgs args){
-        Debug.Log("Grabbable: "+gameObject.name + "has been deactivated!");
+        Debug.Log("Grabbable: "+gameObject.name + " has been deactivated!");
         if((args.interactorObject.transform.name.Contains("Left") && isInHand == 1) || (args.interactorObject.transform.name.Contains("Right") && isInHand == 2)){
             SetMaterial(false, false);
         }

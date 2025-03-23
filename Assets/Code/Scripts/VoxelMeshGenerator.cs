@@ -66,7 +66,9 @@ public class VoxelMeshGenerator : MonoBehaviour
             Mesh mesh = GetMesh(vertices, triangles, uvs);
             meshFilter.mesh = mesh;
             meshCollider.sharedMesh = mesh;
-
+            // Save mesh as an asset for fixed usage //
+            /* string path = "Assets/Resources/TutorialMeshes/Grabbable_" + i + ".asset";
+            UnityEditor.AssetDatabase.CreateAsset(mesh, path); */
         }
     }
 

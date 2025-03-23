@@ -14,6 +14,7 @@ public class LevelManager : MonoBehaviour
     private LevelCollection levelCollection; // Level collection
     private VoxelMeshGenerator voxelMeshGenerator;
     public GameObject lastLevelWindow;
+    public GameObject tutorialManagerPrefab;
 
     //Single instance of LevelManager
     public static LevelManager instance;
@@ -38,7 +39,7 @@ public class LevelManager : MonoBehaviour
         }
         voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
         LoadLevelsFromJSON();
-        GenerateLevel(currentLevel); 
+        StartCoroutine(LoadLevel(currentLevel));
     }
     public void ResetLevelHeight(){
         transform.position = new Vector3(transform.position.x, Camera.main.transform.position.y - (levelCollection.levels[currentLevel].fillable.size[1] * levelCollection.levels[currentLevel].voxelSize), transform.position.z);
@@ -116,12 +117,13 @@ public class LevelManager : MonoBehaviour
 
     private void GenerateLevel(int levelIndex)
     {
-        Debug.Log("Current Level: " + levelIndex);
         if (levelCollection == null || levelCollection.levels.Count <= levelIndex)
         {
             Debug.LogError("LevelManager Error: Invalid level index!");
             return;
         }
+        Debug.Log("Level: " + levelIndex);
+        currentLevel = levelIndex;
 
         LevelData currentLevelData = levelCollection.levels[levelIndex];
         voxelMeshGenerator.GenerateGrabbableObjects(currentLevelData);
@@ -146,22 +148,34 @@ public class LevelManager : MonoBehaviour
     public void FillablesFilled()
     {
         Debug.Log("LevelManager: Fillables filled!");
-        StartCoroutine(NextLevel());
+        if (currentLevel != 0){
+            StartCoroutine(LoadLevel(currentLevel++));
+        }
     }
-    public IEnumerator NextLevel(){
-        StatisticManager.instance.WriteLevelLog();
+    public void TutorialFinished()
+    {
+        StartCoroutine(LoadLevel(1));
+    }
+    public IEnumerator LoadLevel(int levelIndex){
+        if(levelIndex == 0){
+            Instantiate(tutorialManagerPrefab, transform);
+            yield break;
+        }
+        if(StatisticManager.instance.levelStatistic.levelId != 0){
+            StatisticManager.instance.WriteLevelLog();
+        }
+        // Unload previous level
         foreach (Transform child in transform)
         {
             if (child.gameObject.CompareTag("Grabbable"))
                 child.gameObject.GetComponent<GrabbableManager>().Despawn();
-            else
+            else if (child.gameObject.CompareTag("Fillable"))
                 Destroy(child.gameObject);
         }
         yield return new WaitForSeconds(0.3f);
-        if (currentLevel+1 < levelCollection.levels.Count)
+        if (levelIndex < levelCollection.levels.Count)
         {
-            currentLevel++;
-            GenerateLevel(currentLevel);
+            GenerateLevel(levelIndex);
         }
         else
         {

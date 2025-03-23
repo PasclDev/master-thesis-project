@@ -19,7 +19,7 @@ public class FillableManager : MonoBehaviour
     public InputActionReference rightTriggerAction;
 
     private VoxelMeshGenerator voxelMeshGenerator;
-    private List<GrabbableManager> currentGrabbableObjects = new List<GrabbableManager>();
+    public List<GrabbableManager> currentGrabbableObjects = new List<GrabbableManager>();
   
     public void Initialize(Vector3 position, Vector3Int gridSize, float voxelSize, VoxelMeshGenerator voxelMeshGenerator)
     {
