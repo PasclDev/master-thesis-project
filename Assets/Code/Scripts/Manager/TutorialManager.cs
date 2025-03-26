@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
-using Unity.Tutorials.Core.Editor;
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
 
 //Gets loaded if level 0 is loaded in the level manager
 public class TutorialManager : MonoBehaviour
@@ -17,12 +15,12 @@ public class TutorialManager : MonoBehaviour
     public int tutorialStep = 0;
 
     private string[] tutorialTexts = new string[] {
-        "Mit den <color=#FF5C55>Rot-markierten Tasten</color> an den Controllern kannst du farbige Formen, auch \"Farbform\" genannt, aufsammeln.",
-        "Solange du die Taste gedückt hältst, bleibt die Form in deiner Hand.\nDrücke die <color=#FFE455>Gelb-markierte Taste</color> des Controllers, der die Farbform hält, um sie durchsichtig zu machen.",
+        "Mit den <color=#FF5C55>Rot-markierten Tasten</color> an den Controllern kannst du \"Farbformen\" aufsammeln.",
+        "Solange du die Taste gedückt hältst, bleibt die Farbform in deiner Hand.\nDrücke die <color=#FFE455>Gelb-markierte Taste</color> des Controllers, der die Farbform hält, um sie durchsichtig zu machen.",
         "Gut gemacht! In jedem Level muss die Gitterform mit den Farbformen gefüllt werden.\n Bewege nun die Farbform in die Gitterform.",
-        "In späteren Leveln kann man schnell den Überblick verlieren. Drücke die <color=#FFE455>Gelb-markierte Taste</color> des Controllers, um alle Farbformen in der Gitterform durchsichtig zu machen und alle freien Felder zu markieren.",
-        "Super! um die Höhe des Levels anzupassen, greif die Kugel unter der Füllform und ziehe sie nach oben oder unten.",
-        "Das war's mit der Einführung! Um die Einführung zu beenden, platziere die letzte Füllform in die Gitterform."
+        "In späteren Leveln kann man schnell den Überblick verlieren.\nDrücke die <color=#FFE455>Gelb-markierte Taste</color> des Controllers, um alle Farbformen in der Gitterform durchsichtig zu machen und alle freien Felder zu markieren.",
+        "Super! Um die Höhe des Levels anzupassen, greife die Kugel unter der Farbform und ziehe sie nach oben oder unten.",
+        "Das war es mit der Einführung!\nUm die Einführung zu beenden, platziere die letzte Farbform in die Gitterform."
     };
 
     void OnEnable()
@@ -74,6 +72,8 @@ public class TutorialManager : MonoBehaviour
         tutorialText.text = tutorialTexts[tutorialStep];
     }
     public void NextTutorialStep(){
+        StatisticManager.instance.levelStatistic.tutorialStep = tutorialStep;
+        StatisticManager.instance.WriteLevelLog();
         tutorialStep++;
         switch(tutorialStep){
             case 2:

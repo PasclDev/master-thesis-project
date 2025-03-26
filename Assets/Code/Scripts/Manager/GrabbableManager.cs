@@ -160,7 +160,7 @@ public class GrabbableManager : MonoBehaviour
         StatisticManager.instance.levelStatistic.numberOfGrabs++;
         StatisticManager.instance.SetTimeTilFirstGrab();
         SetMaterial(false, false);
-        Debug.Log("Grabbable: "+gameObject.name + "has been picked up! In hand: "+(isInHand == 1 ? "Left" : "Right"));
+        Debug.Log("Grabbable: "+gameObject.name + "has been picked up! In hand: "+(isInHand == 1 ? "Left" : "Right")); // Warning: Used in tutorial-logic
         if (null != insideFillable && null != insideFillable.fillableObject)
         {
             FillableManager fillableManager = insideFillable.fillableObject.GetComponent<FillableManager>();
@@ -190,7 +190,7 @@ public class GrabbableManager : MonoBehaviour
     }
 
     public void OnActivate(ActivateEventArgs args){
-        Debug.Log("Grabbable: "+gameObject.name + " has been activated! "+args.interactorObject.transform.name);
+        Debug.Log("Grabbable: "+gameObject.name + " has been activated! "+args.interactorObject.transform.name); // Warning: Used in tutorial-logic
         if((args.interactorObject.transform.name.Contains("Left") && isInHand == 1) || (args.interactorObject.transform.name.Contains("Right") && isInHand == 2)){
             StatisticManager.instance.levelStatistic.numberOfGrabbableTransparency++;
             SetMaterial(true, false);

@@ -261,7 +261,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jsonFileName: levels.json
-  currentLevel: 1
+  currentLevel: 0
   fillablePrefab: {fileID: 2791289762559432273, guid: a909bcb1916778d4391d591e326ef1a6, type: 3}
   lastLevelWindow: {fileID: 497797836}
   tutorialManagerPrefab: {fileID: 7056604412803229707, guid: 60ba3ed8d2ba1e9459defaf597af3b0e, type: 3}
@@ -1031,12 +1031,17 @@ MonoBehaviour:
     pitch: 0.2
     source: {fileID: 0}
   - name: Fillable_Highlight
-    clip: {fileID: 8300000, guid: f3310f0e6becaf046b3b0023e0dd6016, type: 3}
+    clip: {fileID: 8300000, guid: e63db745f9695b046b8c1af86e952b45, type: 3}
     volume: 0.2
     pitch: 1
     source: {fileID: 0}
   - name: Fillable_Unhighlight
-    clip: {fileID: 8300000, guid: e63db745f9695b046b8c1af86e952b45, type: 3}
+    clip: {fileID: 8300000, guid: f3310f0e6becaf046b3b0023e0dd6016, type: 3}
+    volume: 0.2
+    pitch: 1
+    source: {fileID: 0}
+  - name: Level_Complete
+    clip: {fileID: 8300000, guid: 48b6044baf159c24a8fcdef4e2ebeced, type: 3}
     volume: 0.2
     pitch: 1
     source: {fileID: 0}

@@ -147,9 +147,11 @@ public class LevelManager : MonoBehaviour
     }
     public void FillablesFilled()
     {
-        Debug.Log("LevelManager: Fillables filled!");
+        Debug.Log("LevelManager: Fillables filled!"); // Warning: Used in tutorial-logic
         if (currentLevel != 0){
-            StartCoroutine(LoadLevel(currentLevel++));
+            Debug.Log("LevelManager: Level completed! Loading Level: " + currentLevel+"+1");
+            currentLevel++;
+            StartCoroutine(LoadLevel(currentLevel));
             AudioManager.instance.Play("Level_Complete");
         }
     }
@@ -176,6 +178,7 @@ public class LevelManager : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
         if (levelIndex < levelCollection.levels.Count)
         {
+            Debug.Log("LevelManager: Loading Level: " + levelIndex);
             GenerateLevel(levelIndex);
         }
         else

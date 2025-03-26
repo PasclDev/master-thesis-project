@@ -6,6 +6,7 @@ public class StatisticManager : MonoBehaviour
     [System.Serializable]
     public class LevelStatistic
     {
+        public int tutorialStep = 0;        
         public int levelId = 0;
         public int numberOfFillables = 0;
         public int numberOfGrabbables = 0;
@@ -45,7 +46,7 @@ public class StatisticManager : MonoBehaviour
             logFilePath = Application.persistentDataPath + "/" + System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".csv";
         }
         logFile = new System.IO.StreamWriter(logFilePath, true);
-        logFile.WriteLine("LevelID;NumberOfFillables;NumberOfGrabbables;LevelCompleted;TimeToComplete;TimeTilFirstGrab;NumberOfGrabs;NumberOfSnapsToFillables;NumberOfFillableTransparency;NumberOfGrabbableTransparency");
+        logFile.WriteLine("TutorialStep;LevelID;NumberOfFillables;NumberOfGrabbables;LevelCompleted;TimeToComplete;TimeTilFirstGrab;NumberOfGrabs;NumberOfSnapsToFillables;NumberOfFillableTransparency;NumberOfGrabbableTransparency");
     }
     void Update()
     {
@@ -58,7 +59,7 @@ public class StatisticManager : MonoBehaviour
     }
     public void WriteLevelLog(bool isLevelComplete = true)
     {
-        logFile.WriteLine(levelStatistic.levelId + ";" + levelStatistic.numberOfFillables + ";" + levelStatistic.numberOfGrabbables + ";" + isLevelComplete + ";" + (timeSinceStart - timeSinceLastLog) + ";" + levelStatistic.timeTilFirstGrab + ";" + levelStatistic.numberOfGrabs + ";" + levelStatistic.numberOfSnapsToFillables + ";" + levelStatistic.numberOfFillableTransparency + ";" + levelStatistic.numberOfGrabbableTransparency);
+        logFile.WriteLine(levelStatistic.tutorialStep + ";" + levelStatistic.levelId + ";" + levelStatistic.numberOfFillables + ";" + levelStatistic.numberOfGrabbables + ";" + isLevelComplete + ";" + (timeSinceStart - timeSinceLastLog) + ";" + levelStatistic.timeTilFirstGrab + ";" + levelStatistic.numberOfGrabs + ";" + levelStatistic.numberOfSnapsToFillables + ";" + levelStatistic.numberOfFillableTransparency + ";" + levelStatistic.numberOfGrabbableTransparency);
         timeSinceLastLog = timeSinceStart;
         levelStatistic = new LevelStatistic();
         Debug.Log("StatisticManager: Log written to " + logFilePath);

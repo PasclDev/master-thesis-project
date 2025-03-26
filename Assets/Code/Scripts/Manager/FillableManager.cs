@@ -251,7 +251,7 @@ public class FillableManager : MonoBehaviour
         }
     }
     public void HighlightMissingVoxels(){
-        Debug.Log("Fillable: Highlight activated");
+        Debug.Log("Fillable: Highlight activated"); // Warning: Used in tutorial-logic
         isCurrentlyHighlighted = true;
         AudioManager.instance.Play("Fillable_Highlight");
         // Generate a mesh of the missing voxels with VoxelMeshGenerator and set each grabbable object to transparent
