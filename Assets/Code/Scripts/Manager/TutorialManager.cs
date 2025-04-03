@@ -13,7 +13,6 @@ public class TutorialManager : MonoBehaviour
     public GameObject grabbableObject3;
     public GameObject fillableObject3;
     public TextMeshProUGUI tutorialText;
-    public static TutorialManager instance;
     public int tutorialStep = 0;
 
     private string[] tutorialTexts = new string[] {
@@ -53,18 +52,6 @@ public class TutorialManager : MonoBehaviour
     {
         return System.Text.RegularExpressions.Regex.IsMatch(input, pattern);
     }
-    void Awake()
-    {
-        Debug.Log("TutorialManager: Awake");
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
     void Start()
     {
@@ -73,7 +60,9 @@ public class TutorialManager : MonoBehaviour
 
     }
     private void UpdateTutorialText(){
-        tutorialText.text = tutorialTexts[tutorialStep];
+        if(tutorialStep < tutorialTexts.Length){
+            tutorialText.text = tutorialTexts[tutorialStep];
+        }
     }
     public void NextTutorialStep(){
         StatisticManager.instance.levelStatistic.tutorialStep = tutorialStep;

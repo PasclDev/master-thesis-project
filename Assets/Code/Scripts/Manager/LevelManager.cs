@@ -7,7 +7,7 @@ public class LevelManager : MonoBehaviour
     public string jsonFileName = "levels.json"; // JSON file name
     public int currentLevel = 0; // Current level index
     public GameObject fillablePrefab; // fillableObject prefab
-    public static bool isDebug = true; // Debug mode
+    public static bool isDebug = false; // Debug mode
     public static float rotationTolerancePercentage = 1.00f; // 20% tolerance for rotation
     public static float distanceTolerancePercentage = 0.20f; // 20% tolerance for position
     
@@ -147,16 +147,17 @@ public class LevelManager : MonoBehaviour
     }
     public void FillablesFilled()
     {
-        Debug.Log("LevelManager: Fillables filled!"); // Warning: Used in tutorial-logic
         if (currentLevel != 0){
             Debug.Log("LevelManager: Level completed! Loading Level: " + currentLevel+"+1");
             currentLevel++;
             LoadLevel(currentLevel);
             AudioManager.instance.Play("Level_Complete");
         }
+        Debug.Log("LevelManager: Fillables filled!"); // Warning: Used in tutorial-logic, after currentLevel check! (prevents bug where next level is loaded while this function is called)
     }
     public void TutorialFinished()
     {
+        Debug.Log("LevelManager: Tutorial finished! Loading Level: 1");
         LoadLevel(1);
     }
     public void LoadLevel(int levelIndex, bool isCompleted = true){
@@ -169,6 +170,9 @@ public class LevelManager : MonoBehaviour
             else if (child.gameObject.CompareTag("Fillable") || child.gameObject.CompareTag("Tutorial"))
                 Destroy(child.gameObject);
         }
+        //Reset lastLevel Window
+        lastLevelWindow.SetActive(false);
+        //Write Level Log
         if(StatisticManager.instance.levelStatistic.levelId != 0){
             StatisticManager.instance.WriteLevelLog(isCompleted);
         }

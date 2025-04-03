@@ -30,14 +30,16 @@ public class FillableManager : MonoBehaviour
         this.gridSize = gridSize;
         this.voxelSize = voxelSize;
         this.voxelMeshGenerator = voxelMeshGenerator;
+        InitializeFillableGrid();
+    }
+    void OnEnable()
+    {
         leftTriggerAction.action.performed += LeftTriggerPressed;
         leftTriggerAction.action.canceled += LeftTriggerPressed;
         rightTriggerAction.action.performed += RightTriggerPressed;
         rightTriggerAction.action.canceled += RightTriggerPressed;
-
-        InitializeFillableGrid();
     }
-    public void OnDestroy()
+    void OnDisable()
     {
         leftTriggerAction.action.performed -= LeftTriggerPressed;
         leftTriggerAction.action.canceled -= LeftTriggerPressed;
