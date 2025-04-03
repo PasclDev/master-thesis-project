@@ -39,7 +39,7 @@ public class LevelManager : MonoBehaviour
         }
         voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
         LoadLevelsFromJSON();
-        StartCoroutine(LoadLevel(currentLevel));
+        LoadLevel(currentLevel);
     }
     public void ResetLevelHeight(){
         transform.position = new Vector3(transform.position.x, Camera.main.transform.position.y - (levelCollection.levels[currentLevel].fillable.size[1] * levelCollection.levels[currentLevel].voxelSize), transform.position.z);
@@ -151,15 +151,15 @@ public class LevelManager : MonoBehaviour
         if (currentLevel != 0){
             Debug.Log("LevelManager: Level completed! Loading Level: " + currentLevel+"+1");
             currentLevel++;
-            StartCoroutine(LoadLevel(currentLevel));
+            LoadLevel(currentLevel);
             AudioManager.instance.Play("Level_Complete");
         }
     }
     public void TutorialFinished()
     {
-        StartCoroutine(LoadLevel(1));
+        LoadLevel(1);
     }
-    public IEnumerator LoadLevel(int levelIndex, bool isCompleted = true){
+    public void LoadLevel(int levelIndex, bool isCompleted = true){
         Debug.Log("LevelManager: LoadLevel Started for: " + levelIndex);
         // Unload previous level
         foreach (Transform child in transform)
@@ -173,11 +173,10 @@ public class LevelManager : MonoBehaviour
             StatisticManager.instance.WriteLevelLog(isCompleted);
         }
         if(levelIndex == 0){
+            currentLevel = 0;
             Instantiate(tutorialManagerPrefab, transform);
-            yield break;
+            return;
         }
-
-        yield return new WaitForSeconds(0.3f);
         if (levelIndex < levelCollection.levels.Count)
         {
             Debug.Log("LevelManager: Loading Level: " + levelIndex);
