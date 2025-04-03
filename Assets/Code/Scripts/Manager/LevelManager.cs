@@ -7,7 +7,7 @@ public class LevelManager : MonoBehaviour
     public string jsonFileName = "levels.json"; // JSON file name
     public int currentLevel = 0; // Current level index
     public GameObject fillablePrefab; // fillableObject prefab
-    public static bool isDebug = false; // Debug mode
+    public static bool isDebug = true; // Debug mode
     public static float rotationTolerancePercentage = 1.00f; // 20% tolerance for rotation
     public static float distanceTolerancePercentage = 0.20f; // 20% tolerance for position
     
@@ -159,22 +159,24 @@ public class LevelManager : MonoBehaviour
     {
         StartCoroutine(LoadLevel(1));
     }
-    public IEnumerator LoadLevel(int levelIndex){
-        if(levelIndex == 0){
-            Instantiate(tutorialManagerPrefab, transform);
-            yield break;
-        }
-        if(StatisticManager.instance.levelStatistic.levelId != 0){
-            StatisticManager.instance.WriteLevelLog();
-        }
+    public IEnumerator LoadLevel(int levelIndex, bool isCompleted = true){
+        Debug.Log("LevelManager: LoadLevel Started for: " + levelIndex);
         // Unload previous level
         foreach (Transform child in transform)
         {
             if (child.gameObject.CompareTag("Grabbable"))
                 child.gameObject.GetComponent<GrabbableManager>().Despawn();
-            else if (child.gameObject.CompareTag("Fillable"))
+            else if (child.gameObject.CompareTag("Fillable") || child.gameObject.CompareTag("Tutorial"))
                 Destroy(child.gameObject);
         }
+        if(StatisticManager.instance.levelStatistic.levelId != 0){
+            StatisticManager.instance.WriteLevelLog(isCompleted);
+        }
+        if(levelIndex == 0){
+            Instantiate(tutorialManagerPrefab, transform);
+            yield break;
+        }
+
         yield return new WaitForSeconds(0.3f);
         if (levelIndex < levelCollection.levels.Count)
         {
