@@ -37,6 +37,13 @@ public class FillableManager : MonoBehaviour
 
         InitializeFillableGrid();
     }
+    public void OnDestroy()
+    {
+        leftTriggerAction.action.performed -= LeftTriggerPressed;
+        leftTriggerAction.action.canceled -= LeftTriggerPressed;
+        rightTriggerAction.action.performed -= RightTriggerPressed;
+        rightTriggerAction.action.canceled -= RightTriggerPressed;
+    }
     public void InitializeFillableGrid(){
         fillableGrid = new int[gridSize.x][][];
         for (int x = 0; x < gridSize.x; x++)
