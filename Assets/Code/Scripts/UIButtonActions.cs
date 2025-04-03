@@ -21,7 +21,9 @@ public class UIButtonActions : MonoBehaviour
         //Stop runtime in editor mode
         if(Application.isEditor)
         {
-            UnityEditor.EditorApplication.isPlaying = false;
+            #if UNITY_EDITOR // UnityEditor is not available in build, so a preprocessor directive is used
+                UnityEditor.EditorApplication.isPlaying = false;
+            #endif
         }
     }
 }
