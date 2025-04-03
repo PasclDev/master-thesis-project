@@ -10,14 +10,17 @@ public class TutorialManager : MonoBehaviour
     public GameObject grabbableObjectGroup;
     public GameObject grabbableObject2;
     public GameObject fillableObject2;
+    public GameObject grabbableObject3;
+    public GameObject fillableObject3;
     public TextMeshProUGUI tutorialText;
     public static TutorialManager instance;
     public int tutorialStep = 0;
 
     private string[] tutorialTexts = new string[] {
-        "Mit den <color=#FF5C55>Rot-markierten Tasten</color> an den Controllern kannst du \"Farbformen\" aufsammeln.",
-        "Solange du die Taste gedückt hältst, bleibt die Farbform in deiner Hand.\nDrücke die <color=#FFE455>Gelb-markierte Taste</color> des Controllers, der die Farbform hält, um sie durchsichtig zu machen.",
+        "Mit den <color=#FF5C55>Rot-markierten Greiftasten</color> an den Controllern kannst du \"Farbformen\" aufsammeln.",
+        "Halte eine Farbform mit der <color=#FF5C55>Greiftaste</color> in deiner Hand und drücke währenddessen die <color=#FFE455>Gelb-markierte Triggertaste</color> der gleichen Hand, um die Farbform durchsichtig zu machen.",
         "Gut gemacht! In jedem Level muss die Gitterform mit den Farbformen gefüllt werden.\n Bewege nun die Farbform in die Gitterform.",
+        "Manchmal kann es schwer sein, Objekte zu rotieren.\nStrecke deinen Arm aus, <color=#FF5C55>Greife</color> die Farbform und ziehe dann deinen Arm zu dir, um die Farbform besser rotieren zu können. Packe sie dann in die Gitterform.",
         "In späteren Leveln kann man schnell den Überblick verlieren.\nDrücke die <color=#FFE455>Gelb-markierte Taste</color> des Controllers, um alle Farbformen in der Gitterform durchsichtig zu machen und alle freien Felder zu markieren.",
         "Super! Um die Höhe des Levels anzupassen, greife die Kugel unter der Farbform und ziehe sie nach oben oder unten.",
         "Das war es mit der Einführung!\nUm die Einführung zu beenden, platziere die letzte Farbform in die Gitterform."
@@ -37,9 +40,10 @@ public class TutorialManager : MonoBehaviour
         if ((tutorialStep == 0 && RegexMatch(logString, @"Grabbable:.*has been picked up! In hand:.*")) ||
             (tutorialStep == 1 && RegexMatch(logString, @"Grabbable:.*has been activated!.*")) ||
             (tutorialStep == 2 && logString == "LevelManager: Fillables filled!") ||
-            (tutorialStep == 3 && logString == "Fillable: Highlight activated") ||
-            (tutorialStep == 4 && logString == "HeightInteractable: Grabbed") ||
-            (tutorialStep == 5 && logString == "LevelManager: Fillables filled!"))
+            (tutorialStep == 3 && logString == "LevelManager: Fillables filled!") ||
+            (tutorialStep == 4 && logString == "Fillable: Highlight activated") ||
+            (tutorialStep == 5 && logString == "HeightInteractable: Grabbed") ||
+            (tutorialStep == 6 && logString == "LevelManager: Fillables filled!"))
         {
             NextTutorialStep();
         }
@@ -83,12 +87,18 @@ public class TutorialManager : MonoBehaviour
                 fillableObject1.SetActive(false);
                 grabbableObject1.GetComponent<GrabbableManager>().Despawn();
                 fillableObject2.SetActive(true);
-                grabbableObjectGroup.SetActive(true);
-                break;
-            case 5:
                 grabbableObject2.SetActive(true);
                 break;
+            case 4:
+                fillableObject2.SetActive(false);
+                grabbableObject2.GetComponent<GrabbableManager>().Despawn();
+                fillableObject3.SetActive(true);
+                grabbableObjectGroup.SetActive(true);
+                break;
             case 6:
+                grabbableObject3.SetActive(true);
+                break;
+            case 7:
                 LevelManager.instance.TutorialFinished();
                 Destroy(gameObject);
                 break;
@@ -110,12 +120,15 @@ public class TutorialManager : MonoBehaviour
         grabbableObject1.GetComponent<GrabbableManager>().transparentMaterial = transparentMaterial;
         grabbableObject2.GetComponent<Renderer>().material = normalMaterial;
         grabbableObject2.GetComponent<GrabbableManager>().transparentMaterial = transparentMaterial;
+        grabbableObject3.GetComponent<Renderer>().material = normalMaterial;
+        grabbableObject3.GetComponent<GrabbableManager>().transparentMaterial = transparentMaterial;
 
         // Initialize
         grabbableObject1.GetComponent<GrabbableManager>().Initialize(grabbableObject1.GetComponent<GrabbableManager>().grabbable, 0.1f);
         grabbableObject2.GetComponent<GrabbableManager>().Initialize(grabbableObject2.GetComponent<GrabbableManager>().grabbable, 0.1f);
+        grabbableObject3.GetComponent<GrabbableManager>().Initialize(grabbableObject3.GetComponent<GrabbableManager>().grabbable, 0.1f);
         // Grabbable Voxelcontent
-        grabbableObject1.GetComponent<GrabbableManager>().grabbable.voxels = new int[3][][]{
+        int[][][] grabbableCubeVoxels = new int[3][][]{
             new int[3][]{
                 new int[3]{1,1,1},
                 new int[3]{1,1,1},
@@ -132,7 +145,9 @@ public class TutorialManager : MonoBehaviour
                 new int[3]{1,1,1}
             }
         };
-        grabbableObject2.GetComponent<GrabbableManager>().grabbable.voxels = new int[2][][]{
+        grabbableObject1.GetComponent<GrabbableManager>().grabbable.voxels = grabbableCubeVoxels;
+        grabbableObject2.GetComponent<GrabbableManager>().grabbable.voxels = grabbableCubeVoxels;
+        grabbableObject3.GetComponent<GrabbableManager>().grabbable.voxels = new int[2][][]{
             new int[2][]{
                 new int[2]{0,1},
                 new int[2]{0,0},
@@ -149,9 +164,10 @@ public class TutorialManager : MonoBehaviour
         }
         // Fillables
         fillableObject1.GetComponent<FillableManager>().Initialize(transform.position, new Vector3Int(3,3,3),0.1f, transform.parent.GetComponent<VoxelMeshGenerator>());
-        fillableObject2.GetComponent<FillableManager>().Initialize(transform.position, new Vector3Int(3,3,3),0.08f, transform.parent.GetComponent<VoxelMeshGenerator>());
+        fillableObject2.GetComponent<FillableManager>().Initialize(transform.position, new Vector3Int(3,3,3),0.1f, transform.parent.GetComponent<VoxelMeshGenerator>());
+        fillableObject3.GetComponent<FillableManager>().Initialize(transform.position, new Vector3Int(3,3,3),0.08f, transform.parent.GetComponent<VoxelMeshGenerator>());
         // Fillable fillable content
-        fillableObject2.GetComponent<FillableManager>().fillableGrid = new int[3][][]{
+        fillableObject3.GetComponent<FillableManager>().fillableGrid = new int[3][][]{
             new int[3][]{
                 new int[3]{1,1,0},
                 new int[3]{1,0,0},
@@ -173,7 +189,7 @@ public class TutorialManager : MonoBehaviour
         {
             grabbableManagers.Add(child.GetComponent<GrabbableManager>());
         }
-        fillableObject2.GetComponent<FillableManager>().currentGrabbableObjects = grabbableManagers;
+        fillableObject3.GetComponent<FillableManager>().currentGrabbableObjects = grabbableManagers;
 
     }
 
