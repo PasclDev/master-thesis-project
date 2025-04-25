@@ -10,7 +10,11 @@ public class InteractorDebug : MonoBehaviour
 
     public void OnHoverEnter(HoverEnterEventArgs args)
     {
-        if (args.interactableObject != null)
+        if (
+            args.interactableObject != null
+            && !currentHovers.Contains(args.interactableObject.transform.gameObject)
+            && args.interactableObject.transform.CompareTag("Grabbable")
+        )
         {
             currentHovers.Add(args.interactableObject.transform.gameObject);
             currentHover = args.interactableObject.transform.gameObject;
@@ -20,7 +24,11 @@ public class InteractorDebug : MonoBehaviour
 
     public void OnHoverExit(HoverExitEventArgs args)
     {
-        if (args.interactableObject != null)
+        if (
+            args.interactableObject != null
+            && !currentHovers.Contains(args.interactableObject.transform.gameObject)
+            && args.interactableObject.transform.CompareTag("Grabbable")
+        )
         {
             currentHovers.Remove(args.interactableObject.transform.gameObject);
             currentHover = null;

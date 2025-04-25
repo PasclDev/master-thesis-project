@@ -16,26 +16,37 @@ public class VoxelMeshGenerator : MonoBehaviour
         {
             Grabbable grabbable = currentLevelData.grabbables[i];
             Vector3Int gridSize = new Vector3Int(
-                grabbable.size[0], 
-                grabbable.size[1], 
+                grabbable.size[0],
+                grabbable.size[1],
                 grabbable.size[2]
             );
-            Vector3 gridCenter = (Vector3)gridSize  * 0.5f;
-            Vector3 grabbablePosition = new Vector3(grabbable.position[0], grabbable.position[1], grabbable.position[2]);
+            Vector3 gridCenter = (Vector3)gridSize * 0.5f;
+            Vector3 grabbablePosition = new Vector3(
+                grabbable.position[0],
+                grabbable.position[1],
+                grabbable.position[2]
+            );
             Vector3 position = transform.position + grabbablePosition * voxelSize;
-            GameObject grabbableObject = Instantiate(grabbableBlankPrefab, position, Quaternion.identity, transform);
+            GameObject grabbableObject = Instantiate(
+                grabbableBlankPrefab,
+                position,
+                Quaternion.identity,
+                transform
+            );
             grabbableObject.name = "Grabbable_" + i;
             Material normalMaterial = grabbableObject.GetComponent<Renderer>().material;
-            Material transparentMaterial = new Material(grabbableObject.GetComponent<GrabbableManager>().transparentMaterial);
+            Material transparentMaterial = new Material(
+                grabbableObject.GetComponent<GrabbableManager>().transparentMaterial
+            );
             Color newColor = grabbable.GetColor();
             newColor.a = transparentMaterial.color.a;
             normalMaterial.color = newColor;
             transparentMaterial.color = newColor;
-            grabbableObject.GetComponent<GrabbableManager>().transparentMaterial = transparentMaterial;
+            grabbableObject.GetComponent<GrabbableManager>().transparentMaterial =
+                transparentMaterial;
             MeshFilter meshFilter = grabbableObject.GetComponent<MeshFilter>();
             MeshCollider meshCollider = grabbableObject.GetComponent<MeshCollider>();
             //grabbableObject.GetComponent<BoxCollider>().size = (Vector3)gridSize * voxelSize;
-            grabbableObject.GetComponent<GrabbableManager>().Initialize(grabbable, voxelSize);
 
             // Generate Mesh
             List<Vector3> vertices = new List<Vector3>();
@@ -52,13 +63,26 @@ public class VoxelMeshGenerator : MonoBehaviour
                         {
                             Vector3 voxelPosition = (new Vector3(x, y, z) - gridCenter) * voxelSize;
                             bool[] outerFaces = new bool[6]; // Front, Back, Top, Bottom, Right, Left
-                            if (x == 0 || grabbable.voxels[x - 1][y][z] == 0) outerFaces[5] = true;
-                            if (x == gridSize.x - 1 || grabbable.voxels[x + 1][y][z] == 0) outerFaces[4] = true;
-                            if (y == 0 || grabbable.voxels[x][y - 1][z] == 0) outerFaces[3] = true;
-                            if (y == gridSize.y - 1 || grabbable.voxels[x][y + 1][z] == 0) outerFaces[2] = true;
-                            if (z == 0 || grabbable.voxels[x][y][z - 1] == 0) outerFaces[0] = true;
-                            if (z == gridSize.z - 1 || grabbable.voxels[x][y][z + 1] == 0) outerFaces[1] = true;
-                            AddOuterFacesToMesh(voxelPosition, voxelSize, vertices, triangles, uvs, outerFaces);
+                            if (x == 0 || grabbable.voxels[x - 1][y][z] == 0)
+                                outerFaces[5] = true;
+                            if (x == gridSize.x - 1 || grabbable.voxels[x + 1][y][z] == 0)
+                                outerFaces[4] = true;
+                            if (y == 0 || grabbable.voxels[x][y - 1][z] == 0)
+                                outerFaces[3] = true;
+                            if (y == gridSize.y - 1 || grabbable.voxels[x][y + 1][z] == 0)
+                                outerFaces[2] = true;
+                            if (z == 0 || grabbable.voxels[x][y][z - 1] == 0)
+                                outerFaces[0] = true;
+                            if (z == gridSize.z - 1 || grabbable.voxels[x][y][z + 1] == 0)
+                                outerFaces[1] = true;
+                            AddOuterFacesToMesh(
+                                voxelPosition,
+                                voxelSize,
+                                vertices,
+                                triangles,
+                                uvs,
+                                outerFaces
+                            );
                         }
                     }
                 }
@@ -66,18 +90,24 @@ public class VoxelMeshGenerator : MonoBehaviour
             Mesh mesh = GetMesh(vertices, triangles, uvs);
             meshFilter.mesh = mesh;
             meshCollider.sharedMesh = mesh;
+            // Initialize GrabbableManager after mesh is generated so that the outline is generated correctly //
+            grabbableObject.GetComponent<GrabbableManager>().Initialize(grabbable, voxelSize);
             // Save mesh as an asset for fixed usage //
             /* string path = "Assets/Resources/TutorialMeshes/Grabbable_" + i + ".asset";
             UnityEditor.AssetDatabase.CreateAsset(mesh, path); */
         }
     }
 
-    public void GenerateFillableObject(LevelData currentLevelData){
+    public void GenerateFillableObject(LevelData currentLevelData)
+    {
         float voxelSize = currentLevelData.voxelSize;
         Fillable fillable = currentLevelData.fillable;
 
         GameObject fillableObject = Instantiate(fillableBlankPrefab, transform);
-        Vector3 position = transform.position + voxelSize*new Vector3(fillable.position[0], fillable.position[1], fillable.position[2]); 
+        Vector3 position =
+            transform.position
+            + voxelSize
+                * new Vector3(fillable.position[0], fillable.position[1], fillable.position[2]);
         Vector3Int size = new Vector3Int(fillable.size[0], fillable.size[1], fillable.size[2]);
         Vector3 gridCenter = (Vector3)size * 0.5f;
         fillableObject.name = "Fillable_0";
@@ -98,21 +128,43 @@ public class VoxelMeshGenerator : MonoBehaviour
                 {
                     Vector3 voxelPosition = (new Vector3(x, y, z) - gridCenter) * voxelSize;
                     bool[] outerFaces = new bool[6]; // Front, Back, Top, Bottom, Right, Left
-                    if (x == 0) outerFaces[5] = true;
-                    if (x == size.x - 1) outerFaces[4] = true;
-                    if (y == 0) outerFaces[3] = true;
-                    if (y == size.y - 1) outerFaces[2] = true;
-                    if (z == 0) outerFaces[0] = true;
-                    if (z == size.z - 1) outerFaces[1] = true;
-                    AddOuterFacesToMesh(voxelPosition, voxelSize, vertices, triangles, uvs, outerFaces);
+                    if (x == 0)
+                        outerFaces[5] = true;
+                    if (x == size.x - 1)
+                        outerFaces[4] = true;
+                    if (y == 0)
+                        outerFaces[3] = true;
+                    if (y == size.y - 1)
+                        outerFaces[2] = true;
+                    if (z == 0)
+                        outerFaces[0] = true;
+                    if (z == size.z - 1)
+                        outerFaces[1] = true;
+                    AddOuterFacesToMesh(
+                        voxelPosition,
+                        voxelSize,
+                        vertices,
+                        triangles,
+                        uvs,
+                        outerFaces
+                    );
                 }
             }
         }
         meshFilter.mesh = GetMesh(vertices, triangles, uvs);
     }
 
-    public void GenerateFillableMissingHighlight(Transform fillableObject, Vector3Int gridSize, float voxelSize, int[][][] voxels){
-        GameObject fillableMissingHighlight = Instantiate(fillableMissingHighlightPrefab, fillableObject);
+    public void GenerateFillableMissingHighlight(
+        Transform fillableObject,
+        Vector3Int gridSize,
+        float voxelSize,
+        int[][][] voxels
+    )
+    {
+        GameObject fillableMissingHighlight = Instantiate(
+            fillableMissingHighlightPrefab,
+            fillableObject
+        );
         fillableMissingHighlight.name = "FillableMissingHighlight";
 
         // Generate Mesh
@@ -123,89 +175,172 @@ public class VoxelMeshGenerator : MonoBehaviour
 
         // Mesh only consists of the "outer" faces of the voxel grid, not the inner faces
         for (int x = 0; x < gridSize.x; x++)
+        {
+            for (int y = 0; y < gridSize.y; y++)
             {
-                for (int y = 0; y < gridSize.y; y++)
+                for (int z = 0; z < gridSize.z; z++)
                 {
-                    for (int z = 0; z < gridSize.z; z++)
+                    if (voxels[x][y][z] == 0) // For each missing voxel
                     {
-                        if (voxels[x][y][z] == 0) // For each missing voxel
-                        {
-                            Vector3 voxelPosition = (new Vector3(x, y, z) - ((Vector3)gridSize*0.5f)) * voxelSize;
-                            bool[] outerFaces = new bool[6]; // Front, Back, Top, Bottom, Right, Left
-                            if (x == 0 || voxels[x - 1][y][z] == 1) outerFaces[5] = true;
-                            if (x == gridSize.x - 1 || voxels[x + 1][y][z] == 1) outerFaces[4] = true;
-                            if (y == 0 || voxels[x][y - 1][z] == 1) outerFaces[3] = true;
-                            if (y == gridSize.y - 1 || voxels[x][y + 1][z] == 1) outerFaces[2] = true;
-                            if (z == 0 || voxels[x][y][z - 1] == 1) outerFaces[0] = true;
-                            if (z == gridSize.z - 1 || voxels[x][y][z + 1] == 1) outerFaces[1] = true;
-                            AddOuterFacesToMesh(voxelPosition, voxelSize, vertices, triangles, uvs, outerFaces);
-                        }
+                        Vector3 voxelPosition =
+                            (new Vector3(x, y, z) - ((Vector3)gridSize * 0.5f)) * voxelSize;
+                        bool[] outerFaces = new bool[6]; // Front, Back, Top, Bottom, Right, Left
+                        if (x == 0 || voxels[x - 1][y][z] == 1)
+                            outerFaces[5] = true;
+                        if (x == gridSize.x - 1 || voxels[x + 1][y][z] == 1)
+                            outerFaces[4] = true;
+                        if (y == 0 || voxels[x][y - 1][z] == 1)
+                            outerFaces[3] = true;
+                        if (y == gridSize.y - 1 || voxels[x][y + 1][z] == 1)
+                            outerFaces[2] = true;
+                        if (z == 0 || voxels[x][y][z - 1] == 1)
+                            outerFaces[0] = true;
+                        if (z == gridSize.z - 1 || voxels[x][y][z + 1] == 1)
+                            outerFaces[1] = true;
+                        AddOuterFacesToMesh(
+                            voxelPosition,
+                            voxelSize,
+                            vertices,
+                            triangles,
+                            uvs,
+                            outerFaces
+                        );
                     }
                 }
             }
+        }
         meshFilter.mesh = GetMesh(vertices, triangles, uvs);
 
         //fillableMissingHighlight.GetComponent<FillableMissingHighlightManager>().Initialize(position, size, voxelSize);
     }
+
     //Only add the vertices of the outer faces of the voxel grid
-    private void AddOuterFacesToMesh(Vector3 position, float voxelSize, List<Vector3> vertices, List<int> triangles, List<Vector2> uvs, bool[] outerFaces){
+    private void AddOuterFacesToMesh(
+        Vector3 position,
+        float voxelSize,
+        List<Vector3> vertices,
+        List<int> triangles,
+        List<Vector2> uvs,
+        bool[] outerFaces
+    )
+    {
         int startIndex = vertices.Count;
-    
+
         List<Vector3> cubeVertices = new List<Vector3>();
         List<int> cubeTriangles = new List<int>();
         int addedFaces = 0;
-        if (outerFaces[0]){
-            cubeVertices.AddRange(new Vector3[]{
-                new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(1, 1, 0), new Vector3(0, 1, 0)});
-            cubeTriangles.AddRange(new int[]{0, 2, 1,  0, 3, 2});
+        if (outerFaces[0])
+        {
+            cubeVertices.AddRange(
+                new Vector3[]
+                {
+                    new Vector3(0, 0, 0),
+                    new Vector3(1, 0, 0),
+                    new Vector3(1, 1, 0),
+                    new Vector3(0, 1, 0),
+                }
+            );
+            cubeTriangles.AddRange(new int[] { 0, 2, 1, 0, 3, 2 });
             addedFaces++;
         }
-        if (outerFaces[1]){
-            cubeVertices.AddRange(new Vector3[]{
-                new Vector3(0, 0, 1), new Vector3(1, 0, 1), new Vector3(1, 1, 1), new Vector3(0, 1, 1)});
-            cubeTriangles.AddRange((new int[]{0, 1, 2,  0, 2, 3}).Select(index => index + 4 * addedFaces));
+        if (outerFaces[1])
+        {
+            cubeVertices.AddRange(
+                new Vector3[]
+                {
+                    new Vector3(0, 0, 1),
+                    new Vector3(1, 0, 1),
+                    new Vector3(1, 1, 1),
+                    new Vector3(0, 1, 1),
+                }
+            );
+            cubeTriangles.AddRange(
+                (new int[] { 0, 1, 2, 0, 2, 3 }).Select(index => index + 4 * addedFaces)
+            );
             addedFaces++;
         }
-        if (outerFaces[2]){
-            cubeVertices.AddRange(new Vector3[]{
-                new Vector3(0, 1, 0), new Vector3(1, 1, 0), new Vector3(1, 1, 1), new Vector3(0, 1, 1)});
-            cubeTriangles.AddRange((new int[]{0, 3, 2,  0, 2, 1}).Select(index => index + 4 * addedFaces));
+        if (outerFaces[2])
+        {
+            cubeVertices.AddRange(
+                new Vector3[]
+                {
+                    new Vector3(0, 1, 0),
+                    new Vector3(1, 1, 0),
+                    new Vector3(1, 1, 1),
+                    new Vector3(0, 1, 1),
+                }
+            );
+            cubeTriangles.AddRange(
+                (new int[] { 0, 3, 2, 0, 2, 1 }).Select(index => index + 4 * addedFaces)
+            );
             addedFaces++;
         }
-        if (outerFaces[3]){
-            cubeVertices.AddRange(new Vector3[]{
-                new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(1, 0, 1), new Vector3(0, 0, 1)});
-            cubeTriangles.AddRange((new int[]{0, 1, 2,  0, 2, 3}).Select(index => index + 4 * addedFaces));
+        if (outerFaces[3])
+        {
+            cubeVertices.AddRange(
+                new Vector3[]
+                {
+                    new Vector3(0, 0, 0),
+                    new Vector3(1, 0, 0),
+                    new Vector3(1, 0, 1),
+                    new Vector3(0, 0, 1),
+                }
+            );
+            cubeTriangles.AddRange(
+                (new int[] { 0, 1, 2, 0, 2, 3 }).Select(index => index + 4 * addedFaces)
+            );
             addedFaces++;
         }
-        if (outerFaces[4]){
-            cubeVertices.AddRange(new Vector3[]{
-                new Vector3(1, 0, 0), new Vector3(1, 1, 0), new Vector3(1, 1, 1), new Vector3(1, 0, 1)});
-            cubeTriangles.AddRange((new int[]{0, 1, 2,  0, 2, 3}).Select(index => index + 4 * addedFaces));
+        if (outerFaces[4])
+        {
+            cubeVertices.AddRange(
+                new Vector3[]
+                {
+                    new Vector3(1, 0, 0),
+                    new Vector3(1, 1, 0),
+                    new Vector3(1, 1, 1),
+                    new Vector3(1, 0, 1),
+                }
+            );
+            cubeTriangles.AddRange(
+                (new int[] { 0, 1, 2, 0, 2, 3 }).Select(index => index + 4 * addedFaces)
+            );
             addedFaces++;
         }
-        if (outerFaces[5]){
-            cubeVertices.AddRange(new Vector3[]{
-                new Vector3(0, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 1, 1), new Vector3(0, 0, 1)});
-            cubeTriangles.AddRange((new int[]{0, 3, 2,  0, 2, 1}).Select(index => index + 4 * addedFaces));
+        if (outerFaces[5])
+        {
+            cubeVertices.AddRange(
+                new Vector3[]
+                {
+                    new Vector3(0, 0, 0),
+                    new Vector3(0, 1, 0),
+                    new Vector3(0, 1, 1),
+                    new Vector3(0, 0, 1),
+                }
+            );
+            cubeTriangles.AddRange(
+                (new int[] { 0, 3, 2, 0, 2, 1 }).Select(index => index + 4 * addedFaces)
+            );
             addedFaces++;
         }
 
-        Vector2[] cubeUVs = {
-            new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1)
+        Vector2[] cubeUVs =
+        {
+            new Vector2(0, 0),
+            new Vector2(1, 0),
+            new Vector2(1, 1),
+            new Vector2(0, 1),
         };
         for (int i = 0; i < cubeVertices.Count; i++)
         {
             vertices.Add(cubeVertices[i] * voxelSize + position);
-            uvs.Add(cubeUVs[i%4]);
+            uvs.Add(cubeUVs[i % 4]);
         }
         for (int i = 0; i < cubeTriangles.Count; i++)
         {
             triangles.Add(startIndex + cubeTriangles[i]);
         }
     }
-
-    
 
     private Mesh GetMesh(List<Vector3> vertices, List<int> triangles, List<Vector2> uvs)
     {

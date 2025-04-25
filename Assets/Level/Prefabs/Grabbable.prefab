@@ -405,6 +405,8 @@ MonoBehaviour:
     matrixOrigin: {fileID: 5080750936904777396}
     rotationText: {fileID: 8741922976635442424}
   transparentMaterial: {fileID: 2100000, guid: 81fc72ae88c078d46ad254066d0c2fa3, type: 2}
+  defaultMaterial: {fileID: 0}
+  insideMaterial: {fileID: 0}
 --- !u!95 &1615089270858792429
 Animator:
   serializedVersion: 7
