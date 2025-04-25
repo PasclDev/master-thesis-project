@@ -47,6 +47,7 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         if (context.performed && isHovered)
         {
+            isHovered = false;
             button.onClick.Invoke(); // Invoke the button click event
         }
     }
