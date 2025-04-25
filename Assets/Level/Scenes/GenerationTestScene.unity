@@ -4296,6 +4296,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 725507032043010353, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 725507032043010353, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2199860015111590321, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -4761,7 +4769,9 @@ PrefabInstance:
       value: MR Interaction Setup
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4277812762327903290, guid: 3e46092e15bd37d42ad8686e94b98c25, type: 3}
+    - {fileID: 5474754569654006528, guid: 3e46092e15bd37d42ad8686e94b98c25, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3e46092e15bd37d42ad8686e94b98c25, type: 3}
@@ -4957,36 +4967,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3032334163600735877}
   m_CullTransparentMesh: 1
---- !u!114 &3032334163765991680
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3032334163765991709}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &3032334163765991683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5204,7 +5184,6 @@ GameObject:
   - component: {fileID: 3032334163765991710}
   - component: {fileID: 3032334163765991685}
   - component: {fileID: 3032334163765991683}
-  - component: {fileID: 3032334163765991680}
   - component: {fileID: 3032334163765991687}
   - component: {fileID: 3032334163765991686}
   - component: {fileID: 2599823900465858715}
@@ -6135,7 +6114,6 @@ GameObject:
   - component: {fileID: 3032334165140995077}
   - component: {fileID: 3032334165140995083}
   - component: {fileID: 3032334165140995082}
-  - component: {fileID: 3032334165140995081}
   - component: {fileID: 3032334165140995080}
   - component: {fileID: 3032334165140995079}
   - component: {fileID: 3032334165140995078}
@@ -6335,36 +6313,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &3032334165140995081
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3032334165140995076}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &3032334165140995082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7227,6 +7175,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 681bd5b1d68f66649a528c9145061be4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  leftGrabAction: {fileID: -3742484312079769484, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  rightGrabAction: {fileID: 15759602096507913, guid: c348712bda248c246b8c49b3db54643f, type: 3}
 --- !u!114 &8372077074494813036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7259,6 +7209,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 681bd5b1d68f66649a528c9145061be4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  leftGrabAction: {fileID: -3742484312079769484, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  rightGrabAction: {fileID: 15759602096507913, guid: c348712bda248c246b8c49b3db54643f, type: 3}
 --- !u!222 &8579317722048364248
 CanvasRenderer:
   m_ObjectHideFlags: 0
