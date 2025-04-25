@@ -28,7 +28,7 @@ public class GrabbableManager : MonoBehaviour
     public Grabbable grabbable;
     public float voxelSize;
     public InsideFillable insideFillable;
-    public bool isGrabbed = true;
+    public bool isGrabbed = false;
     public int isInHand = 0; // 1 for left hand, 2 for right hand
     public DebugObjects debugObjects;
     public Material transparentMaterial;
@@ -219,20 +219,30 @@ public class GrabbableManager : MonoBehaviour
         }
     }
 
+    public void OnHoverEnter(HoverEnterEventArgs args)
+    {
+        outline.OutlineColor = Color.gray;
+        outline.enabled = true;
+    }
+
+    public void OnHoverExit(HoverExitEventArgs args)
+    {
+        if (!isGrabbed)
+            outline.enabled = false;
+    }
+
     // Triggers whenever the grabbable gets grabbed by the player
     public void OnSelectEnter(SelectEnterEventArgs args)
     {
         isGrabbed = true;
+        outline.OutlineColor = Color.white;
         outline.enabled = true;
         isInHand = args.interactorObject.transform.name.Contains("Left") ? 1 : 2;
         StatisticManager.instance.levelStatistic.numberOfGrabs++;
         StatisticManager.instance.SetTimeTilFirstGrab();
         SetMaterial(false, false);
         Debug.Log(
-            "Grabbable: "
-                + gameObject.name
-                + "has been picked up! In hand: "
-                + (isInHand == 1 ? "Left" : "Right")
+            $"Grabbable: {gameObject.name} has been picked up! In hand: {(isInHand == 1 ? "Left" : "Right")}"
         ); // Warning: Used in tutorial-logic
         if (null != insideFillable && null != insideFillable.fillableObject)
         {
@@ -250,7 +260,6 @@ public class GrabbableManager : MonoBehaviour
     public void OnSelectExit()
     {
         isGrabbed = false;
-        outline.enabled = false;
         isInHand = 0;
         SetMaterial(false, false);
         Debug.Log("Grabbable: " + gameObject.name + " has been dropped!");

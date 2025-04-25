@@ -5,18 +5,15 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class InteractorDebug : MonoBehaviour
 {
     public string interactorName = "InteractorRight";
-    public List<GameObject> currentHovers = new List<GameObject>();
     public GameObject currentHover;
 
     public void OnHoverEnter(HoverEnterEventArgs args)
     {
         if (
             args.interactableObject != null
-            && !currentHovers.Contains(args.interactableObject.transform.gameObject)
             && args.interactableObject.transform.CompareTag("Grabbable")
         )
         {
-            currentHovers.Add(args.interactableObject.transform.gameObject);
             currentHover = args.interactableObject.transform.gameObject;
             LogCurrentHovers();
         }
@@ -26,11 +23,9 @@ public class InteractorDebug : MonoBehaviour
     {
         if (
             args.interactableObject != null
-            && !currentHovers.Contains(args.interactableObject.transform.gameObject)
             && args.interactableObject.transform.CompareTag("Grabbable")
         )
         {
-            currentHovers.Remove(args.interactableObject.transform.gameObject);
             currentHover = null;
             LogCurrentHovers();
         }
@@ -38,8 +33,7 @@ public class InteractorDebug : MonoBehaviour
 
     private void LogCurrentHovers()
     {
-        string hoverList = string.Join(", ", currentHovers.ConvertAll(obj => obj.name));
-        Debug.Log($"{interactorName}: Hover List: {hoverList}");
+        Debug.Log($"{interactorName}: Hover: {currentHover}");
         if (currentHover != null)
         {
             Vector3 distance = currentHover.transform.position - transform.position;
