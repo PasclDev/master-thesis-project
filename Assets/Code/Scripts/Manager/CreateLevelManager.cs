@@ -247,8 +247,8 @@ public class CreateLevelManager : MonoBehaviour
                 if (i > 1) grabbablesJson += @",";
                 (int[][][] grabbableGrid, int sizeX, int sizeY, int sizeZ) = IsolateGrabbableFromGrid(i);
                 string rawVoxels = ConvertVoxelsToRawVoxels(grabbableGrid, sizeX, sizeY, sizeZ);
-                string position = "[0, 0, 0]";
-                string color = "#E4010B";
+                string position = DetermineGrabbablePositionById(i);
+                string color = DetermineGrabbableColorById(i);
                 grabbablesJson += @"
             {
                 ""size"": [" + sizeX + @", " + sizeY + @", " + sizeZ + @"],
@@ -278,8 +278,53 @@ public class CreateLevelManager : MonoBehaviour
                 }
             }
         }
-        // TODO: reduce size on empty sides
-        return (grabbableGrid, gridSizeX, gridSizeY, gridSizeZ);
+        // Before returning, shrink the grabbable grid to the smallest size that contains all voxels
+        return ShrinkGrabbableGrid(grabbableGrid);
+    }
+    private (int[][][] grid, int sizeX, int sizeY, int sizeZ) ShrinkGrabbableGrid(int[][][] grabbableGrid)
+    {
+        int sizeX = grabbableGrid.Length;
+        int sizeY = grabbableGrid[0].Length;
+        int sizeZ = grabbableGrid[0][0].Length;
+        // Shrink the grid to the smallest size that contains all voxels
+        int minX = sizeX, minY = sizeY, minZ = sizeZ;
+        int maxX = 0, maxY = 0, maxZ = 0;
+        for (int x = 0; x < sizeX; x++)
+        {
+            for (int y = 0; y < sizeY; y++)
+            {
+                for (int z = 0; z < sizeZ; z++)
+                {
+                    if (grabbableGrid[x][y][z] == 1)
+                    {
+                        if (x < minX) minX = x;
+                        if (y < minY) minY = y;
+                        if (z < minZ) minZ = z;
+                        if (x > maxX) maxX = x;
+                        if (y > maxY) maxY = y;
+                        if (z > maxZ) maxZ = z;
+                    }
+                }
+            }
+        }
+        // Create a new grid with the reduced size
+        int newSizeX = maxX - minX + 1;
+        int newSizeY = maxY - minY + 1;
+        int newSizeZ = maxZ - minZ + 1;
+        int[][][] newGrabbableGrid = new int[newSizeX][][];
+        for (int x = 0; x < newSizeX; x++)
+        {
+            newGrabbableGrid[x] = new int[newSizeY][];
+            for (int y = 0; y < newSizeY; y++)
+            {
+                newGrabbableGrid[x][y] = new int[newSizeZ];
+                for (int z = 0; z < newSizeZ; z++)
+                {
+                    newGrabbableGrid[x][y][z] = grabbableGrid[x + minX][y + minY][z + minZ];
+                }
+            }
+        }
+        return (newGrabbableGrid, newSizeX, newSizeY, newSizeZ);
     }
     private string ConvertVoxelsToRawVoxels(int[][][] grid, int sizeX, int sizeY, int sizeZ)
     {
@@ -306,6 +351,33 @@ public class CreateLevelManager : MonoBehaviour
             rawVoxels = rawVoxels.Substring(0, rawVoxels.Length - 4);
         return rawVoxels;
     }
+    private string DetermineGrabbablePositionById(int id)
+    {
+        int x = 0, y = 0;
+
+        if (id == 1)
+            x = -1;
+        else if (id == 2)
+            x = 1;
+        else
+        {
+            y = id / 3;
+            x = (id % 3) - 1;
+        }
+        return $"[{x * (gridSizeX + 1)}, {y * (gridSizeY + 1)}, {0}]";
+    }
+    private string DetermineGrabbableColorById(int id)
+    {
+        // Find the GameObject with the name "CreatedGrabbable_" + id and get its material color
+        GameObject grabbable = GameObject.Find("CreatedGrabbable_" + id);
+        if (grabbable != null)
+        {
+            Color color = grabbable.GetComponent<MeshRenderer>().material.color;
+            return $"#{ColorUtility.ToHtmlStringRGB(color)}";
+        }
+        return "#FFFFFF"; // Default color if not found
+    }
+    //***** Input Action Callbacks  *****//
 
     void LeftTriggerPressed(InputAction.CallbackContext context)
     {
