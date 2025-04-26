@@ -23,6 +23,7 @@ public class CreateLevelManager : MonoBehaviour
     private Vector3 gridSize;
     private Vector3 gridOrigin;
     private Vector3 gridEnd;
+
     void Start()
     {
         voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
@@ -192,6 +193,120 @@ public class CreateLevelManager : MonoBehaviour
             }
         }
     }
+    public void ResetLevel()
+    {
+        //Delete all children
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
+        //Reset grid
+        EmptyGrid(grid);
+        Debug.Log("CreateLevelManager: Level Reset");
+    }
+    public void SaveLevel()
+    {
+        // Save the level as a json file with timestamp
+
+        string levelFilePath;
+        // Logging
+        if (Application.platform == RuntimePlatform.Android)
+        { //Path to Documents in Meta Quest 3
+            levelFilePath = "/storage/emulated/0/Documents/Level_" + System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".json";
+        }
+        else
+        {
+            levelFilePath = Application.persistentDataPath + "/Level_" + System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".json";
+        }
+        System.IO.StreamWriter levelFile = new System.IO.StreamWriter(levelFilePath, true);
+        string jsonString = @"
+{
+    ""levels"": [
+        {
+            ""voxelSize"": " + voxelSize + @",
+            ""fillable"": {
+                ""size"": [" + gridSizeX + @", " + gridSizeY + @", " + gridSizeZ + @"],
+                ""position"": [0, 0, 0]
+            },
+            ""grabbables"": [" + ConvertCreatedGrabbablesToJson() + @"
+            ]
+        }
+    ]
+}";
+        levelFile.WriteLine(jsonString);
+        levelFile.Close();
+        Debug.Log("CreateLevelManager: Level saved to " + levelFilePath);
+    }
+    private string ConvertCreatedGrabbablesToJson()
+    {
+        string grabbablesJson = @"";
+        for (int i = 1; i < gridSizeX * gridSizeY * gridSizeZ; i++)
+        {
+            if (IsIDInUse(i))
+            {
+                if (i > 1) grabbablesJson += @",";
+                (int[][][] grabbableGrid, int sizeX, int sizeY, int sizeZ) = IsolateGrabbableFromGrid(i);
+                string rawVoxels = ConvertVoxelsToRawVoxels(grabbableGrid, sizeX, sizeY, sizeZ);
+                string position = "[0, 0, 0]";
+                string color = "#E4010B";
+                grabbablesJson += @"
+            {
+                ""size"": [" + sizeX + @", " + sizeY + @", " + sizeZ + @"],
+                ""rawVoxels"": [" + rawVoxels + @"],
+                ""position"": " + position + @",
+                ""color"": """ + color + @"""
+            }";
+            }
+        }
+        return grabbablesJson;
+    }
+    private (int[][][] grid, int sizeX, int sizeY, int sizeZ) IsolateGrabbableFromGrid(int id)
+    {
+        int[][][] grabbableGrid = new int[gridSizeX][][];
+        for (int x = 0; x < gridSizeX; x++)
+        {
+            grabbableGrid[x] = new int[gridSizeY][];
+            for (int y = 0; y < gridSizeY; y++)
+            {
+                grabbableGrid[x][y] = new int[gridSizeZ];
+                for (int z = 0; z < gridSizeZ; z++)
+                {
+                    if (grid[x][y][z] == id)
+                    {
+                        grabbableGrid[x][y][z] = 1;
+                    }
+                }
+            }
+        }
+        // TODO: reduce size on empty sides
+        return (grabbableGrid, gridSizeX, gridSizeY, gridSizeZ);
+    }
+    private string ConvertVoxelsToRawVoxels(int[][][] grid, int sizeX, int sizeY, int sizeZ)
+    {
+        string rawVoxels = @"
+                    ";
+        // Convert the grid to a raw voxel format
+        for (int x = 0; x < sizeX; x++)
+        {
+            for (int y = 0; y < sizeY; y++)
+            {
+                for (int z = 0; z < sizeZ; z++)
+                {
+                    rawVoxels += grid[x][y][z];
+                    if (!(x == sizeX - 1 && y == sizeY - 1 && z == sizeZ - 1))
+                        rawVoxels += ", "; // Add a comma and space between voxels, except for the last one
+                    if (z == sizeZ - 1) rawVoxels += " ";
+                }
+                if (y == sizeY - 1) rawVoxels += @"
+                    ";
+            }
+        }
+        // Remove the last 4 characters (4 spaces)
+        if (rawVoxels.Length >= 4)
+            rawVoxels = rawVoxels.Substring(0, rawVoxels.Length - 4);
+        return rawVoxels;
+    }
+
     void LeftTriggerPressed(InputAction.CallbackContext context)
     {
         if (context.performed)

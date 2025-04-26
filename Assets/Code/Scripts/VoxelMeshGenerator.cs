@@ -221,7 +221,7 @@ public class VoxelMeshGenerator : MonoBehaviour
     )
     {
         GameObject createdGrabbableObject = Instantiate(
-            grabbableBlankPrefab,
+            createdGrabbableBlankPrefab,
             position,
             Quaternion.identity,
             transform

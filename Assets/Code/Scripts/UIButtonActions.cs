@@ -65,6 +65,16 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
         LevelManager.instance.LoadLevel(LevelManager.instance.currentLevel, false);
         UIManager.instance.HideManageLevelUI();
     }
+    public void OnResetCreateLevelButton()
+    {
+        GameObject.Find("CreateLevelManager").GetComponent<CreateLevelManager>().ResetLevel();
+        UIManager.instance.HideManageLevelUI();
+    }
+    public void OnSaveLevelButton()
+    {
+        GameObject.Find("CreateLevelManager").GetComponent<CreateLevelManager>().SaveLevel();
+        UIManager.instance.HideManageLevelUI();
+    }
 
     public void OnQuitApplicationButton()
     {
