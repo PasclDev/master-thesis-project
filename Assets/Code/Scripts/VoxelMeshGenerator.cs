@@ -7,6 +7,7 @@ public class VoxelMeshGenerator : MonoBehaviour
     public GameObject grabbableBlankPrefab;
     public GameObject fillableBlankPrefab;
     public GameObject fillableMissingHighlightPrefab;
+    public GameObject createdGrabbableBlankPrefab; // Only used for level creation
 
     public void GenerateGrabbableObjects(LevelData currentLevelData)
     {
@@ -210,6 +211,117 @@ public class VoxelMeshGenerator : MonoBehaviour
 
         //fillableMissingHighlight.GetComponent<FillableMissingHighlightManager>().Initialize(position, size, voxelSize);
     }
+    public void GenerateCreatedGrabbableObject(
+        Vector3 position,
+        Vector3Int gridSize,
+        float voxelSize,
+        int[][][] voxels,
+        Color color,
+        int id
+    )
+    {
+        GameObject createdGrabbableObject = Instantiate(
+            grabbableBlankPrefab,
+            position,
+            Quaternion.identity,
+            transform
+        );
+        createdGrabbableObject.name = "CreatedGrabbable_" + id;
+        Material normalMaterial = createdGrabbableObject.GetComponent<Renderer>().material;
+        normalMaterial.color = color;
+        MeshFilter meshFilter = createdGrabbableObject.GetComponent<MeshFilter>();
+
+        // Generate Mesh
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+        List<Vector2> uvs = new List<Vector2>();
+
+        for (int x = 0; x < gridSize.x; x++)
+        {
+            for (int y = 0; y < gridSize.y; y++)
+            {
+                for (int z = 0; z < gridSize.z; z++)
+                {
+                    if (voxels[x][y][z] == id)
+                    {
+                        Vector3 voxelPosition = (new Vector3(x, y, z) - (Vector3)gridSize * 0.5f) * voxelSize;
+                        bool[] outerFaces = new bool[6]; // Front, Back, Top, Bottom, Right, Left
+                        if (x == 0 || voxels[x - 1][y][z] != id)
+                            outerFaces[5] = true;
+                        if (x == gridSize.x - 1 || voxels[x + 1][y][z] != id)
+                            outerFaces[4] = true;
+                        if (y == 0 || voxels[x][y - 1][z] != id)
+                            outerFaces[3] = true;
+                        if (y == gridSize.y - 1 || voxels[x][y + 1][z] != id)
+                            outerFaces[2] = true;
+                        if (z == 0 || voxels[x][y][z - 1] != id)
+                            outerFaces[0] = true;
+                        if (z == gridSize.z - 1 || voxels[x][y][z + 1] != id)
+                            outerFaces[1] = true;
+                        AddOuterFacesToMesh(
+                            voxelPosition,
+                            voxelSize,
+                            vertices,
+                            triangles,
+                            uvs,
+                            outerFaces
+                        );
+                    }
+                }
+            }
+        }
+        meshFilter.mesh = GetMesh(vertices, triangles, uvs);
+    }
+    public void UpdateCreatedGrabbableObject(
+        GameObject createdGrabbableObject,
+        Vector3Int gridSize,
+        float voxelSize,
+        int[][][] voxels,
+        int id
+    )
+    {
+        // Generate Mesh
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+        List<Vector2> uvs = new List<Vector2>();
+
+        for (int x = 0; x < gridSize.x; x++)
+        {
+            for (int y = 0; y < gridSize.y; y++)
+            {
+                for (int z = 0; z < gridSize.z; z++)
+                {
+                    if (voxels[x][y][z] == id)
+                    {
+                        Vector3 voxelPosition = (new Vector3(x, y, z) - (Vector3)gridSize * 0.5f) * voxelSize;
+                        bool[] outerFaces = new bool[6]; // Front, Back, Top, Bottom, Right, Left
+                        if (x == 0 || voxels[x - 1][y][z] != id)
+                            outerFaces[5] = true;
+                        if (x == gridSize.x - 1 || voxels[x + 1][y][z] != id)
+                            outerFaces[4] = true;
+                        if (y == 0 || voxels[x][y - 1][z] != id)
+                            outerFaces[3] = true;
+                        if (y == gridSize.y - 1 || voxels[x][y + 1][z] != id)
+                            outerFaces[2] = true;
+                        if (z == 0 || voxels[x][y][z - 1] != id)
+                            outerFaces[0] = true;
+                        if (z == gridSize.z - 1 || voxels[x][y][z + 1] != id)
+                            outerFaces[1] = true;
+                        AddOuterFacesToMesh(
+                            voxelPosition,
+                            voxelSize,
+                            vertices,
+                            triangles,
+                            uvs,
+                            outerFaces
+                        );
+                    }
+                }
+            }
+        }
+        createdGrabbableObject.GetComponent<MeshFilter>().mesh = GetMesh(vertices, triangles, uvs);
+    }
+
 
     //Only add the vertices of the outer faces of the voxel grid
     private void AddOuterFacesToMesh(

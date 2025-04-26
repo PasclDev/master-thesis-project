@@ -1,5 +1,7 @@
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.PlayerLoop;
 
 public class CreateLevelManager : MonoBehaviour
 {
@@ -139,34 +141,81 @@ public class CreateLevelManager : MonoBehaviour
         }
         return (false, -1, -1, -1);
     }
+    void UpdateVoxelInGrid(int x, int y, int z, int id)
+    {
+        // Update the voxel in the Grid with the specified ID (Only if the ID is different from the current one)
+        if (x >= 0 && x < gridSizeX && y >= 0 && y < gridSizeY && z >= 0 && z < gridSizeZ && grid[x][y][z] != id)
+        {
+            if (id == 0)
+            {
+                id = grid[x][y][z];
+                grid[x][y][z] = 0;
+            }
+            else
+            {
+                grid[x][y][z] = id;
+            }
+            UpdateGridVisualization(id);
+            Debug.Log("Voxel Updated: " + x + "," + y + "," + z + " | ID: " + id);
+        }
+    }
+    void UpdateGridVisualization(int id)
+    {
+        if (!IsIDInUse(id))
+        {
+            Destroy(GameObject.Find("CreatedGrabbable_" + id));
+        }
+        else
+        {
+            //Check if gameobject exists
+            GameObject createdGrabbable = GameObject.Find("CreatedGrabbable_" + id);
+            if (createdGrabbable == null)
+            {
+                voxelMeshGenerator.GenerateCreatedGrabbableObject(
+                     position: transform.position,
+                     gridSize: new Vector3Int(gridSizeX, gridSizeY, gridSizeZ),
+                     voxelSize: voxelSize,
+                     voxels: grid,
+                     color: new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f),
+                     id: id
+                 );
+            }
+            else
+            {
+                voxelMeshGenerator.UpdateCreatedGrabbableObject(
+                    createdGrabbable,
+                    gridSize: new Vector3Int(gridSizeX, gridSizeY, gridSizeZ),
+                    voxelSize: voxelSize,
+                    voxels: grid,
+                    id: id
+                );
+            }
+        }
+    }
     void LeftTriggerPressed(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
-            (bool isInsideGrid, int x, int y, int z) = GetVoxelPosition(leftControllerTransform.position);
-            if (!isInsideGrid)
-            {
-                Debug.Log("Left Trigger: Pressed" + " | Grid: Not in grid | Position: " + leftControllerTransform.position);
-                return;
-            }
-            grid[x][y][z] = 0;
-            Debug.Log("Left Trigger: Pressed" + " | Grid: " + x + "," + y + "," + z + " | Position: " + leftControllerTransform.position);
-
+            TriggerPressed(true);
         }
     }
     void RightTriggerPressed(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
-            (bool isInsideGrid, int x, int y, int z) = GetVoxelPosition(rightControllerTransform.position);
-            if (!isInsideGrid)
-            {
-                Debug.Log("Right Trigger: Pressed" + " | Grid: Not in grid | Position: " + rightControllerTransform.position);
-                return;
-            }
-            grid[x][y][z] = 0;
-            Debug.Log("Right Trigger: Pressed" + " | Grid: " + x + "," + y + "," + z + " | Position: " + rightControllerTransform.position);
+            TriggerPressed(false);
         }
+    }
+    void TriggerPressed(bool isLeft)
+    {
+        (bool isInsideGrid, int x, int y, int z) = GetVoxelPosition(isLeft ? leftControllerTransform.position : rightControllerTransform.position);
+        if (!isInsideGrid)
+        {
+            Debug.Log("Trigger Pressed: " + (isLeft ? "Left" : "Right") + " |  Grid: Not in grid" + " | Position: " + (isLeft ? leftControllerTransform.position : rightControllerTransform.position));
+            return;
+        }
+        Debug.Log("Trigger Pressed: " + (isLeft ? "Left" : "Right") + " | ID: " + (isLeft ? curObjIDLeft : curObjIDRight) + " | Grid: " + x + "," + y + "," + z + " | Position: " + rightControllerTransform.position);
+        UpdateVoxelInGrid(x, y, z, 0);
     }
     void LeftGripPressed(InputAction.CallbackContext context)
     {
@@ -183,12 +232,10 @@ public class CreateLevelManager : MonoBehaviour
     {
         if (context.performed)
         {
-            Debug.Log("Right Grip: Pressed" + rightControllerTransform.position);
             GripPressed(false);
         }
         else if (context.canceled)
         {
-            Debug.Log("Right Grip: Released" + rightControllerTransform.position);
             curObjIDRight = 0;
         }
     }
@@ -197,7 +244,7 @@ public class CreateLevelManager : MonoBehaviour
         (bool isInsideGrid, int x, int y, int z) = GetVoxelPosition(isLeft ? leftControllerTransform.position : rightControllerTransform.position);
         if (!isInsideGrid)
         {
-            Debug.Log("Grip Pressed: " + (isLeft ? "Left" : "Right") + " Grid: Not in grid" + " Position: " + (isLeft ? leftControllerTransform.position : rightControllerTransform.position));
+            Debug.Log("Grip Pressed: " + (isLeft ? "Left" : "Right") + " | Grid: Not in grid" + " | Position: " + (isLeft ? leftControllerTransform.position : rightControllerTransform.position));
             return;
         }
         if (grid[x][y][z] == 0)
@@ -209,7 +256,7 @@ public class CreateLevelManager : MonoBehaviour
                 {
                     if (isLeft) curObjIDLeft = i;
                     else curObjIDRight = i;
-                    grid[x][y][z] = i;
+                    UpdateVoxelInGrid(x, y, z, i);
                     break;
                 }
             }
@@ -220,7 +267,7 @@ public class CreateLevelManager : MonoBehaviour
             if (isLeft) curObjIDLeft = grid[x][y][z];
             else curObjIDRight = grid[x][y][z];
         }
-        Debug.Log("Grip Pressed: " + (isLeft ? "Left" : "Right") + " ID: " + (isLeft ? curObjIDLeft : curObjIDRight));
+        Debug.Log("Grip Pressed: " + (isLeft ? "Left" : "Right") + " | ID: " + (isLeft ? curObjIDLeft : curObjIDRight) + " | Grid: " + x + "," + y + "," + z + " | Position: " + (isLeft ? leftControllerTransform.position : rightControllerTransform.position));
     }
     void WhileGripPressed(bool isLeft)
     {
@@ -230,8 +277,8 @@ public class CreateLevelManager : MonoBehaviour
         if (grid[x][y][z] == 0)
         {
             // Check if the voxel is empty, if it is, set it to the current object ID
-            grid[x][y][z] = isLeft ? curObjIDLeft : curObjIDRight;
-            Debug.Log("While Grip Pressed: " + (isLeft ? "Left" : "Right") + " ID: " + (isLeft ? curObjIDLeft : curObjIDRight) + "Grid:" + grid[x][y][z]);
+            UpdateVoxelInGrid(x, y, z, isLeft ? curObjIDLeft : curObjIDRight);
+            Debug.Log("While Grip Pressed: " + (isLeft ? "Left" : "Right") + " | ID: " + (isLeft ? curObjIDLeft : curObjIDRight) + " | Grid:" + grid[x][y][z]);
         }
     }
 

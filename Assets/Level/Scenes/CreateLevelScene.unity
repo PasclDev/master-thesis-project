@@ -296,6 +296,7 @@ MonoBehaviour:
   grabbableBlankPrefab: {fileID: 175672152838179538, guid: b4b4c97ef118b32449d94373a739a45d, type: 3}
   fillableBlankPrefab: {fileID: 2791289762559432273, guid: a909bcb1916778d4391d591e326ef1a6, type: 3}
   fillableMissingHighlightPrefab: {fileID: 2791289762559432273, guid: 9057a0bb6da4ec845a71d3e9d0ce4f75, type: 3}
+  createdGrabbableBlankPrefab: {fileID: 0}
 --- !u!114 &348509149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1691,9 +1692,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30f42180685c0314d821b9ced5d5fc69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grabbableBlankPrefab: {fileID: 175672152838179538, guid: b4b4c97ef118b32449d94373a739a45d, type: 3}
+  grabbableBlankPrefab: {fileID: 6754874842520223166, guid: 042433128b1f3f64183afe46c366e432, type: 3}
   fillableBlankPrefab: {fileID: 2791289762559432273, guid: a909bcb1916778d4391d591e326ef1a6, type: 3}
   fillableMissingHighlightPrefab: {fileID: 2791289762559432273, guid: 9057a0bb6da4ec845a71d3e9d0ce4f75, type: 3}
+  createdGrabbableBlankPrefab: {fileID: 0}
 --- !u!114 &1859479057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1727,7 +1729,7 @@ Transform:
   m_GameObject: {fileID: 1859479055}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.1999998, z: 0}
+  m_LocalPosition: {x: 0, y: 1.1999998, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
