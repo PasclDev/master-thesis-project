@@ -37,11 +37,17 @@ public class UIManager : MonoBehaviour
         ManageLevelUI.SetActive(false);
         isUiVisible = false;
     }
-    public void SetManageLevelUIText(int levelIndex, int grabbablesAmount, int fillablesAmount){
-        if (levelIndex == 0){
+    public void SetManageLevelUIText(int levelIndex, int grabbablesAmount, int fillablesAmount)
+    {
+        if (levelIndex == 0)
+        {
             levelInformationText.text = "Level: Einführung";
             return;
         }
         levelInformationText.text = "Level " + levelIndex + "\nFarbformen: " + grabbablesAmount + " | Gitterboxen: " + fillablesAmount;
+    }
+    public void SetManageLevelUIText(string text)
+    {
+        levelInformationText.text = text;
     }
 }

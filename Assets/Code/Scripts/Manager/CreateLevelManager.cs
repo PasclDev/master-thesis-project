@@ -2,6 +2,8 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.PlayerLoop;
+using System.Linq;
+using System.Collections.Generic;
 
 public class CreateLevelManager : MonoBehaviour
 {
@@ -23,6 +25,7 @@ public class CreateLevelManager : MonoBehaviour
     private Vector3 gridSize;
     private Vector3 gridOrigin;
     private Vector3 gridEnd;
+    public List<Color> createdGrabbableColors = new List<Color>();
 
     void Start()
     {
@@ -32,6 +35,11 @@ public class CreateLevelManager : MonoBehaviour
         gridSize = new Vector3(gridSizeX * voxelSize, gridSizeY * voxelSize, gridSizeZ * voxelSize);
         gridOrigin = transform.position - (gridSize / 2);
         gridEnd = transform.position + (gridSize / 2);
+        UpdateUIText();
+        foreach (Color color in createdGrabbableColors)
+        {
+            Debug.Log("Created Grabbable Color: " + color);
+        }
     }
 
     void OnEnable()
@@ -157,6 +165,7 @@ public class CreateLevelManager : MonoBehaviour
                 grid[x][y][z] = id;
             }
             UpdateGridVisualization(id);
+            UpdateUIText();
             Debug.Log("Voxel Updated: " + x + "," + y + "," + z + " | ID: " + id);
         }
     }
@@ -164,6 +173,7 @@ public class CreateLevelManager : MonoBehaviour
     {
         if (!IsIDInUse(id))
         {
+            createdGrabbableColors.Remove(createdGrabbableColors[id - 1]);
             Destroy(GameObject.Find("CreatedGrabbable_" + id));
         }
         else
@@ -172,14 +182,17 @@ public class CreateLevelManager : MonoBehaviour
             GameObject createdGrabbable = GameObject.Find("CreatedGrabbable_" + id);
             if (createdGrabbable == null)
             {
+                Color color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
                 voxelMeshGenerator.GenerateCreatedGrabbableObject(
                      position: transform.position,
                      gridSize: new Vector3Int(gridSizeX, gridSizeY, gridSizeZ),
                      voxelSize: voxelSize,
                      voxels: grid,
-                     color: new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f),
+                     color: color,
                      id: id
                  );
+                createdGrabbableColors.Add(color);
+
             }
             else
             {
@@ -193,6 +206,34 @@ public class CreateLevelManager : MonoBehaviour
             }
         }
     }
+    void UpdateUIText()
+    {
+        // Update the UI text with the current grid state
+        int grabbablesAmount = 0;
+        for (int i = 1; i < gridSizeX * gridSizeY * gridSizeZ; i++)
+        {
+            if (IsIDInUse(i))
+            {
+                grabbablesAmount++;
+            }
+            else
+            {
+                break;
+            }
+        }
+        string text = "Gitterbox-Größe: [" + gridSizeX + ", " + gridSizeY + ", " + gridSizeZ + "]\n";
+        text += "Voxel-Größe: " + voxelSize + "\n";
+        text += "Freie Felder: " + grid.Sum(layer => layer.Sum(row => row.Count(voxel => voxel == 0))) + "\n";
+        text += "Farbformen: " + grabbablesAmount + "\n";
+        for (int i = 0; i < grabbablesAmount; i++)
+        {
+            int voxelAmount = grid.Sum(layer => layer.Sum(row => row.Count(voxel => voxel == (i + 1))));
+
+            text += $"<color=#{ColorUtility.ToHtmlStringRGB(createdGrabbableColors[i])}>█</color>Farbform {i + 1}: {voxelAmount} Voxel\n";
+        }
+        UIManager.instance.SetManageLevelUIText(text);
+    }
+
     public void ResetLevel()
     {
         //Delete all children
@@ -248,7 +289,7 @@ public class CreateLevelManager : MonoBehaviour
                 (int[][][] grabbableGrid, int sizeX, int sizeY, int sizeZ) = IsolateGrabbableFromGrid(i);
                 string rawVoxels = ConvertVoxelsToRawVoxels(grabbableGrid, sizeX, sizeY, sizeZ);
                 string position = DetermineGrabbablePositionById(i);
-                string color = DetermineGrabbableColorById(i);
+                string color = $"#{ColorUtility.ToHtmlStringRGB(createdGrabbableColors[i - 1])}";
                 grabbablesJson += @"
             {
                 ""size"": [" + sizeX + @", " + sizeY + @", " + sizeZ + @"],
@@ -366,17 +407,7 @@ public class CreateLevelManager : MonoBehaviour
         }
         return $"[{x * (gridSizeX + 1)}, {y * (gridSizeY + 1)}, {0}]";
     }
-    private string DetermineGrabbableColorById(int id)
-    {
-        // Find the GameObject with the name "CreatedGrabbable_" + id and get its material color
-        GameObject grabbable = GameObject.Find("CreatedGrabbable_" + id);
-        if (grabbable != null)
-        {
-            Color color = grabbable.GetComponent<MeshRenderer>().material.color;
-            return $"#{ColorUtility.ToHtmlStringRGB(color)}";
-        }
-        return "#FFFFFF"; // Default color if not found
-    }
+
     //***** Input Action Callbacks  *****//
 
     void LeftTriggerPressed(InputAction.CallbackContext context)
