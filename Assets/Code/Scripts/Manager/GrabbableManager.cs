@@ -1,10 +1,6 @@
 using System.Collections;
-using System.Text.RegularExpressions;
-using NUnit.Framework;
 using TMPro;
-using Unity.XR.CoreUtils;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
 
 [System.Serializable]
@@ -75,13 +71,7 @@ public class GrabbableManager : MonoBehaviour
                     GetComponent<Renderer>().material.color == GetMaterialById(targetMaterial).color
                 )
                 {
-                    Debug.Log(
-                        "SetMaterial: "
-                            + lastMaterial
-                            + " to "
-                            + targetMaterial
-                            + " has been completed"
-                    );
+                    Debug.Log($"SetMaterial: {lastMaterial} to {targetMaterial} has been completed");
                     lastMaterial = targetMaterial;
                 }
             }
@@ -112,19 +102,13 @@ public class GrabbableManager : MonoBehaviour
                 forward
             );
             Vector3Int rotatedGridSize = new Vector3Int(rotatedX, rotatedY, rotatedZ);
-            debugObjects.rotationText.text =
-                "Rotation: "
-                + transform.rotation.eulerAngles.ToString("F0")
-                + "\nRounded: "
-                + grabbableRotation.ToString("F0")
-                + "\nUp: "
-                + up.ToString("F0")
-                + "\nRight: "
-                + right.ToString("F0")
-                + "\nForward: "
-                + forward.ToString("F0")
-                + "\nRotated Grid Size:"
-                + Vector3Int.RoundToInt(rotatedGridSize).ToString();
+            debugObjects.rotationText.text = $@"
+Rotation: {transform.rotation.eulerAngles:F0}
+Rounded: {grabbableRotation:F0}
+Up: {up:F0}
+Right: {right:F0}
+Forward: {forward:F0}
+Rotated Grid Size: {Vector3Int.RoundToInt(rotatedGridSize)}";
             debugObjects.center.transform.up = up;
             debugObjects.matrixOrigin.transform.position =
                 transform.position - 0.5f * voxelSize * (Vector3)rotatedGridSize; // Center - half of voxel size * rotatedGridSize
@@ -280,12 +264,7 @@ public class GrabbableManager : MonoBehaviour
 
     public void OnActivate(ActivateEventArgs args)
     {
-        Debug.Log(
-            "Grabbable: "
-                + gameObject.name
-                + " has been activated! "
-                + args.interactorObject.transform.name
-        ); // Warning: Used in tutorial-logic
+        Debug.Log("Grabbable: " + gameObject.name + " has been activated! " + args.interactorObject.transform.name); // Warning: Used in tutorial-logic
         if (
             (args.interactorObject.transform.name.Contains("Left") && isInHand == 1)
             || (args.interactorObject.transform.name.Contains("Right") && isInHand == 2)
