@@ -52,11 +52,11 @@ public class CreateLevelManager : MonoBehaviour
     void Update()
     {
 
-        if (leftGripAction.action.triggered)
+        if (leftGripAction.action.IsPressed())
         {
             WhileGripPressed(true);
         }
-        if (rightGripAction.action.triggered)
+        if (rightGripAction.action.IsPressed())
         {
             WhileGripPressed(false);
         }
@@ -143,16 +143,29 @@ public class CreateLevelManager : MonoBehaviour
     {
         if (context.performed)
         {
-            // Handle left trigger pressed event
-            Debug.Log("Left Trigger: Pressed");
+            (bool isInsideGrid, int x, int y, int z) = GetVoxelPosition(leftControllerTransform.position);
+            if (!isInsideGrid)
+            {
+                Debug.Log("Left Trigger: Pressed" + " | Grid: Not in grid | Position: " + leftControllerTransform.position);
+                return;
+            }
+            grid[x][y][z] = 0;
+            Debug.Log("Left Trigger: Pressed" + " | Grid: " + x + "," + y + "," + z + " | Position: " + leftControllerTransform.position);
+
         }
     }
     void RightTriggerPressed(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
-            // Handle right trigger pressed event
-            Debug.Log("Right Trigger: Pressed");
+            (bool isInsideGrid, int x, int y, int z) = GetVoxelPosition(rightControllerTransform.position);
+            if (!isInsideGrid)
+            {
+                Debug.Log("Right Trigger: Pressed" + " | Grid: Not in grid | Position: " + rightControllerTransform.position);
+                return;
+            }
+            grid[x][y][z] = 0;
+            Debug.Log("Right Trigger: Pressed" + " | Grid: " + x + "," + y + "," + z + " | Position: " + rightControllerTransform.position);
         }
     }
     void LeftGripPressed(InputAction.CallbackContext context)
