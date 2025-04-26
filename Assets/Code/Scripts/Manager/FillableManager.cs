@@ -22,10 +22,10 @@ public class FillableManager : MonoBehaviour
     private VoxelMeshGenerator voxelMeshGenerator;
     public List<GrabbableManager> currentGrabbableObjects = new List<GrabbableManager>();
     private bool isCurrentlyHighlighted = false;
-  
+
     public void Initialize(Vector3 position, Vector3Int gridSize, float voxelSize, VoxelMeshGenerator voxelMeshGenerator)
     {
-        transform.position = position; 
+        transform.position = position;
         GetComponent<BoxCollider>().size = (Vector3)gridSize * voxelSize;
         this.gridSize = gridSize;
         this.voxelSize = voxelSize;
@@ -46,7 +46,8 @@ public class FillableManager : MonoBehaviour
         rightTriggerAction.action.performed -= RightTriggerPressed;
         rightTriggerAction.action.canceled -= RightTriggerPressed;
     }
-    public void InitializeFillableGrid(){
+    public void InitializeFillableGrid()
+    {
         fillableGrid = new int[gridSize.x][][];
         for (int x = 0; x < gridSize.x; x++)
         {
@@ -58,10 +59,11 @@ public class FillableManager : MonoBehaviour
         }
     }
 
-    public void CheckIfGrabbableFitsFillable(GameObject grabbableObject){
+    public void CheckIfGrabbableFitsFillable(GameObject grabbableObject)
+    {
         Grabbable grabbable = grabbableObject.GetComponent<GrabbableManager>().grabbable;
         // Check if Grabbable fits in Fillable, for example (1, 4, 1) Fillable and (4, 1, 1) Grabbable would fit, as Grabbable can be rotated
-        int[] fillableSizeList = new int[]{gridSize.x, gridSize.y, gridSize.z}.OrderByDescending(x => x).ToArray();
+        int[] fillableSizeList = new int[] { gridSize.x, gridSize.y, gridSize.z }.OrderByDescending(x => x).ToArray();
         int[] grabbableSizeList = grabbable.size.OrderByDescending(x => x).ToArray();
         for (int i = 0; i < 3; i++)
         {
@@ -74,7 +76,8 @@ public class FillableManager : MonoBehaviour
 
         //Check rotation tolerance, if rotation is within tolerance, and if position is within tolerance
         (bool isValidRotation, Vector3 up, Vector3 right, Vector3 forward) = RotationHelper.IsValidRotation(grabbableObject.transform, LevelManager.rotationTolerancePercentage);
-        if (!isValidRotation){
+        if (!isValidRotation)
+        {
             Debug.Log("Fillable: Rotation is not within tolerance");
             return;
         }
@@ -87,8 +90,8 @@ public class FillableManager : MonoBehaviour
             return;
         }
 
-        // TODO: Distance tolerance
-        
+        // no distance tolerance check, doing 100% tolerance (if the voxel-center is inside the fillable, it is valid)
+
         Vector3 fillablePosition = transform.position;
         Vector3 fillableStartingPoint = fillablePosition - 0.5f * voxelSize * (Vector3)gridSize;
         Vector3 grabbablePosition = grabbableObject.transform.position;
@@ -132,11 +135,13 @@ public class FillableManager : MonoBehaviour
         // If we reach here, Grabbable fits in Fillable
         AddGrabbableToFillable(grabbableObject, gridOffset, grabbableObject.transform.rotation.eulerAngles, rotatedVoxels, rotatedGridSize, newRotation);
     }
-    public void AddGrabbableToFillable(GameObject grabbableObject, Vector3Int gridOffset, Vector3 grabbableRotation, int[][][] rotatedVoxels, Vector3 rotatedVoxelGridSize, Quaternion newRotation){
+    public void AddGrabbableToFillable(GameObject grabbableObject, Vector3Int gridOffset, Vector3 grabbableRotation, int[][][] rotatedVoxels, Vector3 rotatedVoxelGridSize, Quaternion newRotation)
+    {
         GrabbableManager grabbableInformation = grabbableObject.GetComponent<GrabbableManager>();
         StatisticManager.instance.levelStatistic.numberOfSnapsToFillables++;
         AudioManager.instance.Play("Fillable_Snap");
-        grabbableInformation.insideFillable = new(){
+        grabbableInformation.insideFillable = new()
+        {
             fillableObject = gameObject,
             rotatedVoxelMatrix = rotatedVoxels,
             gridOffset = gridOffset
@@ -146,7 +151,7 @@ public class FillableManager : MonoBehaviour
         // Move it to the corresponding position
         grabbableObject.transform.rotation = newRotation;
         grabbableObject.transform.position = transform.position - 0.5f * voxelSize * (Vector3)gridSize + (Vector3)gridOffset * voxelSize + 0.5f * voxelSize * rotatedVoxelGridSize;
-        
+
         /* Debug Visualizer
         GameObject visualizerParent = new GameObject(grabbableObject.GetInstanceID().ToString());
         visualizerParent.transform.position = transform.position - (transform.localScale / 2) + (Vector3.one * voxelSize / 2);
@@ -169,10 +174,11 @@ public class FillableManager : MonoBehaviour
             }
         }
         //DebugFillableGrid();
-        Debug.Log("Fillable: "+grabbableObject.name+" Grid Offset: " + gridOffset);
+        Debug.Log("Fillable: " + grabbableObject.name + " Grid Offset: " + gridOffset);
         CheckIfFillableIsFilled();
     }
-    public void RemoveGrabbableFromFillable(GameObject grabbableObject){
+    public void RemoveGrabbableFromFillable(GameObject grabbableObject)
+    {
         GrabbableManager grabbableInformation = grabbableObject.GetComponent<GrabbableManager>();
         currentGrabbableObjects.Remove(grabbableInformation);
         AudioManager.instance.Play("Fillable_Unsnap");
@@ -196,7 +202,8 @@ public class FillableManager : MonoBehaviour
         // Visualizer Destroy: Destroy(transform.Find(grabbableObject.GetInstanceID().ToString()).gameObject); // Destroys the visualizerParent
     }
     // Debug the fillableGrid as a function
-    public void DebugFillableGrid(){
+    public void DebugFillableGrid()
+    {
         //prints out each value of fillableGrid
         for (int x = 0; x < gridSize.x; x++)
         {
@@ -209,7 +216,8 @@ public class FillableManager : MonoBehaviour
             }
         }
     }
-    private void CheckIfFillableIsFilled(){
+    private void CheckIfFillableIsFilled()
+    {
         for (int x = 0; x < gridSize.x; x++)
         {
             for (int y = 0; y < gridSize.y; y++)
@@ -226,28 +234,42 @@ public class FillableManager : MonoBehaviour
         Debug.Log("Fillable: Fillable is filled!");
         LevelManager.instance.FillablesFilled();
     }
-    public void LeftTriggerPressed(InputAction.CallbackContext context){
+    public void LeftTriggerPressed(InputAction.CallbackContext context)
+    {
         OnFillableMissingHighlight(context, true);
     }
-    public void RightTriggerPressed(InputAction.CallbackContext context){
+    public void RightTriggerPressed(InputAction.CallbackContext context)
+    {
         OnFillableMissingHighlight(context, false);
     }
 
-    public void OnFillableMissingHighlight(InputAction.CallbackContext context, bool isLeft){
-        if(context.performed){
-            try{
+    public void OnFillableMissingHighlight(InputAction.CallbackContext context, bool isLeft)
+    {
+        if (context.performed)
+        {
+            try
+            {
                 XRBaseInteractor interactor = isLeft ? GameObject.Find("Left Near-Far Interactor").GetComponent<NearFarInteractor>() : GameObject.Find("Right Near-Far Interactor").GetComponent<NearFarInteractor>();
-                if(interactor.interactablesSelected == null){ // Currently excluding the case when heightchanger is grabbed (as something is grabbed)
+                if (interactor.interactablesSelected == null)
+                { // Currently excluding the case when heightchanger is grabbed (as something is grabbed)
                     throw new System.Exception("Fillable: Interactor has no interactables selected.");
-                }else if(UIManager.instance.isUiVisible){
-                    Debug.Log("Fillable: UI is visible, highlight not activated!");
-                } else{
-                    Debug.Log("Fillable: Highlight not activated! Holding objects"+interactor.interactablesSelected.Count+" "+interactor.interactablesSelected.FirstOrDefault().transform.name); 
                 }
-            } catch{
+                else if (UIManager.instance.isUiVisible)
+                {
+                    Debug.Log("Fillable: UI is visible, highlight not activated!");
+                }
+                else
+                {
+                    Debug.Log("Fillable: Highlight not activated! Holding objects" + interactor.interactablesSelected.Count + " " + interactor.interactablesSelected.FirstOrDefault().transform.name);
+                }
+            }
+            catch
+            {
                 HighlightMissingVoxels();
             }
-        }else if(context.canceled && isCurrentlyHighlighted){
+        }
+        else if (context.canceled && isCurrentlyHighlighted)
+        {
             Debug.Log("Fillable: Highlight deactivated");
             AudioManager.instance.Play("Fillable_Unhighlight");
             // Deletes highlight
@@ -261,7 +283,8 @@ public class FillableManager : MonoBehaviour
             }
         }
     }
-    public void HighlightMissingVoxels(){
+    public void HighlightMissingVoxels()
+    {
         Debug.Log("Fillable: Highlight activated"); // Warning: Used in tutorial-logic
         isCurrentlyHighlighted = true;
         AudioManager.instance.Play("Fillable_Highlight");

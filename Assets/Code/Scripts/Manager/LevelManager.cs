@@ -10,7 +10,7 @@ public class LevelManager : MonoBehaviour
     public static bool isDebug = true; // Debug mode
     public static float rotationTolerancePercentage = 1.00f; // 20% tolerance for rotation
     public static float distanceTolerancePercentage = 0.20f; // 20% tolerance for position
-    
+
     private LevelCollection levelCollection; // Level collection
     private VoxelMeshGenerator voxelMeshGenerator;
     public GameObject lastLevelWindow;
@@ -31,7 +31,7 @@ public class LevelManager : MonoBehaviour
     }
     void Start()
     {
-        Debug.Log ("LevelManager: Start");
+        Debug.Log("LevelManager: Start");
         if (fillablePrefab == null)
         {
             Debug.LogError("LevelManager Error: fillableObject Prefab is not assigned!");
@@ -41,7 +41,8 @@ public class LevelManager : MonoBehaviour
         LoadLevelsFromJSON();
         LoadLevel(currentLevel);
     }
-    public void ResetLevelHeight(){
+    public void ResetLevelHeight()
+    {
         transform.position = new Vector3(transform.position.x, Camera.main.transform.position.y - (levelCollection.levels[currentLevel].fillable.size[1] * levelCollection.levels[currentLevel].voxelSize), transform.position.z);
     }
     public void LoadLevelsFromJSON()
@@ -49,13 +50,14 @@ public class LevelManager : MonoBehaviour
         Debug.Log("LevelManager: Loading levels from JSON");
         string filePath = Path.Combine(Application.streamingAssetsPath, jsonFileName);
         string jsonData = "";
-        if (Application.platform == RuntimePlatform.Android){
+        if (Application.platform == RuntimePlatform.Android)
+        {
             // streamingAssets are compressed in android (not readable with File).
             try
             {
                 UnityWebRequest reader = UnityWebRequest.Get(filePath);
                 reader.SendWebRequest();
-                while (!reader.isDone) {}
+                while (!reader.isDone) { }
                 if (reader.result == UnityWebRequest.Result.Success)
                 {
                     jsonData = reader.downloadHandler.text;
@@ -69,19 +71,23 @@ public class LevelManager : MonoBehaviour
             {
                 Debug.LogError("LevelManager Error: Failed to load JSON file: " + e.Message);
             }
-        } else if (File.Exists(filePath))
+        }
+        else if (File.Exists(filePath))
         {
             jsonData = File.ReadAllText(filePath);
-        }else{
+        }
+        else
+        {
             Debug.LogError("LevelManager Error: JSON file not found: " + filePath);
         }
         levelCollection = JsonUtility.FromJson<LevelCollection>(jsonData);
         ConvertRawVoxelsToVoxels(levelCollection);
         //Debug.Log("LevelJson: "+JsonUtility.ToJson(levelCollection));
-        Debug.Log("LevelManager: Levels loaded from JSON, level count: "+levelCollection.levels.Count);
+        Debug.Log("LevelManager: Levels loaded from JSON, level count: " + levelCollection.levels.Count);
     }
     // converts all rawVoxels (int[]) into voxels (int[][][])
-    void ConvertRawVoxelsToVoxels(LevelCollection levelCollection){
+    void ConvertRawVoxelsToVoxels(LevelCollection levelCollection)
+    {
         foreach (var level in levelCollection.levels)
         {
             foreach (var grabbable in level.grabbables)
@@ -127,7 +133,7 @@ public class LevelManager : MonoBehaviour
 
         LevelData currentLevelData = levelCollection.levels[levelIndex];
         voxelMeshGenerator.GenerateGrabbableObjects(currentLevelData);
-        voxelMeshGenerator.GenerateFillableObject(currentLevelData);
+        voxelMeshGenerator.GenerateFillableObject(currentLevelData.voxelSize, currentLevelData.fillable);
         StatisticManager statisticsManager = StatisticManager.instance;
         statisticsManager.levelStatistic.levelId = levelIndex;
         statisticsManager.levelStatistic.numberOfFillables = 1; // Currently still only one fillable per level
@@ -148,8 +154,9 @@ public class LevelManager : MonoBehaviour
     }
     public void FillablesFilled()
     {
-        if (currentLevel != 0){
-            Debug.Log("LevelManager: Level completed! Loading Level: " + currentLevel+"+1");
+        if (currentLevel != 0)
+        {
+            Debug.Log("LevelManager: Level completed! Loading Level: " + currentLevel + "+1");
             currentLevel++;
             LoadLevel(currentLevel);
             AudioManager.instance.Play("Level_Complete");
@@ -161,7 +168,8 @@ public class LevelManager : MonoBehaviour
         Debug.Log("LevelManager: Tutorial finished! Loading Level: 1");
         LoadLevel(1);
     }
-    public void LoadLevel(int levelIndex, bool isCompleted = true){
+    public void LoadLevel(int levelIndex, bool isCompleted = true)
+    {
         Debug.Log("LevelManager: LoadLevel Started for: " + levelIndex);
         // Unload previous level
         foreach (Transform child in transform)
@@ -174,10 +182,12 @@ public class LevelManager : MonoBehaviour
         //Reset lastLevel Window
         lastLevelWindow.SetActive(false);
         //Write Level Log
-        if(StatisticManager.instance.levelStatistic.levelId != 0){
+        if (StatisticManager.instance.levelStatistic.levelId != 0)
+        {
             StatisticManager.instance.WriteLevelLog(isCompleted);
         }
-        if(levelIndex == 0){
+        if (levelIndex == 0)
+        {
             currentLevel = 0;
             UIManager.instance.SetManageLevelUIText(0, 0, 0);
             Instantiate(tutorialManagerPrefab, transform);

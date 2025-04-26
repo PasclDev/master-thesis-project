@@ -98,16 +98,12 @@ public class VoxelMeshGenerator : MonoBehaviour
         }
     }
 
-    public void GenerateFillableObject(LevelData currentLevelData)
+    public GameObject GenerateFillableObject(float voxelSize, Fillable fillable)
     {
-        float voxelSize = currentLevelData.voxelSize;
-        Fillable fillable = currentLevelData.fillable;
-
         GameObject fillableObject = Instantiate(fillableBlankPrefab, transform);
         Vector3 position =
             transform.position
-            + voxelSize
-                * new Vector3(fillable.position[0], fillable.position[1], fillable.position[2]);
+            + voxelSize * new Vector3(fillable.position[0], fillable.position[1], fillable.position[2]);
         Vector3Int size = new Vector3Int(fillable.size[0], fillable.size[1], fillable.size[2]);
         Vector3 gridCenter = (Vector3)size * 0.5f;
         fillableObject.name = "Fillable_0";
@@ -152,6 +148,7 @@ public class VoxelMeshGenerator : MonoBehaviour
             }
         }
         meshFilter.mesh = GetMesh(vertices, triangles, uvs);
+        return fillableObject;
     }
 
     public void GenerateFillableMissingHighlight(
