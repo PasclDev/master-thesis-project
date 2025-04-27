@@ -281,7 +281,7 @@ public class CreateLevelManager : MonoBehaviour
             {
                 if (i > 1) grabbablesJson += @",";
                 (int[][][] grabbableGrid, int sizeX, int sizeY, int sizeZ) = IsolateGrabbableFromGrid(i);
-                string rawVoxels = ConvertVoxelsToRawVoxels(grabbableGrid, sizeX, sizeY, sizeZ);
+                string rawVoxels = ConvertVoxelsToRawVoxels(grabbableGrid);
                 string position = DetermineGrabbablePositionById(i);
                 string color = $"#{ColorUtility.ToHtmlStringRGB(createdGrabbableColors[i])}";
                 grabbablesJson += @"
@@ -318,10 +318,10 @@ public class CreateLevelManager : MonoBehaviour
     }
     private (int[][][] grid, int sizeX, int sizeY, int sizeZ) ShrinkGrabbableGrid(int[][][] grabbableGrid)
     {
+        // Shrink the grid to the smallest size that contains all voxels
         int sizeX = grabbableGrid.Length;
         int sizeY = grabbableGrid[0].Length;
         int sizeZ = grabbableGrid[0][0].Length;
-        // Shrink the grid to the smallest size that contains all voxels
         int minX = sizeX, minY = sizeY, minZ = sizeZ;
         int maxX = 0, maxY = 0, maxZ = 0;
         for (int x = 0; x < sizeX; x++)
@@ -361,21 +361,24 @@ public class CreateLevelManager : MonoBehaviour
         }
         return (newGrabbableGrid, newSizeX, newSizeY, newSizeZ);
     }
-    private string ConvertVoxelsToRawVoxels(int[][][] grid, int sizeX, int sizeY, int sizeZ)
+    private string ConvertVoxelsToRawVoxels(int[][][] grid)
     {
+        int sizeX = grid.Length;
+        int sizeY = grid[0].Length;
+        int sizeZ = grid[0][0].Length;
         string rawVoxels = @"
                     ";
         // Convert the grid to a raw voxel format
-        for (int x = 0; x < sizeX; x++)
+        for (int z = 0; z < sizeZ; z++)
         {
             for (int y = 0; y < sizeY; y++)
             {
-                for (int z = 0; z < sizeZ; z++)
+                for (int x = 0; x < sizeX; x++)
                 {
                     rawVoxels += grid[x][y][z];
                     if (!(x == sizeX - 1 && y == sizeY - 1 && z == sizeZ - 1))
                         rawVoxels += ", "; // Add a comma and space between voxels, except for the last one
-                    if (z == sizeZ - 1) rawVoxels += " ";
+                    if (x == sizeX - 1) rawVoxels += " ";
                 }
                 if (y == sizeY - 1) rawVoxels += @"
                     ";
@@ -422,7 +425,6 @@ public class CreateLevelManager : MonoBehaviour
     {
         // TODO: Wie beim Grip auch während des Drückens die Löschen
         // TODO: Zähl die Zeit wie lange schon gespielt wurde und setz ne flag wenn wenig zeit mehr übrig ist (z.b. 5 min), welches beim Level laden das wichtige Level lädt
-        // TODO: Fix bug wenn id 0 gelöscht wird, dass nichts mehr angezeigt wird (potenzielle probleme mit colors maybe?)
         (bool isInsideGrid, int x, int y, int z) = GetVoxelPosition(isLeft ? leftControllerTransform.position : rightControllerTransform.position);
         if (!isInsideGrid)
         {
