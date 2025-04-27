@@ -28,9 +28,6 @@ public class LevelManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-    void Start()
-    {
         Debug.Log("LevelManager: Start");
         if (fillablePrefab == null)
         {
@@ -39,7 +36,10 @@ public class LevelManager : MonoBehaviour
         }
         voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
         LoadLevelsFromJSON();
-        LoadLevel(currentLevel);
+    }
+    void Start()
+    {
+
     }
     public void ResetLevelHeight()
     {
