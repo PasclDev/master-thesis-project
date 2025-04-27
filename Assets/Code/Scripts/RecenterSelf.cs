@@ -12,7 +12,7 @@ public class RecenterSelf : MonoBehaviour
     private Vector3 cameraForward;
     private float angle;
     public InputActionReference recenterSelfAction;
-    
+
     private void Awake()
     {
         recenterSelfAction.action.performed += Recenter;
@@ -28,7 +28,7 @@ public class RecenterSelf : MonoBehaviour
         {
             return;
         }
-            //From https://stackoverflow.com/questions/76297143/in-unity-openxr-environment-how-to-reset-the-player-position-to-center
+        //From https://stackoverflow.com/questions/76297143/in-unity-openxr-environment-how-to-reset-the-player-position-to-center
         offset = head.position - origin.position;
         offset.y = 0;
         origin.position = target.position - offset;
@@ -41,6 +41,7 @@ public class RecenterSelf : MonoBehaviour
         angle = Vector3.SignedAngle(cameraForward, targetForward, Vector3.up);
 
         origin.RotateAround(head.position, Vector3.up, angle);
-        LevelManager.instance.ResetLevelHeight();
+        if (LevelManager.instance != null)
+            LevelManager.instance.ResetLevelHeight();
     }
 }
