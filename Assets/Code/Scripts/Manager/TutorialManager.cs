@@ -22,11 +22,11 @@ public class TutorialManager : MonoBehaviour
     public int tutorialStep = 0;
 
     private string[] tutorialTexts = new string[] {
-        "Mit den <color=#FF5C55>Rot-markierten Greiftasten</color> an den Controllern kannst du \"Farbformen\" aufsammeln.",
-        "Halte eine Farbform mit der <color=#FF5C55>Greiftaste</color> in deiner Hand und drücke währenddessen die <color=#FFE455>Gelb-markierte Triggertaste</color> der gleichen Hand, um die Farbform durchsichtig zu machen.",
+        "Mit den <color=#CF2821>Rot-markierten Greiftasten</color> an den Controllern kannst du \"Farbformen\" aufsammeln.",
+        "Halte eine Farbform mit der <color=#CF2821>Greiftaste</color> in deiner Hand und drücke währenddessen die <color=#E3C420>Gelb-markierte Triggertaste</color> der gleichen Hand, um die Farbform durchsichtig zu machen.",
         "Gut gemacht! In jedem Level muss die Gitterform mit den Farbformen gefüllt werden.\n Bewege nun die Farbform in die Gitterform.",
-        "Manchmal kann es schwer sein, Objekte zu rotieren.\nStrecke deinen Arm aus, <color=#FF5C55>Greife</color> die Farbform und ziehe dann deinen Arm zu dir, um die Farbform besser rotieren zu können. Packe sie dann in die Gitterform.",
-        "In späteren Leveln kann man schnell den Überblick verlieren.\nDrücke die <color=#FFE455>Gelb-markierte Taste</color> des Controllers, um alle Farbformen in der Gitterform durchsichtig zu machen und alle freien Felder zu markieren.",
+        "Manchmal kann es schwer sein, Objekte zu rotieren.\nStrecke deinen Arm aus, <color=#CF2821>Greife</color> die Farbform und ziehe dann deinen Arm zu dir, um die Farbform besser rotieren zu können. Packe sie dann in die Gitterform.",
+        "In späteren Leveln kann man schnell den Überblick verlieren.\nDrücke die <color=#E3C420>Gelb-markierte Taste</color> des Controllers, um alle Farbformen in der Gitterform durchsichtig zu machen und alle freien Felder zu markieren.",
         "Super! Um die Höhe des Levels anzupassen, greife die Kugel unter der Farbform und ziehe sie nach oben oder unten.",
         "Das war es mit der Einführung!\nUm die Einführung zu beenden, platziere die letzte Farbform in die Gitterform."
     };
