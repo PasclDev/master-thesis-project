@@ -6,7 +6,7 @@ public class StatisticManager : MonoBehaviour
     [System.Serializable]
     public class LevelStatistic
     {
-        public int tutorialStep = 0;        
+        public int tutorialStep = 0;
         public int levelId = 0;
         public int numberOfFillables = 0;
         public int numberOfGrabbables = 0;
@@ -35,22 +35,28 @@ public class StatisticManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
         // Logging
-        if(Application.platform == RuntimePlatform.Android){ //Path to Downloads in Meta Quest 3
+        if (Application.platform == RuntimePlatform.Android)
+        { //Path to Downloads in Meta Quest 3
             logFilePath = "/storage/emulated/0/Documents/" + System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".csv";
         }
         /*else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer)
         {*/
-        else{
+        else
+        {
             logFilePath = Application.persistentDataPath + "/" + System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".csv";
         }
         logFile = new System.IO.StreamWriter(logFilePath, true);
-        logFile.WriteLine("TutorialStep;LevelID;NumberOfFillables;NumberOfGrabbables;LevelCompleted;TimeToComplete;TimeTilFirstGrab;NumberOfGrabs;NumberOfSnapsToFillables;NumberOfFillableTransparency;NumberOfGrabbableTransparency");
+        logFile.WriteLine("TimeSinceStart;TutorialStep;LevelID;NumberOfFillables;NumberOfGrabbables;LevelCompleted;TimeToComplete;TimeTilFirstGrab;NumberOfGrabs;NumberOfSnapsToFillables;NumberOfFillableTransparency;NumberOfGrabbableTransparency");
     }
     void Update()
     {
         timeSinceStart += Time.deltaTime;
+    }
+    void OnDestroy()
+    {
+        WriteLevelLog(false);
+        logFile.Close();
     }
     void OnApplicationQuit()
     {
@@ -59,14 +65,29 @@ public class StatisticManager : MonoBehaviour
     }
     public void WriteLevelLog(bool isLevelComplete = true)
     {
-        logFile.WriteLine(levelStatistic.tutorialStep + ";" + levelStatistic.levelId + ";" + levelStatistic.numberOfFillables + ";" + levelStatistic.numberOfGrabbables + ";" + isLevelComplete + ";" + (timeSinceStart - timeSinceLastLog) + ";" + levelStatistic.timeTilFirstGrab + ";" + levelStatistic.numberOfGrabs + ";" + levelStatistic.numberOfSnapsToFillables + ";" + levelStatistic.numberOfFillableTransparency + ";" + levelStatistic.numberOfGrabbableTransparency);
+        logFile.WriteLine(
+            timeSinceStart.ToString("F6")                               // TimeSinceStart 
+            + ";" + levelStatistic.tutorialStep                         // TutorialStep  
+            + ";" + levelStatistic.levelId                              // LevelID  
+            + ";" + levelStatistic.numberOfFillables                    // NumberOfFillables
+            + ";" + levelStatistic.numberOfGrabbables                   // NumberOfGrabbables
+            + ";" + isLevelComplete                                     // LevelCompleted 
+            + ";" + (timeSinceStart - timeSinceLastLog).ToString("F6")  // Time to complete
+            + ";" + levelStatistic.timeTilFirstGrab.ToString("F6")      // TimeTilFirstGrab
+            + ";" + levelStatistic.numberOfGrabs                        // NumberOfGrabs
+            + ";" + levelStatistic.numberOfSnapsToFillables             // NumberOfSnapsToFillables
+            + ";" + levelStatistic.numberOfFillableTransparency         // NumberOfFillableTransparency
+            + ";" + levelStatistic.numberOfGrabbableTransparency        // NumberOfGrabbableTransparency
+        );
         timeSinceLastLog = timeSinceStart;
         levelStatistic = new LevelStatistic();
         Debug.Log("StatisticManager: Log written to " + logFilePath);
     }
-    public void SetTimeTilFirstGrab(){
-        if(levelStatistic.timeTilFirstGrab == 0){
-            levelStatistic.timeTilFirstGrab = timeSinceStart-timeSinceLastLog;
+    public void SetTimeTilFirstGrab()
+    {
+        if (levelStatistic.timeTilFirstGrab == 0)
+        {
+            levelStatistic.timeTilFirstGrab = timeSinceStart - timeSinceLastLog;
         }
     }
 }
