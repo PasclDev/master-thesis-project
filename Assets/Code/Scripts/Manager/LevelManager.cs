@@ -43,7 +43,7 @@ public class LevelManager : MonoBehaviour
     }
     public void ResetLevelHeight()
     {
-        transform.position = new Vector3(transform.position.x, Camera.main.transform.position.y - (levelCollection.levels[currentLevel].fillable.size[1] * levelCollection.levels[currentLevel].voxelSize), transform.position.z);
+        transform.position = new Vector3(transform.position.x, Camera.main.transform.position.y - 0.3f, transform.position.z); // Level is upwards, so this height is the lowest point of the level - 0.05f (due to Height Change Interactable). Starting at Eye-Height - 0.3f.
     }
     public void LoadLevelsFromJSON()
     {
@@ -186,6 +186,7 @@ public class LevelManager : MonoBehaviour
         {
             StatisticManager.instance.WriteLevelLog(isCompleted);
         }
+        // Handle loading the tutorial
         if (levelIndex == 0)
         {
             currentLevel = 0;
@@ -193,6 +194,7 @@ public class LevelManager : MonoBehaviour
             Instantiate(tutorialManagerPrefab, transform);
             return;
         }
+        // Load a normal level
         if (levelIndex < levelCollection.levels.Count)
         {
             Debug.Log("LevelManager: Loading Level: " + levelIndex);

@@ -24,10 +24,13 @@ public class VoxelMeshGenerator : MonoBehaviour
             Vector3 gridCenter = (Vector3)gridSize * 0.5f;
             Vector3 grabbablePosition = new Vector3(
                 grabbable.position[0],
-                grabbable.position[1],
+                grabbable.position[1] + (currentLevelData.fillable.size[1] * 0.5f), // Offset for fillable height
                 grabbable.position[2]
             );
-            Vector3 position = transform.position + grabbablePosition * voxelSize;
+            Vector3 position =
+                transform.position              // Position of LevelManager / this script
+                + grabbablePosition * voxelSize // (turn voxel movement amount into world space coordinates)
+                + new Vector3(0, 0.05f, 0);     // Offset for Height Change Interactable
             GameObject grabbableObject = Instantiate(
                 grabbableBlankPrefab,
                 position,
@@ -104,7 +107,12 @@ public class VoxelMeshGenerator : MonoBehaviour
         GameObject fillableObject = Instantiate(fillableBlankPrefab, transform);
         Vector3 position =
             transform.position
-            + voxelSize * new Vector3(fillable.position[0], fillable.position[1], fillable.position[2]);
+            + voxelSize
+            * new Vector3(
+                fillable.position[0],
+                fillable.position[1] + (fillable.size[1] * 0.5f),
+                fillable.position[2])
+            + new Vector3(0, 0.05f, 0); // Offset for Height Change Interactable
         Vector3Int size = new Vector3Int(fillable.size[0], fillable.size[1], fillable.size[2]);
         Vector3 gridCenter = (Vector3)size * 0.5f;
         fillableObject.name = "Fillable_0";
