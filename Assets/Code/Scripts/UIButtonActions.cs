@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
@@ -54,9 +55,31 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void OnLoadLevelButton(int levelIndex)
     {
-        Debug.Log("UIButtonActions: Load Level " + levelIndex);
-        LevelManager.instance.LoadLevel(levelIndex, false);
-        UIManager.instance.HideManageLevelUI();
+        if (SceneManager.GetActiveScene().name != "MainGameScene")
+        {
+            SceneManager.sceneLoaded += OnMainGameSceneLoaded;
+            SceneManager.LoadScene("MainGameScene");
+        }
+        else
+        {
+            LoadLevel(levelIndex);
+        }
+
+        void OnMainGameSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (scene.name == "MainGameScene")
+            {
+                SceneManager.sceneLoaded -= OnMainGameSceneLoaded;
+                LoadLevel(levelIndex);
+            }
+        }
+
+        void LoadLevel(int level)
+        {
+            Debug.Log("UIButtonActions: Load Level " + level);
+            LevelManager.instance.LoadLevel(level, false);
+            UIManager.instance.HideManageLevelUI();
+        }
     }
 
     public void OnRestartLevelButton()
@@ -75,7 +98,14 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
         GameObject.Find("CreateLevelManager").GetComponent<CreateLevelManager>().SaveLevel();
         UIManager.instance.HideManageLevelUI();
     }
+    public void OnLoadSceneButton(string sceneName)
+    {
+        Debug.Log("UIButtonActions: Load Scene " + sceneName);
+        SceneManager.LoadScene(sceneName);
+        //SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+        //SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
+    }
     public void OnQuitApplicationButton()
     {
         Debug.Log("UIButtonActions: Quit Application");

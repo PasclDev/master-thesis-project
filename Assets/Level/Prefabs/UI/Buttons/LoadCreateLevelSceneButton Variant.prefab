@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &7104612327806562108
+--- !u!1001 &7957813525696826505
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -74,7 +74,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 705510609974721623, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -35
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 705510609974721623, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -89,94 +89,81 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
-      propertyPath: m_TargetGraphic
-      value: 
-      objectReference: {fileID: 574125024192503969}
-    - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Colors.m_NormalColor.b
-      value: 0.9529412
+      value: 0.9083557
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Colors.m_NormalColor.g
-      value: 0.5882353
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Colors.m_NormalColor.r
-      value: 0.1254902
+      value: 0.8309388
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Colors.m_PressedColor.b
-      value: 0.9647059
+      value: 0.89218324
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Colors.m_PressedColor.g
-      value: 0.6901961
+      value: 0.25851667
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Colors.m_PressedColor.r
-      value: 0.34509805
+      value: 0.8375568
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Colors.m_SelectedColor.b
-      value: 0.9529412
+      value: 0.74663067
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Colors.m_SelectedColor.g
-      value: 0.5882353
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Colors.m_SelectedColor.r
-      value: 0.1254902
+      value: 0.68226594
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Colors.m_HighlightedColor.b
-      value: 0.7137255
+      value: 0.6603774
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Colors.m_HighlightedColor.g
-      value: 0.4392157
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Colors.m_HighlightedColor.r
-      value: 0.09411765
+      value: 0.6034483
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnResetCreateLevelButton
+      value: OnLoadSceneButton
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
-      value: 0
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: CreateLevelScene
       objectReference: {fileID: 0}
     - target: {fileID: 6635281095465729010, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Name
-      value: LevelButton Variant
+      value: LoadCreateLevelSceneButton Variant
       objectReference: {fileID: 0}
     - target: {fileID: 8493674396471738450, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_text
-      value: "Level \nzur\xFCcksetzen"
+      value: 'Level
+
+        erstellen'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8493674396471738450, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
+      propertyPath: m_fontSize
+      value: 15.65
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
---- !u!114 &574125024192503969 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7309083740639940509, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
-  m_PrefabInstance: {fileID: 7104612327806562108}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
