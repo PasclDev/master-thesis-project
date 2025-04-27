@@ -416,7 +416,9 @@ MonoBehaviour:
   fillableObject2: {fileID: 2798134250378054076}
   grabbableObject3: {fileID: 669270068103294615}
   fillableObject3: {fileID: 5457728465645942206}
+  heightInteractableObject: {fileID: 0}
   tutorialText: {fileID: 175070086858664489}
+  TextboxBackground: {fileID: 2593062532776011089}
   tutorialStep: 0
 --- !u!1001 &29377879119323117
 PrefabInstance:

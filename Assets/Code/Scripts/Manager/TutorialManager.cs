@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 //Gets loaded if level 0 is loaded in the level manager
 public class TutorialManager : MonoBehaviour
@@ -14,6 +16,9 @@ public class TutorialManager : MonoBehaviour
     public GameObject fillableObject3;
     public GameObject heightInteractableObject;
     public TextMeshProUGUI tutorialText;
+    public Image TextboxBackground;
+
+    private Color textboxBackgroundColor;
     public int tutorialStep = 0;
 
     private string[] tutorialTexts = new string[] {
@@ -57,6 +62,7 @@ public class TutorialManager : MonoBehaviour
 
     void Start()
     {
+        textboxBackgroundColor = TextboxBackground.color;
         UpdateTutorialText();
         InitializeGameObjects();
 
@@ -65,13 +71,34 @@ public class TutorialManager : MonoBehaviour
     {
         if (tutorialStep < tutorialTexts.Length)
         {
+            Debug.Log("Current Tutorial Step: " + tutorialStep);
             tutorialText.text = tutorialTexts[tutorialStep];
+            Debug.Log("UpdateTutorialText: " + tutorialStep + " - of" + tutorialTexts.Length);
+            StartCoroutine(AnimateTextboxBackground());
         }
+    }
+    IEnumerator AnimateTextboxBackground()
+    {
+        Debug.Log("AnimateTextboxBackground: " + tutorialStep);
+        float elapsedTime = 0f;
+        float duration = 0.4f; // Duration of the animation in seconds
+        int blinkCount = 1; // Number of blinks
+        Color targetColor = new Color(1, 1, 1, textboxBackgroundColor.a);
+
+        // Animate the background color, blink twice in the target color, reverting to the start color
+        while (elapsedTime < duration)
+        {
+            TextboxBackground.color = Color.Lerp(textboxBackgroundColor, targetColor, 0.5f * (1f + Mathf.Sin(blinkCount * 2f * Mathf.PI * (elapsedTime / duration) - Mathf.PI / 2f)));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
     }
     public void NextTutorialStep()
     {
         StatisticManager.instance.levelStatistic.tutorialStep = tutorialStep;
         StatisticManager.instance.WriteLevelLog();
+        AudioManager.instance.Play("Tutorial_NextStep");
         tutorialStep++;
         switch (tutorialStep)
         {
@@ -104,6 +131,7 @@ public class TutorialManager : MonoBehaviour
         }
         UpdateTutorialText();
     }
+
 
     private void InitializeGameObjects()
     {
