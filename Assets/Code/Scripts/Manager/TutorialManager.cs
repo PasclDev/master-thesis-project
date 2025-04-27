@@ -12,6 +12,7 @@ public class TutorialManager : MonoBehaviour
     public GameObject fillableObject2;
     public GameObject grabbableObject3;
     public GameObject fillableObject3;
+    public GameObject heightInteractableObject;
     public TextMeshProUGUI tutorialText;
     public int tutorialStep = 0;
 
@@ -28,6 +29,7 @@ public class TutorialManager : MonoBehaviour
     void OnEnable()
     {
         Application.logMessageReceived += HandleLog;
+        heightInteractableObject = GameObject.Find("HeightInteractableObject");
     }
     void OnDisable()
     {
@@ -59,16 +61,20 @@ public class TutorialManager : MonoBehaviour
         InitializeGameObjects();
 
     }
-    private void UpdateTutorialText(){
-        if(tutorialStep < tutorialTexts.Length){
+    private void UpdateTutorialText()
+    {
+        if (tutorialStep < tutorialTexts.Length)
+        {
             tutorialText.text = tutorialTexts[tutorialStep];
         }
     }
-    public void NextTutorialStep(){
+    public void NextTutorialStep()
+    {
         StatisticManager.instance.levelStatistic.tutorialStep = tutorialStep;
         StatisticManager.instance.WriteLevelLog();
         tutorialStep++;
-        switch(tutorialStep){
+        switch (tutorialStep)
+        {
             case 2:
                 fillableObject1.SetActive(true);
                 break;
@@ -84,8 +90,12 @@ public class TutorialManager : MonoBehaviour
                 fillableObject3.SetActive(true);
                 grabbableObjectGroup.SetActive(true);
                 break;
+            case 5:
+                heightInteractableObject.GetComponent<Outline>().enabled = true;
+                break;
             case 6:
                 grabbableObject3.SetActive(true);
+                heightInteractableObject.GetComponent<Outline>().enabled = false;
                 break;
             case 7:
                 LevelManager.instance.TutorialFinished();
@@ -95,8 +105,8 @@ public class TutorialManager : MonoBehaviour
         UpdateTutorialText();
     }
 
-    // Update is called once per frame
-    private void InitializeGameObjects(){
+    private void InitializeGameObjects()
+    {
         // Grabbables
         // Grabbable Texture
         Material normalMaterial = grabbableObject1.GetComponent<Renderer>().material;
@@ -152,9 +162,9 @@ public class TutorialManager : MonoBehaviour
             child.GetComponent<GrabbableManager>().Initialize(child.GetComponent<GrabbableManager>().grabbable, 0.08f);
         }
         // Fillables
-        fillableObject1.GetComponent<FillableManager>().Initialize(transform.position, new Vector3Int(3,3,3),0.1f, transform.parent.GetComponent<VoxelMeshGenerator>());
-        fillableObject2.GetComponent<FillableManager>().Initialize(transform.position, new Vector3Int(3,3,3),0.1f, transform.parent.GetComponent<VoxelMeshGenerator>());
-        fillableObject3.GetComponent<FillableManager>().Initialize(transform.position, new Vector3Int(3,3,3),0.08f, transform.parent.GetComponent<VoxelMeshGenerator>());
+        fillableObject1.GetComponent<FillableManager>().Initialize(transform.position, new Vector3Int(3, 3, 3), 0.1f, transform.parent.GetComponent<VoxelMeshGenerator>());
+        fillableObject2.GetComponent<FillableManager>().Initialize(transform.position, new Vector3Int(3, 3, 3), 0.1f, transform.parent.GetComponent<VoxelMeshGenerator>());
+        fillableObject3.GetComponent<FillableManager>().Initialize(transform.position, new Vector3Int(3, 3, 3), 0.08f, transform.parent.GetComponent<VoxelMeshGenerator>());
         // Fillable fillable content
         fillableObject3.GetComponent<FillableManager>().fillableGrid = new int[3][][]{
             new int[3][]{

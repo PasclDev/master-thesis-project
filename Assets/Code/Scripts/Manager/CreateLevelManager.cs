@@ -428,7 +428,6 @@ public class CreateLevelManager : MonoBehaviour
     void TriggerPressed(bool isLeft)
     {
         // TODO: Wie beim Grip auch während des Drückens die Löschen
-        // TODO: Checken, ob die Statistiken noch alle richtig geladen werden jetzt beim neuen Scenenwechsel
         // TODO: Zähl die Zeit wie lange schon gespielt wurde und setz ne flag wenn wenig zeit mehr übrig ist (z.b. 5 min), welches beim Level laden das wichtige Level lädt
         // TODO: Fix bug wenn id 0 gelöscht wird, dass nichts mehr angezeigt wird (potenzielle probleme mit colors maybe?)
         (bool isInsideGrid, int x, int y, int z) = GetVoxelPosition(isLeft ? leftControllerTransform.position : rightControllerTransform.position);
