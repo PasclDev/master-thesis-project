@@ -1568,7 +1568,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1694278517}
   m_Layer: 5
-  m_Name: LevelCard_1
+  m_Name: CreateLevelInformation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1851,7 +1851,7 @@ GameObject:
   - component: {fileID: 1781759621}
   - component: {fileID: 1781759620}
   m_Layer: 5
-  m_Name: ManageLevelUI
+  m_Name: ManageCreateLevelUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

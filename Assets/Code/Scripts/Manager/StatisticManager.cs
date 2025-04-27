@@ -58,11 +58,6 @@ public class StatisticManager : MonoBehaviour
         WriteLevelLog(false);
         logFile.Close();
     }
-    void OnApplicationQuit()
-    {
-        WriteLevelLog(false);
-        logFile.Close();
-    }
     public void WriteLevelLog(bool isLevelComplete = true)
     {
         logFile.WriteLine(
@@ -89,5 +84,9 @@ public class StatisticManager : MonoBehaviour
         {
             levelStatistic.timeTilFirstGrab = timeSinceStart - timeSinceLastLog;
         }
+    }
+    private float GetTimeSinceStart()
+    {
+        return timeSinceStart;
     }
 }
