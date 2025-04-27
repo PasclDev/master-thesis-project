@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -29,6 +28,7 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void RemoveActions()
     {
+        isHovered = false;
         leftGrabAction.action.performed -= OnGrabAction;
         rightGrabAction.action.performed -= OnGrabAction;
     }

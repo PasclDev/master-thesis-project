@@ -25,7 +25,8 @@ public class CreateLevelManager : MonoBehaviour
     private Vector3 gridSize;
     private Vector3 gridOrigin;
     private Vector3 gridEnd;
-    public List<Color> createdGrabbableColors = new List<Color>();
+    private Dictionary<int, Color> createdGrabbableColors = new Dictionary<int, Color>();
+
 
     void Start()
     {
@@ -36,10 +37,6 @@ public class CreateLevelManager : MonoBehaviour
         gridOrigin = transform.position - (gridSize / 2);
         gridEnd = transform.position + (gridSize / 2);
         UpdateUIText();
-        foreach (Color color in createdGrabbableColors)
-        {
-            Debug.Log("Created Grabbable Color: " + color);
-        }
     }
 
     void OnEnable()
@@ -173,7 +170,7 @@ public class CreateLevelManager : MonoBehaviour
     {
         if (!IsIDInUse(id))
         {
-            createdGrabbableColors.Remove(createdGrabbableColors[id - 1]);
+            createdGrabbableColors.Remove(id);
             Destroy(GameObject.Find("CreatedGrabbable_" + id));
         }
         else
@@ -191,7 +188,7 @@ public class CreateLevelManager : MonoBehaviour
                      color: color,
                      id: id
                  );
-                createdGrabbableColors.Add(color);
+                createdGrabbableColors.Add(id, color);
 
             }
             else
@@ -209,27 +206,22 @@ public class CreateLevelManager : MonoBehaviour
     void UpdateUIText()
     {
         // Update the UI text with the current grid state
-        int grabbablesAmount = 0;
-        for (int i = 1; i < gridSizeX * gridSizeY * gridSizeZ; i++)
-        {
-            if (IsIDInUse(i))
-            {
-                grabbablesAmount++;
-            }
-            else
-            {
-                break;
-            }
-        }
+
+        int[] existingIDs = grid.SelectMany(layer => layer.SelectMany(row => row))
+            .Distinct()
+            .Where(id => id != 0)
+            .OrderBy(id => id)
+            .ToArray();
+        Debug.Log("CreateLevelManager: Update UI Text | IDs: " + string.Join(", ", existingIDs) + "| Colors: " + string.Join(", ", createdGrabbableColors.Keys));
         string text = "Gitterbox-Größe: [" + gridSizeX + ", " + gridSizeY + ", " + gridSizeZ + "]\n";
         text += "Voxel-Größe: " + voxelSize + "\n";
         text += "Freie Felder: " + grid.Sum(layer => layer.Sum(row => row.Count(voxel => voxel == 0))) + "\n";
-        text += "Farbformen: " + grabbablesAmount + "\n";
-        for (int i = 0; i < grabbablesAmount; i++)
+        text += "Farbformen: " + existingIDs.Length + "\n";
+        foreach (int i in existingIDs)
         {
-            int voxelAmount = grid.Sum(layer => layer.Sum(row => row.Count(voxel => voxel == (i + 1))));
+            int voxelAmount = grid.Sum(layer => layer.Sum(row => row.Count(voxel => voxel == i)));
 
-            text += $"<color=#{ColorUtility.ToHtmlStringRGB(createdGrabbableColors[i])}>█</color>Farbform {i + 1}: {voxelAmount} Voxel\n";
+            text += $"<color=#{ColorUtility.ToHtmlStringRGB(createdGrabbableColors[i])}>█</color>Farbform {i}: {voxelAmount} Voxel\n";
         }
         UIManager.instance.SetManageLevelUIText(text);
     }
@@ -244,6 +236,7 @@ public class CreateLevelManager : MonoBehaviour
         //Reset grid
         EmptyGrid(grid);
         UpdateUIText();
+        createdGrabbableColors.Clear();
         Debug.Log("CreateLevelManager: Level Reset");
     }
     public void SaveLevel()
@@ -290,7 +283,7 @@ public class CreateLevelManager : MonoBehaviour
                 (int[][][] grabbableGrid, int sizeX, int sizeY, int sizeZ) = IsolateGrabbableFromGrid(i);
                 string rawVoxels = ConvertVoxelsToRawVoxels(grabbableGrid, sizeX, sizeY, sizeZ);
                 string position = DetermineGrabbablePositionById(i);
-                string color = $"#{ColorUtility.ToHtmlStringRGB(createdGrabbableColors[i - 1])}";
+                string color = $"#{ColorUtility.ToHtmlStringRGB(createdGrabbableColors[i])}";
                 grabbablesJson += @"
             {
                 ""size"": [" + sizeX + @", " + sizeY + @", " + sizeZ + @"],
