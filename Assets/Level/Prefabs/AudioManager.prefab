@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4692570322943220820
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6260930603525949718}
+  - component: {fileID: 8210935153594058962}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6260930603525949718
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4692570322943220820}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8210935153594058962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4692570322943220820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 379125e946d23394293c3177c669593a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: Fillable_Snap
+    clip: {fileID: 8300000, guid: 376caf0c5e7e2dd40ba46e8603a3275f, type: 3}
+    volume: 0.2
+    pitch: 1
+    source: {fileID: 0}
+  - name: Fillable_Unsnap
+    clip: {fileID: 8300000, guid: 2099a92a2dc90d04b8669fbafb8981ee, type: 3}
+    volume: 0.2
+    pitch: 1
+    source: {fileID: 0}
+  - name: Fillable_Overlap
+    clip: {fileID: 8300000, guid: 376caf0c5e7e2dd40ba46e8603a3275f, type: 3}
+    volume: 0.2
+    pitch: 0.2
+    source: {fileID: 0}
+  - name: Fillable_Highlight
+    clip: {fileID: 8300000, guid: e63db745f9695b046b8c1af86e952b45, type: 3}
+    volume: 0.2
+    pitch: 1
+    source: {fileID: 0}
+  - name: Fillable_Unhighlight
+    clip: {fileID: 8300000, guid: f3310f0e6becaf046b3b0023e0dd6016, type: 3}
+    volume: 0.2
+    pitch: 1
+    source: {fileID: 0}
+  - name: Level_Complete
+    clip: {fileID: 8300000, guid: 48b6044baf159c24a8fcdef4e2ebeced, type: 3}
+    volume: 0.2
+    pitch: 1
+    source: {fileID: 0}
+  aus: {fileID: 0}

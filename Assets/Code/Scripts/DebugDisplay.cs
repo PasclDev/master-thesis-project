@@ -7,6 +7,20 @@ public class DebugDisplay : MonoBehaviour
 {
     Dictionary<string, string> debugTexts = new Dictionary<string, string>();
     public TextMeshProUGUI display;
+
+    public static DebugDisplay instance;
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     void Start()
     {
         gameObject.SetActive(LevelManager.isDebug);
@@ -19,24 +33,32 @@ public class DebugDisplay : MonoBehaviour
     {
         Application.logMessageReceived -= HandleLog;
     }
-    void HandleLog(string logString, string stackTrace, LogType type){
-        if (type != LogType.Log){
+    void HandleLog(string logString, string stackTrace, LogType type)
+    {
+        if (type != LogType.Log)
+        {
             return;
         }
         string[] splitString = logString.Split(new char[] { ':' }, 2);
         string debugKey = splitString[0];
         string debugValue = splitString.Length > 1 ? splitString[1] : "";
-        if (debugTexts.ContainsKey(debugKey)){
+        if (debugTexts.ContainsKey(debugKey))
+        {
             debugTexts[debugKey] = debugValue;
-        } else {
+        }
+        else
+        {
             debugTexts.Add(debugKey, debugValue);
         }
         string displayText = "";
         foreach (KeyValuePair<string, string> log in debugTexts)
         {
-            if(log.Value == ""){
+            if (log.Value == "")
+            {
                 displayText += log.Key + "\n";
-            }else{
+            }
+            else
+            {
                 displayText += log.Key + ": " + log.Value + "\n";
             }
         }
