@@ -653,7 +653,7 @@ GameObject:
   - component: {fileID: 398055581}
   - component: {fileID: 398055582}
   m_Layer: 0
-  m_Name: EnviromentManager
+  m_Name: '[Debug] EnviromentManager'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3198,7 +3198,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 348509144}
   - {fileID: 889875999}
-  - {fileID: 398055581}
   - {fileID: 1891272113242842711}
   - {fileID: 1707873351}
   - {fileID: 497797838}
@@ -3206,3 +3205,4 @@ SceneRoots:
   - {fileID: 3032334165349072807}
   - {fileID: 1039561413}
   - {fileID: 475544257}
+  - {fileID: 398055581}

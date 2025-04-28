@@ -1,5 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 public class LevelManager : MonoBehaviour
@@ -7,7 +9,7 @@ public class LevelManager : MonoBehaviour
     public string jsonFileName = "levels.json"; // JSON file name
     public int currentLevel = 0; // Current level index
     public GameObject fillablePrefab; // fillableObject prefab
-    public static bool isDebug = false; // Debug mode
+    public static bool isDebug = true; // Debug mode
     public static float rotationTolerancePercentage = 1.00f; // 20% tolerance for rotation
     public static float distanceTolerancePercentage = 0.20f; // 20% tolerance for position
 
@@ -16,6 +18,10 @@ public class LevelManager : MonoBehaviour
     public GameObject lastLevelWindow;
     public GameObject tutorialManagerPrefab;
 
+    // Extra variables for the study
+    private int[] timeStressCrucialLevel = new int[] { 2, 10 }; // Level that is crucial for the study (currently 10) that get put to the start of the queue if little time is left
+    private List<int> levelQueue = new List<int>(); // Queue of levels to be loaded. If current level is 2, next in queue would be 3, 4, etc. Only exists to smoothly change level order in the study.
+    private List<int> completedLevel = new List<int>(); // List of completed level.
     //Single instance of LevelManager
     public static LevelManager instance;
     private void Awake()
@@ -156,9 +162,7 @@ public class LevelManager : MonoBehaviour
     {
         if (currentLevel != 0)
         {
-            Debug.Log("LevelManager: Level completed! Loading Level: " + currentLevel + "+1");
-            currentLevel++;
-            LoadLevel(currentLevel);
+            LoadNextLevel();
             AudioManager.instance.Play("Level_Complete");
         }
         Debug.Log("LevelManager: Fillables filled!"); // Warning: Used in tutorial-logic, after currentLevel check! (prevents bug where next level is loaded while this function is called)
@@ -166,11 +170,43 @@ public class LevelManager : MonoBehaviour
     public void TutorialFinished()
     {
         Debug.Log("LevelManager: Tutorial finished! Loading Level: 1");
+
         LoadLevel(1);
+    }
+    public void LoadNextLevel()
+    {
+        if (levelQueue.Count > 0)
+        {
+            LoadLevel(levelQueue.FirstOrDefault());
+            return;
+        }
+        else LoadLevel(currentLevel + 1); // Load next level
+
     }
     public void LoadLevel(int levelIndex, bool isCompleted = true)
     {
-        Debug.Log("LevelManager: LoadLevel Started for: " + levelIndex);
+        if (isCompleted)
+        {
+            if (!completedLevel.Contains(currentLevel)) // If level is not already completed
+            {
+                completedLevel.Add(currentLevel);
+            }
+        }
+        if ((levelQueue.Count == 0) || levelIndex != levelQueue.FirstOrDefault()) // If loaded level is not the first in the queue or queue is empty
+        {
+            levelQueue.Clear();
+            // Add every number from levelIndex to the last level to the queue
+            for (int i = levelIndex + 1; i < levelCollection.levels.Count; i++)
+            {
+                if (!completedLevel.Contains(i)) // If level is not already completed
+                    levelQueue.Add(i);
+            }
+        }
+        else if (levelQueue.Count > 0)// If loaded level is the first in the queue
+        {
+            levelQueue.RemoveAt(0); // Remove the first element from the queue
+        }
+        Debug.Log("LevelManager: Loading Level: " + levelIndex + "| Queue: " + string.Join(", ", levelQueue) + "| Completed: " + string.Join(", ", completedLevel));
         // Unload previous level
         foreach (Transform child in transform)
         {
@@ -197,7 +233,6 @@ public class LevelManager : MonoBehaviour
         // Load a normal level
         if (levelIndex < levelCollection.levels.Count)
         {
-            Debug.Log("LevelManager: Loading Level: " + levelIndex);
             GenerateLevel(levelIndex);
         }
         else
@@ -207,6 +242,23 @@ public class LevelManager : MonoBehaviour
             {
                 lastLevelWindow.SetActive(true);
             }
+        }
+    }
+    private void SetLevelToFrontOfQueue(int levelIndex)
+    {
+        if (levelQueue.Contains(levelIndex))
+        {
+            levelQueue.Remove(levelIndex);
+        }
+        levelQueue.Insert(0, levelIndex);
+    }
+    public void MoveCrucialLevelToFrontOfQueue() // Gets called when time is running out to make sure every crucial level is played
+    {
+        foreach (int level in timeStressCrucialLevel)
+        {
+            if (completedLevel.Contains(level)) // If level is already completed, skip it
+                continue;
+            SetLevelToFrontOfQueue(level);
         }
     }
 }
