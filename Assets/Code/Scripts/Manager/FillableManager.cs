@@ -247,26 +247,7 @@ public class FillableManager : MonoBehaviour
     {
         if (context.performed)
         {
-            try
-            {
-                XRBaseInteractor interactor = isLeft ? GameObject.Find("Left Near-Far Interactor").GetComponent<NearFarInteractor>() : GameObject.Find("Right Near-Far Interactor").GetComponent<NearFarInteractor>();
-                if (interactor.interactablesSelected == null)
-                { // Currently excluding the case when heightchanger is grabbed (as something is grabbed)
-                    throw new System.Exception("Fillable: Interactor has no interactables selected.");
-                }
-                else if (UIManager.instance.isUiVisible)
-                {
-                    Debug.Log("Fillable: UI is visible, highlight not activated!");
-                }
-                else
-                {
-                    Debug.Log("Fillable: Highlight not activated! Holding objects" + interactor.interactablesSelected.Count + " " + interactor.interactablesSelected.FirstOrDefault().transform.name);
-                }
-            }
-            catch
-            {
-                HighlightMissingVoxels();
-            }
+            HighlightMissingVoxels();
         }
         else if (context.canceled && isCurrentlyHighlighted)
         {
