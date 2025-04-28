@@ -19,8 +19,8 @@ public class LevelManager : MonoBehaviour
     public GameObject tutorialManagerPrefab;
 
     // Extra variables for the study
-    private int[] timeStressCrucialLevel = new int[] { 2, 10 }; // Level that is crucial for the study (currently 10) that get put to the start of the queue if little time is left
-    private List<int> levelQueue = new List<int>(); // Queue of levels to be loaded. If current level is 2, next in queue would be 3, 4, etc. Only exists to smoothly change level order in the study.
+    private int[] timeStressCrucialLevel = new int[] { 10, 2 }; // Level that is crucial for the study (currently 10) that get put to the start of the queue if little time is left
+    public List<int> levelQueue = new List<int>(); // Queue of levels to be loaded. If current level is 2, next in queue would be 3, 4, etc. Only exists to smoothly change level order in the study.
     private List<int> completedLevel = new List<int>(); // List of completed level.
     //Single instance of LevelManager
     public static LevelManager instance;
@@ -171,7 +171,7 @@ public class LevelManager : MonoBehaviour
     {
         Debug.Log("LevelManager: Tutorial finished! Loading Level: 1");
 
-        LoadLevel(1);
+        LoadNextLevel();
     }
     public void LoadNextLevel()
     {
@@ -252,11 +252,11 @@ public class LevelManager : MonoBehaviour
         }
         levelQueue.Insert(0, levelIndex);
     }
-    public void MoveCrucialLevelToFrontOfQueue() // Gets called when time is running out to make sure every crucial level is played
+    public void MoveCrucialLevelsToFrontOfQueue() // Gets called when time is running out to make sure every crucial level is played
     {
         foreach (int level in timeStressCrucialLevel)
         {
-            if (completedLevel.Contains(level)) // If level is already completed, skip it
+            if (completedLevel.Contains(level) || currentLevel == level) // If level is already completed or is currently doing said level, skip it
                 continue;
             SetLevelToFrontOfQueue(level);
         }

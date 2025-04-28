@@ -21,6 +21,8 @@ public class StatisticManager : MonoBehaviour
     private float timeSinceStart = 0;
     private float timeSinceLastLog = 0;
     private string logFilePath;
+    private bool hasCrucialTimePassed = false;
+    private int crucialTime = 900; // 15 minutes in seconds
     private System.IO.StreamWriter logFile;
     public static StatisticManager instance;
     public LevelStatistic levelStatistic = new LevelStatistic();
@@ -52,6 +54,14 @@ public class StatisticManager : MonoBehaviour
     void Update()
     {
         timeSinceStart += Time.deltaTime;
+        Debug.Log("TimeSinceStart: " + ((int)(timeSinceStart / 60)).ToString("D2") + ":" + ((int)(timeSinceStart % 60)).ToString("D2"));
+        // If 15 minutes have passed, add crucial levels to queue 
+        if (!hasCrucialTimePassed && timeSinceStart > crucialTime)
+        {
+            hasCrucialTimePassed = true;
+            Debug.Log("StatisticManager: 15 minutes have passed, adding crucial levels to queue.");
+            LevelManager.instance.MoveCrucialLevelsToFrontOfQueue();
+        }
     }
     void OnDestroy()
     {
