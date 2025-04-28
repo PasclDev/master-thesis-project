@@ -7,7 +7,7 @@ public class LevelManager : MonoBehaviour
     public string jsonFileName = "levels.json"; // JSON file name
     public int currentLevel = 0; // Current level index
     public GameObject fillablePrefab; // fillableObject prefab
-    public static bool isDebug = true; // Debug mode
+    public static bool isDebug = false; // Debug mode
     public static float rotationTolerancePercentage = 1.00f; // 20% tolerance for rotation
     public static float distanceTolerancePercentage = 0.20f; // 20% tolerance for position
 
@@ -43,7 +43,7 @@ public class LevelManager : MonoBehaviour
     }
     public void ResetLevelHeight()
     {
-        transform.position = new Vector3(transform.position.x, Camera.main.transform.position.y - 0.3f, transform.position.z); // Level is upwards, so this height is the lowest point of the level - 0.05f (due to Height Change Interactable). Starting at Eye-Height - 0.3f.
+        transform.position = new Vector3(transform.position.x, Camera.main.transform.position.y - 0.4f, transform.position.z); // Level is upwards, so this height is the lowest point of the level - 0.05f (due to Height Change Interactable). Starting at Eye-Height - 0.4f.
     }
     public void LoadLevelsFromJSON()
     {

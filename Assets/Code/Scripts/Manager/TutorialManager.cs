@@ -22,19 +22,18 @@ public class TutorialManager : MonoBehaviour
     public int tutorialStep = 0;
 
     private string[] tutorialTexts = new string[] {
-        "Mit den <color=#CF2821>Rot-markierten Greiftasten</color> an den Controllern kannst du \"Farbformen\" aufsammeln.",
-        "Halte eine Farbform mit der <color=#CF2821>Greiftaste</color> in deiner Hand und drücke währenddessen die <color=#E3C420>Gelb-markierte Triggertaste</color> der gleichen Hand, um die Farbform durchsichtig zu machen.",
-        "Gut gemacht! In jedem Level muss die Gitterform mit den Farbformen gefüllt werden.\n Bewege nun die Farbform in die Gitterform.",
-        "Manchmal kann es schwer sein, Objekte zu rotieren.\nStrecke deinen Arm aus, <color=#CF2821>Greife</color> die Farbform und ziehe dann deinen Arm zu dir, um die Farbform besser rotieren zu können. Packe sie dann in die Gitterform.",
-        "In späteren Leveln kann man schnell den Überblick verlieren.\nDrücke die <color=#E3C420>Gelb-markierte Taste</color> des Controllers, um alle Farbformen in der Gitterform durchsichtig zu machen und alle freien Felder zu markieren.",
-        "Super! Um die Höhe des Levels anzupassen, greife die Kugel unter der Farbform und ziehe sie nach oben oder unten.",
-        "Das war es mit der Einführung!\nUm die Einführung zu beenden, platziere die letzte Farbform in die Gitterform."
+        "Mit der <color=#CF2821><b>Rot-markierten Greiftaste</b></color> am linken und rechten Controller kannst du \"Farbformen\" aufsammeln.",
+        "Halte eine Farbform mit der <color=#CF2821><b>Greiftaste</b></color> in deiner Hand und drücke währenddessen die <color=#E3C420><b>Gelb-markierte Triggertaste</b></color> der gleichen Hand, um die Farbform durchsichtig zu machen.",
+        "Gut gemacht! In jedem Level muss die Gitterbox mit den Farbformen gefüllt werden.\n Bewege nun die Farbform in die Gitterbox.",
+        "Manchmal können Farbformen\nzu weit weg sein.\nStrecke deinen Arm aus, <color=#CF2821><b>greife</b></color> die Farbform und ziehe dann deinen Arm zu dir, um die Farbform in deine Hand zu ziehen.\n\nPacke sie dann in die Gitterbox.",
+        "In späteren Leveln kann man schnell den Überblick verlieren.\nDrücke die <color=#E3C420><b>Gelb-markierte Taste</b></color> des Controllers, um alle Farbformen in der Gitterbox durchsichtig zu machen und alle freien Felder zu markieren.",
+        "Super! Um die Höhe des Levels anzupassen, <color=#CF2821><b>greife</b></color> die Kugel unter der Farbform und ziehe sie nach oben oder unten.",
+        "Das war es mit der Einführung!\nUm die Einführung zu beenden, platziere die letzte Farbform in die Gitterbox.\n\n<size=7><i>Tipp zum Rotieren:\n<color=#CF2821><b>Greife</b></color> die Farmform, drehe dein Handgelenk, lasse los, drehe zurück und <color=#CF2821>greife</b></color> erneut.</i></size>",
     };
 
     void OnEnable()
     {
         Application.logMessageReceived += HandleLog;
-        heightInteractableObject = GameObject.Find("HeightInteractableObject");
     }
     void OnDisable()
     {
@@ -65,6 +64,10 @@ public class TutorialManager : MonoBehaviour
         textboxBackgroundColor = TextboxBackground.color;
         UpdateTutorialText();
         InitializeGameObjects();
+        heightInteractableObject = LevelManager.instance.GetComponent<YAxisGrabInteractable>().attachTransform.gameObject; // Secure way to find it even when it is deactivated
+        Debug.Log("TutorialManager: HeightInteractable found:" + heightInteractableObject.name);
+        heightInteractableObject.SetActive(false);
+        LevelManager.instance.ResetLevelHeight();
 
     }
     private void UpdateTutorialText()
@@ -118,6 +121,7 @@ public class TutorialManager : MonoBehaviour
                 grabbableObjectGroup.SetActive(true);
                 break;
             case 5:
+                heightInteractableObject.SetActive(true);
                 heightInteractableObject.GetComponent<Outline>().enabled = true;
                 break;
             case 6:
@@ -190,9 +194,9 @@ public class TutorialManager : MonoBehaviour
             child.GetComponent<GrabbableManager>().Initialize(child.GetComponent<GrabbableManager>().grabbable, 0.08f);
         }
         // Fillables
-        fillableObject1.GetComponent<FillableManager>().Initialize(transform.position, new Vector3Int(3, 3, 3), 0.1f, transform.parent.GetComponent<VoxelMeshGenerator>());
-        fillableObject2.GetComponent<FillableManager>().Initialize(transform.position, new Vector3Int(3, 3, 3), 0.1f, transform.parent.GetComponent<VoxelMeshGenerator>());
-        fillableObject3.GetComponent<FillableManager>().Initialize(transform.position, new Vector3Int(3, 3, 3), 0.08f, transform.parent.GetComponent<VoxelMeshGenerator>());
+        fillableObject1.GetComponent<FillableManager>().Initialize(fillableObject1.transform.position, new Vector3Int(3, 3, 3), 0.1f, transform.parent.GetComponent<VoxelMeshGenerator>());
+        fillableObject2.GetComponent<FillableManager>().Initialize(fillableObject2.transform.position, new Vector3Int(3, 3, 3), 0.1f, transform.parent.GetComponent<VoxelMeshGenerator>());
+        fillableObject3.GetComponent<FillableManager>().Initialize(fillableObject3.transform.position, new Vector3Int(3, 3, 3), 0.08f, transform.parent.GetComponent<VoxelMeshGenerator>());
         // Fillable fillable content
         fillableObject3.GetComponent<FillableManager>().fillableGrid = new int[3][][]{
             new int[3][]{
