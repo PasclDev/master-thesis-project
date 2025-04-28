@@ -9,7 +9,7 @@ public class LevelManager : MonoBehaviour
     public string jsonFileName = "levels.json"; // JSON file name
     public int currentLevel = 0; // Current level index
     public GameObject fillablePrefab; // fillableObject prefab
-    public static bool isDebug = true; // Debug mode
+    public static bool isDebug = false; // Debug mode
     public static float rotationTolerancePercentage = 1.00f; // 20% tolerance for rotation
     public static float distanceTolerancePercentage = 0.20f; // 20% tolerance for position
 
@@ -145,7 +145,6 @@ public class LevelManager : MonoBehaviour
         statisticsManager.levelStatistic.numberOfFillables = 1; // Currently still only one fillable per level
         statisticsManager.levelStatistic.numberOfGrabbables = currentLevelData.grabbables.Count;
         UIManager.instance.SetManageLevelUIText(levelIndex, currentLevelData.grabbables.Count, 1);
-        StartCoroutine(WaitForCameraPositionChange());
     }
     //First camera height change sets the level to the camera height
     private IEnumerator WaitForCameraPositionChange()
@@ -228,10 +227,8 @@ public class LevelManager : MonoBehaviour
             currentLevel = 0;
             UIManager.instance.SetManageLevelUIText(0, 0, 0);
             Instantiate(tutorialManagerPrefab, transform);
-            return;
         }
-        // Load a normal level
-        if (levelIndex < levelCollection.levels.Count)
+        else if (levelIndex < levelCollection.levels.Count)         // Load a normal level
         {
             GenerateLevel(levelIndex);
         }
@@ -243,6 +240,7 @@ public class LevelManager : MonoBehaviour
                 lastLevelWindow.SetActive(true);
             }
         }
+        StartCoroutine(WaitForCameraPositionChange()); // Wait for camera position change before setting level height
     }
     private void SetLevelToFrontOfQueue(int levelIndex)
     {

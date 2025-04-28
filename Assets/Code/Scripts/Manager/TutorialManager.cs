@@ -22,11 +22,11 @@ public class TutorialManager : MonoBehaviour
     public int tutorialStep = 0;
 
     private string[] tutorialTexts = new string[] {
-        "Mit der <color=#CF2821><b>Rot-markierten Greiftaste</b></color> am linken und rechten Controller kannst du \"Farbformen\" aufsammeln.",
-        "Halte eine Farbform mit der <color=#CF2821><b>Greiftaste</b></color> in deiner Hand und drücke währenddessen die <color=#E3C420><b>Gelb-markierte Triggertaste</b></color> der gleichen Hand, um die Farbform durchsichtig zu machen.",
+        "Mit der <color=#CF2821><b>rot-markierten Greiftaste</b></color> am linken und rechten Controller kannst du \"Farbformen\" aufsammeln.",
+        "Halte eine Farbform mit der <color=#CF2821><b>Greiftaste</b></color> in deiner Hand und drücke währenddessen die <color=#E3C420><b>gelb-markierte Triggertaste</b></color> der gleichen Hand, um die Farbform durchsichtig zu machen.",
         "Gut gemacht! In jedem Level muss die Gitterbox mit den Farbformen gefüllt werden.\n Bewege nun die Farbform in die Gitterbox.",
         "Manchmal können Farbformen\nzu weit weg sein.\nStrecke deinen Arm aus, <color=#CF2821><b>greife</b></color> die Farbform und ziehe dann deinen Arm zu dir, um die Farbform in deine Hand zu ziehen.\n\nPacke sie dann in die Gitterbox.",
-        "In späteren Leveln kann man schnell den Überblick verlieren.\nDrücke die <color=#E3C420><b>Gelb-markierte Taste</b></color> des Controllers, um alle Farbformen in der Gitterbox durchsichtig zu machen und alle freien Felder zu markieren.",
+        "In späteren Leveln kann man schnell den Überblick verlieren.\nDrücke die <color=#E3C420><b>gelb-markierte Triggertaste</b></color> des Controllers, um alle Farbformen in der Gitterbox durchsichtig zu machen und alle freien Felder zu markieren.",
         "Super! Um die Höhe des Levels anzupassen, <color=#CF2821><b>greife</b></color> die Kugel unter der Farbform und ziehe sie nach oben oder unten.",
         "Das war es mit der Einführung!\nUm die Einführung zu beenden, platziere die letzte Farbform in die Gitterbox.\n\n<size=7><i>Tipp zum Rotieren:\n<color=#CF2821><b>Greife</b></color> die Farmform, drehe dein Handgelenk, lasse los, drehe zurück und <color=#CF2821>greife</b></color> erneut.</i></size>",
     };
@@ -67,8 +67,6 @@ public class TutorialManager : MonoBehaviour
         heightInteractableObject = LevelManager.instance.GetComponent<YAxisGrabInteractable>().attachTransform.gameObject; // Secure way to find it even when it is deactivated
         Debug.Log("TutorialManager: HeightInteractable found:" + heightInteractableObject.name);
         heightInteractableObject.SetActive(false);
-        LevelManager.instance.ResetLevelHeight();
-
     }
     private void UpdateTutorialText()
     {

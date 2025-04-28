@@ -167,15 +167,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'TutorialText
-
-    TutorialText
-
-    TutorialText
-
-    TutorialText
-
-    TutorialText'
+  m_text: "In sp\xE4teren Leveln kann man schnell den \xDCberblick verlieren.\\nDr\xFCcke
+    die <color=#E3C420><b>gelb-markierte Triggertaste</b></color> des Controllers,
+    um alle Farbformen in der Gitterbox durchsichtig zu machen und alle freien Felder
+    zu markieren."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

@@ -424,7 +424,6 @@ public class CreateLevelManager : MonoBehaviour
     void TriggerPressed(bool isLeft)
     {
         // TODO: Wie beim Grip auch während des Drückens die Löschen
-        // TODO: Zähl die Zeit wie lange schon gespielt wurde und setz ne flag wenn wenig zeit mehr übrig ist (z.b. 5 min), welches beim Level laden das wichtige Level lädt
         (bool isInsideGrid, int x, int y, int z) = GetVoxelPosition(isLeft ? leftControllerTransform.position : rightControllerTransform.position);
         if (!isInsideGrid)
         {

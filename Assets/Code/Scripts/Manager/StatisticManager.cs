@@ -54,7 +54,7 @@ public class StatisticManager : MonoBehaviour
     void Update()
     {
         timeSinceStart += Time.deltaTime;
-        Debug.Log("TimeSinceStart: " + ((int)(timeSinceStart / 60)).ToString("D2") + ":" + ((int)(timeSinceStart % 60)).ToString("D2"));
+        // Debug.Log("TimeSinceStart: " + ((int)(timeSinceStart / 60)).ToString("D2") + ":" + ((int)(timeSinceStart % 60)).ToString("D2"));
         // If 15 minutes have passed, add crucial levels to queue 
         if (!hasCrucialTimePassed && timeSinceStart > crucialTime)
         {
