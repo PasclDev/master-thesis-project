@@ -13,21 +13,36 @@ public class RecenterSelf : MonoBehaviour
     private float angle;
     public InputActionReference recenterSelfAction;
 
+    public static RecenterSelf instance;
+
     private void Awake()
     {
-        recenterSelfAction.action.performed += Recenter;
+        if (instance == null)
+        {
+            instance = this;
+            recenterSelfAction.action.performed += OnRecenterButtonPressed;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
     }
     private void OnDestroy()
     {
-        recenterSelfAction.action.performed -= Recenter;
+        recenterSelfAction.action.performed -= OnRecenterButtonPressed;
     }
 
-    public void Recenter(InputAction.CallbackContext context)
+    public void OnRecenterButtonPressed(InputAction.CallbackContext context)
     {
         if (!context.performed)
         {
             return;
         }
+        Recenter();
+    }
+    public void Recenter()
+    {
         //From https://stackoverflow.com/questions/76297143/in-unity-openxr-environment-how-to-reset-the-player-position-to-center
         offset = head.position - origin.position;
         offset.y = 0;
@@ -44,4 +59,5 @@ public class RecenterSelf : MonoBehaviour
         if (LevelManager.instance != null)
             LevelManager.instance.ResetLevelHeight();
     }
+
 }

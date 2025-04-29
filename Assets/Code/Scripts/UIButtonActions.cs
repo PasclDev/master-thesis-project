@@ -106,6 +106,11 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
         //SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
     }
+    public void OnRecenterSelfButton()
+    {
+        Debug.Log("UIButtonActions: Recenter Self");
+        RecenterSelf.instance.Recenter();
+    }
     public void OnQuitApplicationButton()
     {
         Debug.Log("UIButtonActions: Quit Application");
