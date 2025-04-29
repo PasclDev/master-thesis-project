@@ -24,7 +24,8 @@ public class GrabbableManager : MonoBehaviour
     public Grabbable grabbable;
     public float voxelSize;
     public InsideFillable insideFillable;
-    public bool isGrabbed = false;
+    private bool isGrabbed = false;
+    private bool isHovered = false;
     public int isInHand = 0; // 1 for left hand, 2 for right hand
     public DebugObjects debugObjects;
     public Material transparentMaterial;
@@ -205,12 +206,15 @@ Rotated Grid Size: {Vector3Int.RoundToInt(rotatedGridSize)}";
 
     public void OnHoverEnter(HoverEnterEventArgs args)
     {
+        //Always gets executed AFTER OnSelectExit
+        isHovered = true;
         outline.OutlineColor = Color.gray;
         outline.enabled = true;
     }
 
     public void OnHoverExit(HoverExitEventArgs args)
     {
+        isHovered = false;
         if (!isGrabbed)
             outline.enabled = false;
     }
@@ -245,6 +249,16 @@ Rotated Grid Size: {Vector3Int.RoundToInt(rotatedGridSize)}";
     {
         isGrabbed = false;
         isInHand = 0;
+        StartCoroutine(WaitAndCheckHover());
+        // OnHoverEnter gets executed after OnSelectExit, so just disabling it would lead to flickering, waiting for the next frame solved that issue
+        IEnumerator WaitAndCheckHover()
+        {
+            yield return new WaitForEndOfFrame();
+            if (!isHovered)
+            {
+                outline.enabled = false;
+            }
+        }
         SetMaterial(false, false);
         Debug.Log("Grabbable: " + gameObject.name + " has been dropped!");
         if (lastTouchedFillable != null)
