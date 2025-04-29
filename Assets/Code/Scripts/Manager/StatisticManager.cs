@@ -22,7 +22,10 @@ public class StatisticManager : MonoBehaviour
     private float timeSinceLastLog = 0;
     private string logFilePath;
     private bool hasCrucialTimePassed = false;
-    private int crucialTime = 900; // 15 minutes in seconds
+    private bool hasEndStudyTimePassed = false;
+
+    private int crucialTime = 840; // 14 minutes in seconds (Add crucial level to front of queue)
+    private int endStudyTime = 1080; // 18 minutes in seconds (If not every crucial level is completed, end the study after they are completed)
     private System.IO.StreamWriter logFile;
     public static StatisticManager instance;
     public LevelStatistic levelStatistic = new LevelStatistic();
@@ -61,6 +64,13 @@ public class StatisticManager : MonoBehaviour
             hasCrucialTimePassed = true;
             Debug.Log("StatisticManager: 15 minutes have passed, adding crucial levels to queue.");
             LevelManager.instance.MoveCrucialLevelsToFrontOfQueue();
+        }
+        if (!hasEndStudyTimePassed && timeSinceStart > endStudyTime)
+        {
+            hasEndStudyTimePassed = true;
+
+            Debug.Log("StatisticManager: 20 minutes have passed, adding end game to queue if crucialLevel are still missing, otherwise end the game");
+            LevelManager.instance.EndOfStudy();
         }
     }
     void OnDestroy()

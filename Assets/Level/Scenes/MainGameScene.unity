@@ -285,6 +285,7 @@ MonoBehaviour:
   lastLevelWindow: {fileID: 497797836}
   tutorialManagerPrefab: {fileID: 7056604412803229707, guid: 60ba3ed8d2ba1e9459defaf597af3b0e, type: 3}
   levelQueue: 
+  completedLevel: 
 --- !u!4 &348509144
 Transform:
   m_ObjectHideFlags: 0

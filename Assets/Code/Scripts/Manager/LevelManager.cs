@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour
 {
     public string jsonFileName = "levels.json"; // JSON file name
@@ -21,7 +23,7 @@ public class LevelManager : MonoBehaviour
     // Extra variables for the study
     private int[] timeStressCrucialLevel = new int[] { 10, 2 }; // Level that is crucial for the study (currently 10) that get put to the start of the queue if little time is left
     public List<int> levelQueue = new List<int>(); // Queue of levels to be loaded. If current level is 2, next in queue would be 3, 4, etc. Only exists to smoothly change level order in the study.
-    private List<int> completedLevel = new List<int>(); // List of completed level.
+    public List<int> completedLevel = new List<int>(); // List of completed level.
     //Single instance of LevelManager
     public static LevelManager instance;
     private void Awake()
@@ -228,6 +230,12 @@ public class LevelManager : MonoBehaviour
             UIManager.instance.SetManageLevelUIText(0, 0, 0);
             Instantiate(tutorialManagerPrefab, transform);
         }
+        else if (levelIndex == -1)
+        {
+            // Loading end of study
+            currentLevel = -1;
+            SceneManager.LoadScene("StudyEndScene");
+        }
         else if (levelIndex < levelCollection.levels.Count)         // Load a normal level
         {
             GenerateLevel(levelIndex);
@@ -257,6 +265,45 @@ public class LevelManager : MonoBehaviour
             if (completedLevel.Contains(level) || currentLevel == level) // If level is already completed or is currently doing said level, skip it
                 continue;
             SetLevelToFrontOfQueue(level);
+        }
+    }
+    public void EndOfStudy()
+    {
+        // If every crucial level is completed, end the study (load the StudyEndScene), otherwise add -1 after the crucial levels in the queue.
+        // This is to make sure that the study ends after the crucial levels are completed, even if the time is running out.
+
+        // If every crucialLevel is completed
+        if (timeStressCrucialLevel.All(level => completedLevel.Contains(level)))
+        {
+            Debug.Log("LevelManager: Study ended, all crucial levels completed!");
+            LoadLevel(-1); // Load end of study scene
+        }
+        else
+        {
+            Debug.Log("LevelManager: Study ended, not all crucial levels completed!");
+            // Set level -1 AFTER every crucial level in queue like 2,3,4 turns into 2,-1,3,4 because only level 2 is crucial. crucial levels will always be at the start
+            // in case that multiple crucial levels are still in queue, set -1 after the last crucial level
+            // if no crucial level is in the queue, add -1 at the start of the queue 3,4 -> -1,3,4
+            for (int i = 0; i < levelQueue.Count; i++)
+            {
+                if (timeStressCrucialLevel.Contains(levelQueue[i]))
+                {
+                    if (i + 1 < levelQueue.Count && !timeStressCrucialLevel.Contains(levelQueue[i + 1])) // If next queue entry exists and it isn't a crucial level
+                    {
+                        levelQueue.Insert(i + 1, -1);
+                        break;
+                    }
+                    else if (i + 1 == levelQueue.Count) // If the last element is a crucial level, add -1 at the end of the queue
+                    {
+                        levelQueue.Add(-1);
+                        break;
+                    }
+                }
+            }
+            if (!levelQueue.Contains(-1)) // If no crucial level is in the queue, add -1 at the start of the queue
+            {
+                levelQueue.Insert(0, -1);
+            }
         }
     }
 }
