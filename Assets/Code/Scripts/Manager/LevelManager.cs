@@ -11,7 +11,7 @@ public class LevelManager : MonoBehaviour
     public string jsonFileName = "levels.json"; // JSON file name
     public int currentLevel = 0; // Current level index
     public GameObject fillablePrefab; // fillableObject prefab
-    public static bool isDebug = false; // Debug mode
+    public static bool isDebug = true; // Debug mode
     public static float rotationTolerancePercentage = 1.00f; // 20% tolerance for rotation
     public static float distanceTolerancePercentage = 0.20f; // 20% tolerance for position
 
@@ -21,7 +21,7 @@ public class LevelManager : MonoBehaviour
     public GameObject tutorialManagerPrefab;
 
     // Extra variables for the study
-    private int[] timeStressCrucialLevel = new int[] { 10, 2 }; // Level that is crucial for the study (currently 10) that get put to the start of the queue if little time is left
+    private int[] timeStressCrucialLevel = new int[] { 16, 13, 10, 4 }; // Level that is crucial for the study (currently 10) that get put to the start of the queue if little time is left
     public List<int> levelQueue = new List<int>(); // Queue of levels to be loaded. If current level is 2, next in queue would be 3, 4, etc. Only exists to smoothly change level order in the study.
     public List<int> completedLevel = new List<int>(); // List of completed level.
     //Single instance of LevelManager

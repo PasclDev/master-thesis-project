@@ -665,7 +665,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 407947704278251850, guid: 52e57cba71989464ab101efde846f1f8, type: 3}
       propertyPath: m_VerticalAlignment
-      value: 4096
+      value: 512
       objectReference: {fileID: 0}
     - target: {fileID: 3198545959200932586, guid: 52e57cba71989464ab101efde846f1f8, type: 3}
       propertyPath: m_Name
