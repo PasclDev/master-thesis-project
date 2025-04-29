@@ -110,6 +110,7 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         Debug.Log("UIButtonActions: Recenter Self");
         RecenterSelf.instance.Recenter();
+        UIManager.instance.HideManageLevelUI();
     }
     public void OnQuitApplicationButton()
     {
