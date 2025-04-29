@@ -137,7 +137,7 @@
               0, 0, 0,  0, 0, 0,  1, 0, 0,  
               0, 0, 0,  0, 0, 0,  1, 0, 0 
           ],
-          "position": [-4, 4, 0],
+          "position": [-4, 3, 0],
           "color": "#160407"
       },
       {
@@ -145,7 +145,7 @@
           "rawVoxels": [
               1, 1,  1, 1 
           ],
-          "position": [0, 4, 0],
+          "position": [0, 3, 1],
           "color": "#4b364f"
       },
       {
@@ -154,7 +154,7 @@
               1,  1,  
               1,  1 
           ],
-          "position": [4, 4, 0],
+          "position": [4, 3, 0],
           "color": "#6c6f6b"
       },
       {
@@ -163,7 +163,7 @@
               1, 1,  
               1, 1 
           ],
-          "position": [-4, 8, 0],
+          "position": [0, 5, 0],
           "color": "#fff8bf"
       }
       ]
@@ -571,58 +571,67 @@
       ]
     },
     {
-      "voxelSize": 0.06,
-      "fillable": {
-          "size": [3, 3, 3],
-          "position": [0, 0, 0]
-      },
-      "grabbables": [
-      {
-          "size": [3, 3, 3],
-          "rawVoxels": [
-              0, 0, 1,  0, 0, 0,  0, 0, 0,  
-              0, 0, 1,  0, 0, 0,  0, 0, 0,  
-              1, 1, 1,  0, 0, 1,  0, 0, 1 
-          ],
-          "position": [-4, 0, 0],
-          "color": "#190909"
-      },
-      {
-          "size": [2, 2, 2],
-          "rawVoxels": [
-              1, 1,  1, 1,  
-              1, 1,  1, 1 
-          ],
-          "position": [4, 0, 0],
-          "color": "#550000"
-      },
-      {
-          "size": [1, 2, 2],
-          "rawVoxels": [
-              1,  1,  
-              1,  1 
-          ],
-          "position": [-4, 4, 0],
-          "color": "#aa3939"
-      },
-      {
-          "size": [2, 1, 2],
-          "rawVoxels": [
-              1, 1,  
-              1, 1 
-          ],
-          "position": [0, 4, 0],
-          "color": "#d46a6a"
-      },
-      {
-          "size": [2, 2, 1],
-          "rawVoxels": [
-              1, 1,  1, 1 
-          ],
-          "position": [4, 4, 0],
-          "color": "#ffaaaa"
-      }
-      ]
+        "voxelSize": 0.08,
+        "fillable": {
+            "size": [3, 3, 3],
+            "position": [0, 0, 0]
+        },
+        "grabbables": [
+        {
+            "size": [1, 2, 2],
+            "rawVoxels": [
+                1,  1,  
+                1,  1 
+            ],
+            "position": [-4, 3, 0],
+            "color": "#990000"
+        },
+        {
+            "size": [1, 2, 2],
+            "rawVoxels": [
+                1,  1,  
+                1,  1 
+            ],
+            "position": [4, 3, 0],
+            "color": "#eb5d7a"
+        },
+        {
+            "size": [3, 3, 3],
+            "rawVoxels": [
+                1, 0, 0,  1, 0, 0,  1, 1, 1,  
+                0, 0, 0,  0, 0, 0,  1, 0, 0,  
+                0, 0, 0,  0, 0, 0,  1, 0, 0 
+            ],
+            "position": [-4, 0, 0],
+            "color": "#f47321"
+        },
+        {
+            "size": [2, 2, 1],
+            "rawVoxels": [
+                1, 1,  1, 1 
+            ],
+            "position": [4, 0, 0],
+            "color": "#ffc220"
+        },
+        {
+            "size": [1, 2, 2],
+            "rawVoxels": [
+                1,  1,  
+                1,  1 
+            ],
+            "position": [0, 3, 1],
+            "color": "#76c043"
+        },
+        {
+            "size": [2, 1, 2],
+            "rawVoxels": [
+                1, 1,  
+                1, 1 
+            ],
+            "position": [0, 5, 0],
+            "color": "#0071ce"
+        }
+        ]
     },
     {
       "voxelSize": 0.06,
