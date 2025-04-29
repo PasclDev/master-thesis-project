@@ -99,7 +99,7 @@ public class TutorialManager : MonoBehaviour
     {
         StatisticManager.instance.levelStatistic.tutorialStep = tutorialStep;
         StatisticManager.instance.WriteLevelLog();
-        AudioManager.instance.Play("Tutorial_NextStep");
+        GetComponent<AudioSource>().Play(); // Own AudioSource instead of the AudioManager to avoid the sound being overwritten by the trigger sound
         tutorialStep++;
         switch (tutorialStep)
         {
@@ -128,6 +128,7 @@ public class TutorialManager : MonoBehaviour
                 break;
             case 7:
                 LevelManager.instance.TutorialFinished();
+                AudioManager.instance.Play("Tutorial_Finished"); // Using AudioManager so the sound will be played even after destroying this object
                 Destroy(gameObject);
                 break;
         }
