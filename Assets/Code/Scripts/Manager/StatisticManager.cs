@@ -24,8 +24,8 @@ public class StatisticManager : MonoBehaviour
     private bool hasCrucialTimePassed = false;
     private bool hasEndStudyTimePassed = false;
 
-    private int crucialTime = 840; // 14 minutes in seconds (Add crucial level to front of queue)
-    private int endStudyTime = 1080; // 18 minutes in seconds (If not every crucial level is completed, end the study after they are completed)
+    private int crucialTime = 720; // 12 minutes in seconds (Add crucial level to front of queue)
+    private int endStudyTime = 960; // 16 minutes in seconds (If not every crucial level is completed, end the study after they are completed)
     private System.IO.StreamWriter logFile;
     public static StatisticManager instance;
     public LevelStatistic levelStatistic = new LevelStatistic();
