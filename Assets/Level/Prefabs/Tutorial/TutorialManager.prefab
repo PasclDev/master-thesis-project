@@ -36,8 +36,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.4}
-  m_SizeDelta: {x: 180, y: 80}
+  m_AnchoredPosition: {x: 0, y: 0.48}
+  m_SizeDelta: {x: 185, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &1188778117410038157
 Canvas:
@@ -167,10 +167,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "In sp\xE4teren Leveln kann man schnell den \xDCberblick verlieren.\\nDr\xFCcke
-    die <color=#E3C420><b>gelb-markierte Triggertaste</b></color> des Controllers,
-    um alle Farbformen in der Gitterbox durchsichtig zu machen und alle freien Felder
-    zu markieren."
+  m_text: "Manchmal ist es schwer erkennen, wo noch leere Felder in der Gitterbox
+    sind.\\nDaf\xFCr gibt es die <color=#E3C420><b>gelbe Triggertaste</b></color>.\\n\\nDas
+    Halten der <color=#E3C420><b>Triggertaste</b></color>:\\n<i>macht alle Farbformen
+    in der Gitterbox durchsichtig\\n&\\nmarkiert die leeren Felder, die noch gef\xFCllt
+    werden m\xFCssen\r\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

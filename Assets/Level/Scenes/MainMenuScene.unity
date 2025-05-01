@@ -782,6 +782,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5301877954494683078, guid: 3060b668445394f4c92ebfcdc9ffa93b, type: 3}
+      propertyPath: m_Color.a
+      value: 0.9490196
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301877954494683078, guid: 3060b668445394f4c92ebfcdc9ffa93b, type: 3}
       propertyPath: m_Color.b
       value: 0.2509804
       objectReference: {fileID: 0}
@@ -800,8 +804,8 @@ PrefabInstance:
     - target: {fileID: 8231228824200700535, guid: 3060b668445394f4c92ebfcdc9ffa93b, type: 3}
       propertyPath: m_text
       value: "Willkommen!\n\nZeige mit dem Controller auf den Start-Knopf und dr\xFCcke
-        entweder die\n<color=#CF2821><b>rot-markierten Greiftaste</b></color>\noder
-        die\n<color=#E3C420><b>gelb-markierte Triggertaste</b>\n"
+        entweder die\n<color=#CF2821><b>rote Greiftaste</b></color>\noder die\n<color=#E3C420><b>gelbe
+        Triggertaste</b>\n"
       objectReference: {fileID: 0}
     - target: {fileID: 8231228824200700535, guid: 3060b668445394f4c92ebfcdc9ffa93b, type: 3}
       propertyPath: m_fontSize
@@ -892,7 +896,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2509804, g: 0.2509804, b: 0.2509804, a: 0.9019608}
+  m_Color: {r: 0.2509804, g: 0.2509804, b: 0.2509804, a: 0.9490196}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1845,7 +1849,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.25, g: 0.25, b: 0.25, a: 0.8980392}
+  m_Color: {r: 0.25, g: 0.25, b: 0.25, a: 0.9490196}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
