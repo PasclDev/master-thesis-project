@@ -38,13 +38,30 @@ $logFiles = Get-ChildItem -Path $logsPath -Filter "Log_TP*.csv" | Sort-Object Na
 Write-Output "Found $($logFiles.Count) log files."
 $csvData = @()
 foreach ($logFile in $logFiles) {
-    # Get the ID of the testing user
-    $id = $logFile.Name -replace 'Log_TP(\d+)_F\d+.csv', '$1'
+    $id = $logFile.Name -replace 'Log_TP(\d+)_F2.csv', '$1'
 
-    # Read the log file and convert it to a CSV format
-    $logData = Import-Csv -Path $logFile.FullName -Delimiter ';'
-    # combination of TutorialStep and LevelID should be unique, so remove duplicates. If there are duplicates, remove the one where LevelCompleted is false, if there are still more than one, keep the first one
-    # Remove all duplicates and where LevelCompleted is false
+    # Read the log file and convert it to a CSV format and replace the comma with a dot in the numbers so calculations work better (US standard to use dots)
+    $logData = Import-Csv -Path $logFile.FullName -Delimiter ';' | ForEach-Object {
+        $_ | ForEach-Object { 
+            foreach ($property in $_.PSObject.Properties) {
+                if ($property.Value -match '^\d+,\d+$') {
+                    $property.Value = $property.Value -replace ',', '.'
+                }
+            }
+            $_
+        }
+    }
+    $testingTime = ($logData | Select-Object -Last 1).TimeSinceStart
+    # If TimeSinceStart of the last and the second to last line are the same, set LevelCompleted of the second to last line to false, as it wrongfully got flagged as completed
+    if ($logData.Count -gt 1) {
+        $lastLine = $logData | Select-Object -Last 1
+        $secondToLastLine = $logData | Select-Object -Last 2 | Select-Object -First 1
+        if ($lastLine.TimeSinceStart -eq $secondToLastLine.TimeSinceStart) {
+            $secondToLastLine.LevelCompleted = 'False'
+        }
+    }
+    # Combination of TutorialStep and LevelID should be unique, so remove duplicates. If there are duplicates, remove the one where LevelCompleted is false, if there are still more than one, keep the first one
+    # Removes all duplicates and where LevelCompleted is false
     $seen = @{}
     $logData = $logData | Where-Object {
         $key = "$($_.TutorialStep)_$($_.LevelID)"
@@ -61,9 +78,25 @@ foreach ($logFile in $logFiles) {
         }
     }
     Write-Output "Adding $($logFile.Name) with $($logData.Count) non-duplicate & completed level lines to CSV."
-    
+    $levelsCompleted = $logData | Where-Object { $_.LevelCompleted -eq 'True' -and $_.LevelID -ne 0 } | Measure-Object | Select-Object -ExpandProperty Count
+    # Check if an entry for TutorialStep 6 exists, as well as for LevelID 4, 10, 13, 16
+    $isTutorialComplete = ($logData | Where-Object { $_.TutorialStep -eq 6 -and $_.LevelID -eq 0 } | Measure-Object | Select-Object -ExpandProperty Count) -gt 0
+    $isFirstLevelPairCompleted = ($logData | Where-Object { $_.LevelID -in 4, 13 } | Measure-Object | Select-Object -ExpandProperty Count) -eq 2
+    $isSecondLevelPairCompleted = ($logData | Where-Object { $_.LevelID -in 10, 16 } | Measure-Object | Select-Object -ExpandProperty Count) -eq 2
     $csvLine = [ordered]@{
-        ID = $id
+        ID                                   = $id
+        LevelsCompleted                      = $levelsCompleted
+        IsTutorialComplete                   = $isTutorialComplete
+        IsFirstLevelPairCompleted            = $isFirstLevelPairCompleted
+        IsSecondLevelPairCompleted           = $isSecondLevelPairCompleted
+        TestingTime                          = $testingTime
+        AverageTimeToComplete                = ($logData | Measure-Object -Property TimeToComplete -Sum).Sum / $logData.Count
+        AverageTimeTilFirstGrab              = ($logData | Measure-Object -Property TimeTilFirstGrab -Sum).Sum / $logData.Count
+        AverageNumberOfGrabs                 = ($logData | Measure-Object -Property NumberOfGrabs -Sum).Sum / $logData.Count
+        AverageNumberOfSnapsToFillables      = ($logData | Measure-Object -Property NumberOfSnapsToFillables -Sum).Sum / $logData.Count
+        AverageSnapsPerGrabbable             = ($logData | ForEach-Object { if ($_.NumberOfGrabbables -ne 0) { $_.NumberOfSnapsToFillables / $_.NumberOfGrabbables } } | Measure-Object -Average).Average
+        AverageNumberOfFillableTransparency  = ($logData | Measure-Object -Property NumberOfFillableTransparency -Sum).Sum / $logData.Count
+        AverageNumberOfGrabbableTransparency = ($logData | Measure-Object -Property NumberOfGrabbableTransparency -Sum).Sum / $logData.Count
     }
     # Not adding TutorialStep, LevelID and LevelCompleted to the CSV, as they are already in the header or otherwise implied
     # NumberOfFillables and NumberOfGrabbables are not added to the CSV, as they can be cross-referenced and don't need to be added to every user line
@@ -77,5 +110,13 @@ foreach ($logFile in $logFiles) {
         $csvLine["$($line.TutorialStep)_$($line.LevelID)_NumberOfGrabbableTransparency"] = $line.NumberOfGrabbableTransparency
     }
     $csvData += New-Object PSObject -Property $csvLine
+}
+# Changes back every . to a comma
+$csvData | ForEach-Object {
+    foreach ($property in $_.PSObject.Properties) {
+        if ($property.Value -match '^\d+\.\d+$') {
+            $property.Value = $property.Value -replace '\.', ','
+        }
+    }
 }
 $csvData | Export-Csv -Path $targetPath -NoTypeInformation -Force
