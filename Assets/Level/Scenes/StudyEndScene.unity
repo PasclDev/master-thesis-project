@@ -570,7 +570,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UI: {fileID: 1936291718}
-  toggleUIAction: {fileID: -8548539058372380893, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  toggleUIAction: {fileID: 4444114543481933486, guid: c348712bda248c246b8c49b3db54643f, type: 3}
 --- !u!114 &876467998
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -584,7 +584,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UI: {fileID: 1563729590}
-  toggleUIAction: {fileID: -8548539058372380893, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  toggleUIAction: {fileID: 4444114543481933486, guid: c348712bda248c246b8c49b3db54643f, type: 3}
 --- !u!114 &876467999
 MonoBehaviour:
   m_ObjectHideFlags: 0

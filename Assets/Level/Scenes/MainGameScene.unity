@@ -2851,7 +2851,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ManageLevelUI: {fileID: 3032334165210331312}
-  toggleManageLevelUIAction: {fileID: -8548539058372380893, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  toggleManageLevelUIAction: {fileID: 4444114543481933486, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   isUiVisible: 0
   levelInformationText: {fileID: 369253143}
 --- !u!1001 &5224389776125284638
