@@ -119,4 +119,20 @@ $csvData | ForEach-Object {
         }
     }
 }
-$csvData | Export-Csv -Path $targetPath -NoTypeInformation -Force
+# Ensure all possible columns are included by collecting all property names
+$allColumns = @()
+foreach ($entry in $csvData) {
+    foreach ($name in $entry.PSObject.Properties.Name) {
+        if (-not $allColumns.Contains($name)) {
+            $allColumns += $name
+        }
+    }
+}
+
+# Export with all columns, filling missing values with empty strings
+$csvData | Select-Object $allColumns | Export-Csv -Path $targetPath -NoTypeInformation -Force
+
+
+# Hinzufügen:
+# Welches Level vor Zeitlimit gestartet wurde
+# Welches letztes geschafftes Level war
