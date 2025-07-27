@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Numerics;
 using UnityEngine;
 
 [System.Serializable]
@@ -16,7 +15,8 @@ public class LevelData
 }
 
 [System.Serializable]
-public class Fillable {
+public class Fillable
+{
 
     // Both size and position are relative to voxelSize
     public int[] size; // [x, y, z]

@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 public class StatisticManager : MonoBehaviour
 {
     [System.Serializable]
