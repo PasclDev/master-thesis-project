@@ -78,7 +78,7 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
         {
             Debug.Log("UIButtonActions: Load Level " + level);
             LevelManager.instance.LoadLevel(level, false);
-            UIManager.instance.HideManageLevelUI();
+            UIManager.instance.HideCurrentUI();
         }
     }
 
@@ -86,17 +86,17 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         Debug.Log("UIButtonActions: Restart Level");
         LevelManager.instance.LoadLevel(LevelManager.instance.currentLevel, false);
-        UIManager.instance.HideManageLevelUI();
+        UIManager.instance.HideCurrentUI();
     }
     public void OnResetCreateLevelButton()
     {
         GameObject.Find("CreateLevelManager").GetComponent<CreateLevelManager>().ResetLevel();
-        UIManager.instance.HideManageLevelUI();
+        UIManager.instance.HideCurrentUI();
     }
     public void OnSaveLevelButton()
     {
         GameObject.Find("CreateLevelManager").GetComponent<CreateLevelManager>().SaveLevel();
-        UIManager.instance.HideManageLevelUI();
+        UIManager.instance.HideCurrentUI();
     }
     public void OnLoadSceneButton(string sceneName)
     {
@@ -110,7 +110,7 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         Debug.Log("UIButtonActions: Recenter Self");
         RecenterSelf.instance.Recenter();
-        UIManager.instance.HideManageLevelUI();
+        UIManager.instance.HideCurrentUI();
     }
     public void OnQuitApplicationButton()
     {

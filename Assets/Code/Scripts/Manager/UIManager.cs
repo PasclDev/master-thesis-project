@@ -1,13 +1,18 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
     // Singleton
     public static UIManager instance;
-    public GameObject ManageLevelUI;
-    public InputActionReference toggleManageLevelUIAction;
+    public GameObject UILevelList;
+    public GameObject UILevelListNoCurLevel;
+    public GameObject UIMainMenu;
+    public GameObject UICreateLevel;
+    private GameObject currentUI;
+    public InputActionReference toggleCurrentUIAction;
     public bool isUiVisible = false;
     public TextMeshProUGUI levelInformationText;
 
@@ -15,29 +20,88 @@ public class UIManager : MonoBehaviour
     {
         if (instance == null) instance = this;
         else Destroy(gameObject);
-        toggleManageLevelUIAction.action.performed += ToggleManageLevelUI;
+        DontDestroyOnLoad(this);
+        toggleCurrentUIAction.action.performed += ToggleCurrentUIInput;
+        SceneManager.activeSceneChanged += ChangeCurrentUI;
+        // Case: Depending on the scene, change the current UI
+        currentUI = UIMainMenu;
     }
     void OnDestroy()
     {
-        toggleManageLevelUIAction.action.performed -= ToggleManageLevelUI;
+        toggleCurrentUIAction.action.performed -= ToggleCurrentUIInput;
     }
-    private void ToggleManageLevelUI(InputAction.CallbackContext context)
+    private void ChangeCurrentUI(Scene _, Scene loading)
+    {
+        string name = loading.name;
+        name = name.Substring(0, name.Length-5);
+        ChangeCurrentUI(name);
+    }
+    public void ChangeCurrentUI(string name)
+    {
+        UILevelList.SetActive(false);
+        UICreateLevel.SetActive(false);
+        UIMainMenu.SetActive(false);
+        UILevelListNoCurLevel.SetActive(false);
+        switch (name)
+        {
+            case "CreateLevel":
+                currentUI = UICreateLevel;
+                break;
+            case "LevelList":
+            case "MainGame":
+                currentUI = UILevelList;
+                break;
+            case "MainMenu":
+                currentUI = UIMainMenu;
+                ShowCurrentUI();
+                break;
+            case "LevelListNoCurLevel":
+            default: 
+                currentUI = UILevelListNoCurLevel;
+                break;
+        }
+        
+    }
+    private void ToggleCurrentUIInput(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
-        ManageLevelUI.SetActive(!ManageLevelUI.activeSelf);
-        isUiVisible = ManageLevelUI.activeSelf;
+        ToggleCurrentUi();
     }
-    public void ShowManageLevelUI()
+    public void ToggleCurrentUi()
     {
-        ManageLevelUI.SetActive(true);
+        currentUI.SetActive(!currentUI.activeSelf);
+        isUiVisible = currentUI.activeSelf;
+    }
+ 
+    public void ShowCurrentUI()
+    {
+        currentUI.SetActive(true);
         isUiVisible = true;
     }
-    public void HideManageLevelUI()
+    public void HideCurrentUI()
     {
-        ManageLevelUI.SetActive(false);
+        currentUI.SetActive(false);
         isUiVisible = false;
     }
-    public void SetManageLevelUIText(int levelIndex, int grabbablesAmount, int fillablesAmount)
+    public void ShowUI(string UIName)
+    {
+        switch (UIName)
+        {
+            case "CreateLevel":
+                UICreateLevel.SetActive(true);
+                break;
+            case "LevelList":
+                UILevelList.SetActive(true);
+                break;
+            case "MainMenu":
+                UIMainMenu.SetActive(true);
+                break;
+            case "LevelListWithNoCurrentLevel":
+                UILevelListNoCurLevel.SetActive(true);
+                break;
+        }
+    }
+    public void SetCurrentUIText(int levelIndex, int grabbablesAmount, int fillablesAmount)
     {
         if (levelIndex == 0)
         {
@@ -46,7 +110,7 @@ public class UIManager : MonoBehaviour
         }
         levelInformationText.text = "Level " + levelIndex + "\nFarbformen: " + grabbablesAmount + " | Gitterboxen: " + fillablesAmount;
     }
-    public void SetManageLevelUIText(string text)
+    public void SetCurrentUIText(string text)
     {
         levelInformationText.text = text;
     }

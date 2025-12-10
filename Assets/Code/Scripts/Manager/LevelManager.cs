@@ -145,7 +145,7 @@ public class LevelManager : MonoBehaviour
         statisticsManager.levelStatistic.levelId = levelIndex;
         statisticsManager.levelStatistic.numberOfFillables = 1; // Currently still only one fillable per level
         statisticsManager.levelStatistic.numberOfGrabbables = currentLevelData.grabbables.Count;
-        UIManager.instance.SetManageLevelUIText(levelIndex, currentLevelData.grabbables.Count, 1);
+        UIManager.instance.SetCurrentUIText(levelIndex, currentLevelData.grabbables.Count, 1);
     }
     //First camera height change sets the level to the camera height
     private IEnumerator WaitForCameraPositionChange()
@@ -226,7 +226,7 @@ public class LevelManager : MonoBehaviour
         if (levelIndex == 0)
         {
             currentLevel = 0;
-            UIManager.instance.SetManageLevelUIText(0, 0, 0);
+            UIManager.instance.SetCurrentUIText(0, 0, 0);
             Instantiate(tutorialManagerPrefab, transform);
         }
         else if (levelIndex == -1)

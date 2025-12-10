@@ -348,7 +348,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: d14b106713a74b448bcab90869f1706e, type: 3}
+  m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: d14b106713a74b448bcab90869f1706e, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -554,7 +554,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: b319a2e4ff8f5d840b82d8635b645d22, type: 3}
+  m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: b319a2e4ff8f5d840b82d8635b645d22, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -741,8 +741,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 681bd5b1d68f66649a528c9145061be4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftGrabAction: {fileID: -3742484312079769484, guid: c348712bda248c246b8c49b3db54643f, type: 3}
-  rightGrabAction: {fileID: 15759602096507913, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  leftGrabAction: {fileID: -3742484312079769484, guid: a362bb92f1a81da4a971df0ecbaf1ae3, type: 3}
+  rightGrabAction: {fileID: 15759602096507913, guid: a362bb92f1a81da4a971df0ecbaf1ae3, type: 3}
 --- !u!1 &9067615890978573596
 GameObject:
   m_ObjectHideFlags: 0

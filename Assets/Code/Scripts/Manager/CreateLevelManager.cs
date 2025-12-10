@@ -221,7 +221,7 @@ public class CreateLevelManager : MonoBehaviour
 
             text += $"<color=#{ColorUtility.ToHtmlStringRGB(createdGrabbableColors[i])}>█</color>Farbform {i}: {voxelAmount} Voxel\n";
         }
-        UIManager.instance.SetManageLevelUIText(text);
+        UIManager.instance.SetCurrentUIText(text);
     }
 
     public void ResetLevel()
