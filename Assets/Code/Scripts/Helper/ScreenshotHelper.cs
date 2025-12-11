@@ -3,7 +3,7 @@ using UnityEngine;
 public class ScreenshotHelper : MonoBehaviour
 {
     LevelManager levelManager;
-    public Camera camera;
+    public Camera captureCamera;
     void Start()
     {
 
@@ -37,15 +37,15 @@ public class ScreenshotHelper : MonoBehaviour
     void SaveCurrentViewAsPicture()
     {
         RenderTexture renderTexture = new RenderTexture(Screen.width, Screen.height, 24);
-        camera.targetTexture = renderTexture;
-        camera.Render();
+        captureCamera.targetTexture = renderTexture;
+        captureCamera.Render();
 
         RenderTexture.active = renderTexture;
         Texture2D texture = new Texture2D(Screen.width, Screen.height, TextureFormat.ARGB32, false);
         texture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
         texture.Apply();
 
-        camera.targetTexture = null;
+        captureCamera.targetTexture = null;
         RenderTexture.active = null;
         Destroy(renderTexture);
 
