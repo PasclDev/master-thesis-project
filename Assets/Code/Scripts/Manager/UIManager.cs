@@ -21,7 +21,7 @@ public class UIManager : MonoBehaviour
         if (instance == null) instance = this;
         else Destroy(gameObject);
         DontDestroyOnLoad(this);
-        ChangeCurrentUI(SceneManager.GetActiveScene().name);
+        ChangeCurrentUI(SceneManager.GetSceneAt(0).name);
         toggleCurrentUIAction.action.performed += ToggleCurrentUIInput;
         SceneManager.activeSceneChanged += ChangeCurrentUI;
     }
@@ -32,13 +32,13 @@ public class UIManager : MonoBehaviour
     private void ChangeCurrentUI(Scene _, Scene loading)
     {
         string name = loading.name;
-        Debug.Log("UI: New Active Scene is:"+name+". Changing UI accordingly");
-        name = name.Substring(0, name.Length-5);
+        Debug.Log("UI: New Active Scene is: "+name+". Changing Default UI accordingly");
         ChangeCurrentUI(name);
     }
     public void ChangeCurrentUI(string name)
     {
         HideAllUI();
+        if (name.EndsWith("Scene")) name = name.Substring(0, name.Length-5);
         CurrentLevelStatsSegment.SetActive(name == "MainGame");
         switch (name)
         {
