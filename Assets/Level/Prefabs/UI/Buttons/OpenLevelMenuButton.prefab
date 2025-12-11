@@ -138,11 +138,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
@@ -155,7 +155,7 @@ PrefabInstance:
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 6062135300656764782}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
@@ -170,7 +170,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ToggleManageLevelUi
+      value: OnOpenMenuButton
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
@@ -182,7 +182,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: UIManager, Assembly-CSharp
+      value: UIButtonActions, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
@@ -201,6 +201,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: LevelMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
@@ -210,11 +214,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6635281095465729010, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Name
-      value: OpenMenuButton Variant
+      value: OpenLevelMenuButton
       objectReference: {fileID: 0}
     - target: {fileID: 8493674396471738450, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_text
-      value: Alle Level
+      value: "Levelmen\xFC"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

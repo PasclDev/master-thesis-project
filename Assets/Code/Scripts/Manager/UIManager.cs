@@ -7,11 +7,11 @@ public class UIManager : MonoBehaviour
 {
     // Singleton
     public static UIManager instance;
-    public GameObject UILevelList;
-    public GameObject UILevelListNoCurLevel;
+    public GameObject UILevelMenu;
     public GameObject UIMainMenu;
     public GameObject UICreateLevel;
     private GameObject currentUI;
+    public GameObject CurrentLevelStatsSegment;
     public InputActionReference toggleCurrentUIAction;
     public bool isUiVisible = false;
     public TextMeshProUGUI levelInformationText;
@@ -21,10 +21,9 @@ public class UIManager : MonoBehaviour
         if (instance == null) instance = this;
         else Destroy(gameObject);
         DontDestroyOnLoad(this);
+        ChangeCurrentUI(SceneManager.GetActiveScene().name);
         toggleCurrentUIAction.action.performed += ToggleCurrentUIInput;
         SceneManager.activeSceneChanged += ChangeCurrentUI;
-        // Case: Depending on the scene, change the current UI
-        currentUI = UIMainMenu;
     }
     void OnDestroy()
     {
@@ -33,31 +32,27 @@ public class UIManager : MonoBehaviour
     private void ChangeCurrentUI(Scene _, Scene loading)
     {
         string name = loading.name;
+        Debug.Log("UI: New Active Scene is:"+name+". Changing UI accordingly");
         name = name.Substring(0, name.Length-5);
         ChangeCurrentUI(name);
     }
     public void ChangeCurrentUI(string name)
     {
-        UILevelList.SetActive(false);
-        UICreateLevel.SetActive(false);
-        UIMainMenu.SetActive(false);
-        UILevelListNoCurLevel.SetActive(false);
+        HideAllUI();
+        CurrentLevelStatsSegment.SetActive(name == "MainGame");
         switch (name)
         {
             case "CreateLevel":
                 currentUI = UICreateLevel;
                 break;
-            case "LevelList":
+            case "LevelMenu":
             case "MainGame":
-                currentUI = UILevelList;
+                currentUI = UILevelMenu;
                 break;
             case "MainMenu":
+            default: 
                 currentUI = UIMainMenu;
                 ShowCurrentUI();
-                break;
-            case "LevelListNoCurLevel":
-            default: 
-                currentUI = UILevelListNoCurLevel;
                 break;
         }
         
@@ -78,6 +73,13 @@ public class UIManager : MonoBehaviour
         currentUI.SetActive(true);
         isUiVisible = true;
     }
+    public void HideAllUI()
+    {
+        UILevelMenu.SetActive(false);
+        UICreateLevel.SetActive(false);
+        UIMainMenu.SetActive(false);
+    }
+    // Use only if the button is currentUI unique, like save level for the createLevel menu
     public void HideCurrentUI()
     {
         currentUI.SetActive(false);
@@ -85,19 +87,17 @@ public class UIManager : MonoBehaviour
     }
     public void ShowUI(string UIName)
     {
+        CurrentLevelStatsSegment.SetActive(UIName == "MainGame");
         switch (UIName)
         {
             case "CreateLevel":
                 UICreateLevel.SetActive(true);
                 break;
-            case "LevelList":
-                UILevelList.SetActive(true);
+            case "LevelMenu":
+                UILevelMenu.SetActive(true);
                 break;
             case "MainMenu":
                 UIMainMenu.SetActive(true);
-                break;
-            case "LevelListWithNoCurrentLevel":
-                UILevelListNoCurLevel.SetActive(true);
                 break;
         }
     }

@@ -28,6 +28,8 @@ MonoBehaviour:
     m_path: Assets/Level/Scenes/CreateLevelScene.unity
   - m_enabled: 1
     m_path: Assets/Level/Scenes/StudyEndScene.unity
+  - m_enabled: 1
+    m_path: Assets/Level/Scenes/SetupScene.unity
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
     m_Settings:
@@ -1050,6 +1052,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 8563268757574385770
       type: {class: AndroidPlatformBuildSettings, ns: UnityEditor.Android, asm: UnityEditor.Android.Extensions}
       data:

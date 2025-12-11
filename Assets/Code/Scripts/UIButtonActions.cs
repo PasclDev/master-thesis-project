@@ -124,4 +124,15 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
 #endif
         }
     }
+    public void OnChangeMenuButton(string menuName)
+    {
+        UIManager.instance.HideAllUI();
+        UIManager.instance.ChangeCurrentUI(menuName);
+        UIManager.instance.ShowCurrentUI();
+    }
+    public void OnOpenMenuButton(string menuName)
+    {
+        UIManager.instance.HideAllUI();
+        UIManager.instance.ShowUI(menuName);
+    }
 }

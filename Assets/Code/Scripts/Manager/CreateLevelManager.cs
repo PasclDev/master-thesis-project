@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEngine.XR.Interaction.Toolkit.Inputs;
 
 public class CreateLevelManager : MonoBehaviour
 {
@@ -35,6 +36,7 @@ public class CreateLevelManager : MonoBehaviour
         gridOrigin = transform.position - (gridSize / 2);
         gridEnd = transform.position + (gridSize / 2);
         UpdateUIText();
+        CheckForController();
     }
 
     void OnEnable()
@@ -45,6 +47,7 @@ public class CreateLevelManager : MonoBehaviour
         leftGripAction.action.canceled += LeftGripPressed;
         rightGripAction.action.performed += RightGripPressed;
         rightGripAction.action.canceled += RightGripPressed;
+        Debug.Log("CreateLevel: Actions Enabled");
     }
     void OnDisable()
     {
@@ -54,6 +57,7 @@ public class CreateLevelManager : MonoBehaviour
         leftGripAction.action.canceled -= LeftGripPressed;
         rightGripAction.action.performed -= RightGripPressed;
         rightGripAction.action.canceled -= RightGripPressed;
+        Debug.Log("CreateLevel: Actions Disabled");
     }
     void Update()
     {
@@ -421,6 +425,8 @@ public class CreateLevelManager : MonoBehaviour
     }
     void TriggerPressed(bool isLeft)
     {
+        Debug.Log("CreateLevel: Trigger pressed "+isLeft);
+        if (!CheckForController()) return;
         // TODO: Wie beim Grip auch während des Drückens die Löschen
         (bool isInsideGrid, int x, int y, int z) = GetVoxelPosition(isLeft ? leftControllerTransform.position : rightControllerTransform.position);
         if (!isInsideGrid)
@@ -455,6 +461,8 @@ public class CreateLevelManager : MonoBehaviour
     }
     void GripPressed(bool isLeft)
     {
+        Debug.Log("CreateLevel: Grip pressed "+isLeft);
+        if (!CheckForController()) return;
         (bool isInsideGrid, int x, int y, int z) = GetVoxelPosition(isLeft ? leftControllerTransform.position : rightControllerTransform.position);
         if (!isInsideGrid)
         {
@@ -485,6 +493,8 @@ public class CreateLevelManager : MonoBehaviour
     }
     void WhileGripPressed(bool isLeft)
     {
+        Debug.Log("CreateLevel: While Grip pressed "+isLeft);
+        if (!CheckForController()) return;
         (bool isInsideGrid, int x, int y, int z) = GetVoxelPosition(isLeft ? leftControllerTransform.position : rightControllerTransform.position);
         if (!isInsideGrid)
             return;
@@ -494,6 +504,14 @@ public class CreateLevelManager : MonoBehaviour
             UpdateVoxelInGrid(x, y, z, isLeft ? curObjIDLeft : curObjIDRight);
             Debug.Log("While Grip Pressed: " + (isLeft ? "Left" : "Right") + " | ID: " + (isLeft ? curObjIDLeft : curObjIDRight) + " | Grid:" + grid[x][y][z]);
         }
+    }
+    private bool CheckForController()
+    {
+        
+        if (leftControllerTransform == null) leftControllerTransform = GameObject.Find("XR Origin (XR Rig)").GetComponent<XRInputModalityManager>().leftController.transform;
+        if (rightControllerTransform == null) rightControllerTransform = GameObject.Find("XR Origin (XR Rig)").GetComponent<XRInputModalityManager>().rightController.transform;
+        if(leftControllerTransform == null || rightControllerTransform == null) Debug.Log("CreateLevel: Error: Controller-Transform nicht richtig zugewiesen");
+        return leftControllerTransform == null || rightControllerTransform == null;
     }
 
 }
