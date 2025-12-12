@@ -55,6 +55,7 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void OnLoadLevelButton(int levelIndex)
     {
+        UIManager.instance.HideCurrentUI();
         if (SceneManager.GetActiveScene().name != "MainGameScene")
         {
             SceneManager.sceneLoaded += OnMainGameSceneLoaded;
@@ -78,7 +79,6 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
         {
             Debug.Log("UIButtonActions: Load Level " + level);
             LevelManager.instance.LoadLevel(level, false);
-            UIManager.instance.HideCurrentUI();
         }
     }
 
@@ -124,15 +124,9 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
 #endif
         }
     }
-    public void OnChangeMenuButton(string menuName)
-    {
-        UIManager.instance.HideAllUI();
-        UIManager.instance.ChangeCurrentUI(menuName);
-        UIManager.instance.ShowCurrentUI();
-    }
     public void OnOpenMenuButton(string menuName)
     {
-        UIManager.instance.HideAllUI();
+        UIManager.instance.HideCurrentUI();
         UIManager.instance.ShowUI(menuName);
     }
 }

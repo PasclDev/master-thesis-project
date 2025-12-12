@@ -10,10 +10,10 @@ public class UIManager : MonoBehaviour
     public GameObject UILevelMenu;
     public GameObject UIMainMenu;
     public GameObject UICreateLevel;
-    private GameObject currentUI;
+    private GameObject sceneMainUI;
+    private GameObject currentOpenUI;
     public GameObject CurrentLevelStatsSegment;
     public InputActionReference toggleCurrentUIAction;
-    public bool isUiVisible = false;
     public TextMeshProUGUI levelInformationText;
 
     void Awake()
@@ -21,69 +21,79 @@ public class UIManager : MonoBehaviour
         if (instance == null) instance = this;
         else Destroy(gameObject);
         DontDestroyOnLoad(this);
-        ChangeCurrentUI(SceneManager.GetSceneAt(0).name);
-        toggleCurrentUIAction.action.performed += ToggleCurrentUIInput;
-        SceneManager.activeSceneChanged += ChangeCurrentUI;
+        HideAllUI();
+        ChangeSceneMainUI(SceneManager.GetSceneAt(0).name);
+        toggleCurrentUIAction.action.performed += ToggleUIInput;
+        SceneManager.activeSceneChanged += ChangeSceneMainUI;
     }
     void OnDestroy()
     {
-        toggleCurrentUIAction.action.performed -= ToggleCurrentUIInput;
+        toggleCurrentUIAction.action.performed -= ToggleUIInput;
     }
-    private void ChangeCurrentUI(Scene _, Scene loading)
+    private void ChangeSceneMainUI(Scene _, Scene loading)
     {
         string name = loading.name;
         Debug.Log("UI: New Active Scene is: "+name+". Changing Default UI accordingly");
-        ChangeCurrentUI(name);
+        ChangeSceneMainUI(name);
     }
-    public void ChangeCurrentUI(string name)
+    public void ChangeSceneMainUI(string name)
     {
-        HideAllUI();
+        HideCurrentUI();
         if (name.EndsWith("Scene")) name = name.Substring(0, name.Length-5);
         CurrentLevelStatsSegment.SetActive(name == "MainGame");
         switch (name)
         {
             case "CreateLevel":
-                currentUI = UICreateLevel;
+                sceneMainUI = UICreateLevel;
                 break;
             case "LevelMenu":
             case "MainGame":
-                currentUI = UILevelMenu;
+                sceneMainUI = UILevelMenu;
                 break;
             case "MainMenu":
             default: 
-                currentUI = UIMainMenu;
-                ShowCurrentUI();
+                sceneMainUI = UIMainMenu;
+                ShowSceneMainUI();
                 break;
         }
         
     }
-    private void ToggleCurrentUIInput(InputAction.CallbackContext context)
+    private void ToggleUIInput(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
-        ToggleCurrentUi();
+        ToggleUi();
     }
-    public void ToggleCurrentUi()
+    public void ToggleUi()
     {
-        currentUI.SetActive(!currentUI.activeSelf);
-        isUiVisible = currentUI.activeSelf;
+        if(currentOpenUI.activeSelf)
+        {
+            HideCurrentUI();
+        }
+        else
+        {
+            ShowSceneMainUI();
+        }
+        
     }
  
-    public void ShowCurrentUI()
+    public void ShowSceneMainUI()
     {
-        currentUI.SetActive(true);
-        isUiVisible = true;
+        sceneMainUI.SetActive(true);
+        currentOpenUI = sceneMainUI;
     }
+    // Use only if the button is currentUI unique, like save level for the createLevel menu
+    public void HideCurrentUI()
+    {
+        if(currentOpenUI == null) return;
+        currentOpenUI.SetActive(false);
+        currentOpenUI = null;
+    }
+    // Only needed at initialization, as some UIs could be active while working on them
     public void HideAllUI()
     {
         UILevelMenu.SetActive(false);
         UICreateLevel.SetActive(false);
         UIMainMenu.SetActive(false);
-    }
-    // Use only if the button is currentUI unique, like save level for the createLevel menu
-    public void HideCurrentUI()
-    {
-        currentUI.SetActive(false);
-        isUiVisible = false;
     }
     public void ShowUI(string UIName)
     {
@@ -91,15 +101,16 @@ public class UIManager : MonoBehaviour
         switch (UIName)
         {
             case "CreateLevel":
-                UICreateLevel.SetActive(true);
+                currentOpenUI = UICreateLevel;
                 break;
             case "LevelMenu":
-                UILevelMenu.SetActive(true);
+                currentOpenUI = UILevelMenu;
                 break;
             case "MainMenu":
-                UIMainMenu.SetActive(true);
+                currentOpenUI = UIMainMenu;
                 break;
         }
+        currentOpenUI.SetActive(true);
     }
     public void SetCurrentUIText(int levelIndex, int grabbablesAmount, int fillablesAmount)
     {
