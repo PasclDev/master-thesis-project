@@ -126,7 +126,16 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
     }
     public void OnOpenMenuButton(string menuName)
     {
+        Debug.Log("UIButtonActions: Open Menu " + menuName);
         UIManager.instance.HideCurrentUI();
         UIManager.instance.ShowUI(menuName);
+    }
+    public void OnNextLevelPageButton()
+    {
+        UIManager.instance.NextLevelPage();
+    }
+    public void OnPreviousLevelPageButton()
+    {
+        UIManager.instance.PreviousLevelPage();
     }
 }

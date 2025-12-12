@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour
     private GameObject sceneMainUI;
     private GameObject currentOpenUI;
     public GameObject CurrentLevelStatsSegment;
+    public LevelButtonManager LevelButtonManager;
     public InputActionReference toggleCurrentUIAction;
     public TextMeshProUGUI levelInformationText;
 
@@ -97,6 +98,7 @@ public class UIManager : MonoBehaviour
     }
     public void ShowUI(string UIName)
     {
+        Debug.Log("UIManager: Showing UI: " + UIName);
         CurrentLevelStatsSegment.SetActive(UIName == "MainGame");
         switch (UIName)
         {
@@ -124,5 +126,13 @@ public class UIManager : MonoBehaviour
     public void SetCurrentUIText(string text)
     {
         levelInformationText.text = text;
+    }
+    public void NextLevelPage()
+    {
+        LevelButtonManager.ChangeLevelPage(true);
+    }
+    public void PreviousLevelPage()
+    {
+        LevelButtonManager.ChangeLevelPage(false);
     }
 }

@@ -137,12 +137,32 @@ PrefabInstance:
       value: 0.07110882
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 450052043180908596}
+    - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnRecenterSelfButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIButtonActions, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4837070394338760850, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6635281095465729010, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
       propertyPath: m_Name
@@ -163,3 +183,14 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
+--- !u!114 &450052043180908596 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1963821293592728720, guid: c162f6ae547a10341a1e4de7e068d6dd, type: 3}
+  m_PrefabInstance: {fileID: 2125139360533574820}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 681bd5b1d68f66649a528c9145061be4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

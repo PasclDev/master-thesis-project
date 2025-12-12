@@ -119,6 +119,52 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &1640489804
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1640489806}
+  - component: {fileID: 1640489805}
+  m_Layer: 0
+  m_Name: LevelDataProvider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1640489805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1640489804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95082fd2fbeb9e14e88a5e1b96916ff1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelDataProvider
+  levelCollection:
+    levels: []
+--- !u!4 &1640489806
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1640489804}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.11588, y: 1.29362, z: 0.99122}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2086454085 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1122790335642260024, guid: 3e46092e15bd37d42ad8686e94b98c25, type: 3}
@@ -165,22 +211,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 616996529887536407, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 616996529887536407, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 616996529887536407, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 155
-      objectReference: {fileID: 0}
-    - target: {fileID: 616996529887536407, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -440
-      objectReference: {fileID: 0}
     - target: {fileID: 835521986551862916, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -195,10 +225,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 835521986551862916, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2241021758009517153, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3787541078464573836, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
@@ -257,34 +283,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4579677428107268385, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 440
-      objectReference: {fileID: 0}
-    - target: {fileID: 4612083824136247587, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4612083824136247587, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: ShowCurrentUI
-      objectReference: {fileID: 0}
-    - target: {fileID: 4612083824136247587, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_StringArgument
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5068157868590764392, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_Name
-      value: OpenMainMenuButtonw
-      objectReference: {fileID: 0}
-    - target: {fileID: 5559526891538634476, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_Name
-      value: UI_LevelMenu
-      objectReference: {fileID: 0}
-    - target: {fileID: 5559526891538634476, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5611580463268276736, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
@@ -325,25 +323,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
-    - target: {fileID: 7673396241105388608, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7673396241105388608, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7673396241105388608, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 155
-      objectReference: {fileID: 0}
-    - target: {fileID: 7673396241105388608, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -100
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 680021103697614291, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f394018b1220ad94cb88114d8db7e38f, type: 3}
@@ -565,4 +546,5 @@ SceneRoots:
   - {fileID: 1891272113242842711}
   - {fileID: 273471528543889534}
   - {fileID: 5518761102571634194}
+  - {fileID: 1640489806}
   - {fileID: 270775517434843428}

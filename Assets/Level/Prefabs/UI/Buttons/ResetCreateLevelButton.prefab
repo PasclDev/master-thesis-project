@@ -13,8 +13,32 @@ PrefabInstance:
       value: "Level \nzur\xFCcksetzen"
       objectReference: {fileID: 0}
     - target: {fileID: 2429725673151772590, guid: 5a78ed536901dae44ae61d4d52cba8a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2429725673151772590, guid: 5a78ed536901dae44ae61d4d52cba8a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2429725673151772590, guid: 5a78ed536901dae44ae61d4d52cba8a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8618227308667610632}
+    - target: {fileID: 2429725673151772590, guid: 5a78ed536901dae44ae61d4d52cba8a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2429725673151772590, guid: 5a78ed536901dae44ae61d4d52cba8a7, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnResetCreateLevelButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 2429725673151772590, guid: 5a78ed536901dae44ae61d4d52cba8a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIButtonActions, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2429725673151772590, guid: 5a78ed536901dae44ae61d4d52cba8a7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 4507511988139332814, guid: 5a78ed536901dae44ae61d4d52cba8a7, type: 3}
       propertyPath: m_Name
@@ -105,3 +129,14 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a78ed536901dae44ae61d4d52cba8a7, type: 3}
+--- !u!114 &8618227308667610632 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8779840363435408300, guid: 5a78ed536901dae44ae61d4d52cba8a7, type: 3}
+  m_PrefabInstance: {fileID: 1027483005733576100}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 681bd5b1d68f66649a528c9145061be4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
