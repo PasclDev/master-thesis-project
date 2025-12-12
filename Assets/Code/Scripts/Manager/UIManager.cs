@@ -65,7 +65,7 @@ public class UIManager : MonoBehaviour
     }
     public void ToggleUi()
     {
-        if(currentOpenUI.activeSelf)
+        if(currentOpenUI != null)
         {
             HideCurrentUI();
         }
