@@ -1,7 +1,12 @@
+using System;
 using UnityEngine;
 
 public class RotationHelper
 {
+    public static Vector3[] worldAxes = {
+            Vector3.right, Vector3.up, Vector3.forward,
+            Vector3.left, Vector3.down, Vector3.back
+    };
     // Rotate a matrix of voxels by the orientation of the object
     public static int[][][] RotateMatrix(int[][][] matrix, Vector3 up, Vector3 right, Vector3 forward)
     {
@@ -79,6 +84,7 @@ public class RotationHelper
         }
         return (x, y, z);
     }
+    // Rotates the indices of a voxel in the matrix depending on the rotation around each axis
     private static (int, int, int) RotateIndices(int x, int y, int z, int xRotation, int yRotation, int zRotation, int xLength, int yLength, int zLength)
     {
         int newX = x;
@@ -177,67 +183,135 @@ public class RotationHelper
         return (0, 0, 0);
     }
     // Checks if the orientation of the object is within the rotationTolerancePercentage
-    public static (bool, Vector3, Vector3, Vector3) IsValidRotation(Transform grabbable, float rotationTolerancePercentage)
+    public static (bool, Orientation, Orientation) IsValidRotation(Transform fillable, Transform grabbable, float rotationTolerancePercentage)
     {
         // Get the object's transform axes directly
-        Vector3 right = grabbable.transform.right;     // Local X
-        Vector3 up = grabbable.transform.up;           // Local Y
-        Vector3 forward = grabbable.transform.forward; // Local Z
+        Vector3 right = grabbable.right;     // Local X
+        Vector3 up = grabbable.up;           // Local Y
+        Vector3 forward = grabbable.forward; // Local Z
 
         // Define possible world-aligned axes
-        Vector3[] validAxes = {
-            Vector3.right, Vector3.left,
-            Vector3.up, Vector3.down,
-            Vector3.forward, Vector3.back
+        Vector3[] validFillableAxes = {
+             fillable.right,  fillable.up,  fillable.forward, 
+            -fillable.right, -fillable.up, -fillable.forward
         };
+        
 
-        // Find the closest world-aligned vectors for each local axis
-        Vector3 closestRight = FindClosestAxis(right, validAxes);
-        Vector3 closestUp = FindClosestAxis(up, validAxes);
-        Vector3 closestForward = FindClosestAxis(forward, validAxes);
+        // Find the closest fillable-aligned vectors for each local grabbable axis
+        int closestRightId = FindClosestAxis(right, validFillableAxes);
+        int closestUpId = FindClosestAxis(up, validFillableAxes);
+        int closestForwardId = FindClosestAxis(forward, validFillableAxes);
 
-        // Check if the object is aligned with world axes
+        Vector3 closestRight = validFillableAxes[closestRightId];
+        Vector3 closestUp = validFillableAxes[closestUpId];
+        Vector3 closestForward = validFillableAxes[closestForwardId];
+
+
+        Vector3 rotDimUp = worldAxes[closestUpId];
+        Vector3 rotDimRight = worldAxes[closestRightId];
+        Vector3 rotDimForward = worldAxes[closestForwardId];
+
+
+        // Check if the object is aligned with fillable axes
         bool isValid =
-            IsAxisAligned(right, rotationTolerancePercentage) &&
-            IsAxisAligned(up, rotationTolerancePercentage) &&
-            IsAxisAligned(forward, rotationTolerancePercentage) &&
+            IsAxisAligned(right, fillable, rotationTolerancePercentage) &&
+            IsAxisAligned(up, fillable, rotationTolerancePercentage) &&
+            IsAxisAligned(forward, fillable, rotationTolerancePercentage) &&
             closestRight != closestUp && closestUp != closestForward && closestRight != closestForward; // Ensure perpendicularity
 
-        // Return validity and the full rotation axes
 
-        return (isValid, closestUp, closestRight, closestForward);
+        // Return validity and the full rotation axes
+        // rotDimForward and rotDimUp represent the rotation difference
+        Debug.Log("RotationHelperA: IsValidRotation - closestUp: " + closestUp + ", closestRight: " + closestRight + ", closestForward: " + closestForward + ", rotDimUp: " + rotDimUp + ", rotDimRight: " + rotDimRight + ", rotDimForward: " + rotDimForward);
+        // Return the validity, the axis orientation of the grabbable responding to fillable, and the orientation of world axes
+        return (isValid, new Orientation(closestForward, closestUp, closestRight), new Orientation (rotDimForward, rotDimUp, rotDimRight));
     }
 
-    // Checks if a vector is close to a valid axis (±1,0,0), (0,±1,0), (0,0,±1)
-    static bool IsAxisAligned(Vector3 v, float rotationTolerancePercentage)
+    // Checks if a vector is close to a valid axis 
+    static bool IsAxisAligned(Vector3 v, Transform validTransforms, float rotationTolerancePercentage)
     {
         float tolerance = rotationTolerancePercentage;
-
+        //only the first three axes are needed, as the others are just the negative versions
         return (Mathf.Abs(Mathf.Abs(v.x) - 1) <= tolerance && Mathf.Abs(v.y) <= tolerance && Mathf.Abs(v.z) <= tolerance) ||
             (Mathf.Abs(Mathf.Abs(v.y) - 1) <= tolerance && Mathf.Abs(v.x) <= tolerance && Mathf.Abs(v.z) <= tolerance) ||
             (Mathf.Abs(Mathf.Abs(v.z) - 1) <= tolerance && Mathf.Abs(v.x) <= tolerance && Mathf.Abs(v.y) <= tolerance);
+
+        /*return 
+        Mathf.Abs(Mathf.Abs(v.x) - Mathf.Abs(validTransforms.right.x)) <= tolerance && 
+        Mathf.Abs(Mathf.Abs(v.y) - Mathf.Abs(validTransforms.right.y)) <= tolerance && 
+        Mathf.Abs(Mathf.Abs(v.z) - Mathf.Abs(validTransforms.right.z)) <= tolerance ||
+        Mathf.Abs(Mathf.Abs(v.x) - Mathf.Abs(validTransforms.up.x)) <= tolerance && 
+        Mathf.Abs(Mathf.Abs(v.y) - Mathf.Abs(validTransforms.up.y)) <= tolerance && 
+        Mathf.Abs(Mathf.Abs(v.z) - Mathf.Abs(validTransforms.up.z)) <= tolerance ||
+        Mathf.Abs(Mathf.Abs(v.x) - Mathf.Abs(validTransforms.forward.x)) <= tolerance && 
+        Mathf.Abs(Mathf.Abs(v.y) - Mathf.Abs(validTransforms.forward.y)) <= tolerance && 
+        Mathf.Abs(Mathf.Abs(v.z) - Mathf.Abs(validTransforms.forward.z)) <= tolerance;*/
     }
 
     // Finds the closest world-aligned axis to a given vector
-    static Vector3 FindClosestAxis(Vector3 axis, Vector3[] validAxes)
+    public static int FindClosestAxis(Vector3 axis, Vector3[] validAxes)
     {
-        Vector3 closest = validAxes[0];
+        int closest = 0;
         float maxDot = -1f;
 
-        foreach (var valid in validAxes)
+        for (int i = 0; i < validAxes.Length; i++)
         {
-            float dot = Vector3.Dot(axis, valid);
+            float dot = Vector3.Dot(axis, validAxes[i]);
             if (dot > maxDot) // Find best match
             {
                 maxDot = dot;
-                closest = valid;
+                closest = i;
             }
         }
-
         return closest;
     }
-    public static Quaternion OrientationToQuaternion(Vector3 up, Vector3 forward, Vector3 right)
+    public static Quaternion OrientationToQuaternion(Orientation orientation)
     {
-        return Quaternion.LookRotation(forward, up);
+        return Quaternion.LookRotation(orientation.forward, orientation.up);
+    }
+    public static Vector3Int RotateGridOffset(Vector3Int gridOffset, Vector3Int gridSize,Vector3Int rotatedGrabbableGridSize, Vector3 rotateDimensionUp, Vector3 rotateDimensionForward, Vector3 rotateDimensionRight)
+    {
+        (int newX, int newY, int newZ) = (gridOffset.x, gridOffset.y, gridOffset.z);
+        //TTODO: Needs to be the unrotated grabbable grid size!
+        Vector3Int gridOffsetUpperBound = new Vector3Int(gridOffset.x + rotatedGrabbableGridSize[0], gridOffset.y + rotatedGrabbableGridSize[1], gridOffset.z + rotatedGrabbableGridSize[2]);
+        (int newXUpper, int newYUpper, int newZUpper) = (gridOffsetUpperBound.x, gridOffsetUpperBound.y, gridOffsetUpperBound.z);
+        (int xRotation, int yRotation, int zRotation) = AxisRotationAmount(rotateDimensionUp, rotateDimensionRight, rotateDimensionForward);
+        
+        // Apply rotations to the grid offset
+        // in case of Y rotation and (0,0,0) with a grid of (3,3,3), the new grid offset would be (0,0,3), then (3,0,3) and finally (3,0,0)
+        // in case of Y rotation and (0,0,1) with a grid of (3,3,3), the new grid offset would be (1,0,3), then (3,0,2) and finally (2,0,0)
+        // we want to REVERSE this rotation! So we apply the negative rotation
+        // in case of negative Y rotation and (0,0,0) with a grid of (3,3,3), the new grid offset would be (3,0,0), then (3,0,3) and finally (0,0,3)
+        for (int ix = 0; ix < xRotation; ix++)
+        {
+            //normal: (newY, newZ) = (newZ, gridSize.x - newY);
+            // reversed:
+            (newY, newZ) = (gridSize.z - newZ, newY);
+            (newYUpper, newZUpper) = (gridSize.z - newZUpper, newYUpper);
+            (gridSize.x, gridSize.y, gridSize.z) = RotateDimensionSize(gridSize.x, gridSize.y, gridSize.z, 1, 0, 0);
+            
+        }
+        for (int iy = 0; iy < yRotation; iy++)
+        {
+            //old: (newX, newZ) = (newZ, gridSize.x - newX);
+            // reversed:
+            (newX, newZ) = (gridSize.x - newZ, newX);
+            (newXUpper, newZUpper) = (gridSize.x - newZUpper, newXUpper);
+            (gridSize.x, gridSize.y, gridSize.z) = RotateDimensionSize(gridSize.x, gridSize.y, gridSize.z, 0, 1, 0);
+        }
+        for (int iz = 0; iz < zRotation; iz++)
+        {
+            //old: (newX, newY) = (gridSize.y - newY, newX);
+            // reversed:
+            (newX, newY) = (newY, gridSize.y - newX);
+            (newXUpper, newYUpper) = (newYUpper, gridSize.y - newXUpper);
+            (gridSize.x, gridSize.y, gridSize.z) = RotateDimensionSize(gridSize.x, gridSize.y, gridSize.z, 0, 0, 1);
+        }
+        // in case of 90 degrees Y rotation and (0,0,0) with a grid of (3,3,3), the new grid offset would be (0,0,3), but with a rotatedGrabbableGridSize of (2,2,2), the new grid offset has to be (0,0,1) to better represent the actual position in the rotated grid
+        
+        Debug.Log("OffsetRotation: AxisRotationAmount - rotUp = "+ rotateDimensionForward + "rotRight = " + rotateDimensionRight + "rotForward = " + rotateDimensionUp + " xRotation: " + xRotation + ", yRotation: " + yRotation + ", zRotation: " + zRotation+", original offset: " + gridOffset + ", rotOffset grid: "+ new Vector3Int(newX, newY, newZ)+", rotOffsetUpper: "+ new Vector3Int(newXUpper, newYUpper, newZUpper)+" rotated offsetMin: " + new Vector3Int(Math.Min(newX, newXUpper), Math.Min(newY, newYUpper), Math.Min(newZ, newZUpper)));
+        // min value of grid offset or upper grid offset:
+
+        return new Vector3Int(Math.Min(newX, newXUpper), Math.Min(newY, newYUpper), Math.Min(newZ, newZUpper));
     }
 }

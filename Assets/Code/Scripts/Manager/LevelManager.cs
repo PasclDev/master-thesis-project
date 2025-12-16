@@ -15,7 +15,7 @@ public class LevelManager : MonoBehaviour
 
     //Single instance of LevelManager
     public static LevelManager instance;
-    private void Awake()
+    private void Start()
     {
         if (instance == null)
         {
@@ -33,7 +33,6 @@ public class LevelManager : MonoBehaviour
         }
         voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
         levelDataProvider = GameObject.Find("LevelDataProvider").GetComponent<LevelDataProvider>();
-        levelDataProvider.LoadLevelsFromJSON();
     }
     public void ResetLevelHeight()
     {

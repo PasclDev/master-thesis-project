@@ -9,7 +9,10 @@ public class SetupLoader : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-            SceneManager.LoadSceneAsync("SetupScene", LoadSceneMode.Additive);
+            // Reload the current scene to ensure SetupScene is loaded first, prevents XR setup issues.
+            var sceneName = SceneManager.GetActiveScene().name.ToString();
+            SceneManager.LoadScene("SetupScene");
+            SceneManager.LoadScene(sceneName);
         }
         else
         {

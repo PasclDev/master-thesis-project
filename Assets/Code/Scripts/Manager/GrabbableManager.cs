@@ -89,8 +89,8 @@ public class GrabbableManager : MonoBehaviour
                 grabbable.size[2]
             );
             Vector3 grabbableRotation = transform.rotation.eulerAngles;
-            (bool isValidRotation, Vector3 up, Vector3 right, Vector3 forward) =
-                RotationHelper.IsValidRotation(transform, LevelManager.rotationTolerancePercentage);
+            (bool isValidRotation, Orientation grabbableLockedOrientation, Orientation grabbableWorldAxisOrientation) =
+                RotationHelper.IsValidRotation(transform, transform, LevelManager.rotationTolerancePercentage); // Currently "disabled" with same transform input
             debugObjects.matrixOrigin.GetComponent<Renderer>().material.color = isValidRotation
                 ? Color.green
                 : Color.red;
@@ -99,18 +99,21 @@ public class GrabbableManager : MonoBehaviour
                 grabbableGridSize.x,
                 grabbableGridSize.y,
                 grabbableGridSize.z,
-                up,
-                forward
+                grabbableLockedOrientation.up,
+                grabbableLockedOrientation.forward
             );
             Vector3Int rotatedGridSize = new Vector3Int(rotatedX, rotatedY, rotatedZ);
             debugObjects.rotationText.text = $@"
 Rotation: {transform.rotation.eulerAngles:F0}
 Rounded: {grabbableRotation:F0}
-Up: {up:F0}
-Right: {right:F0}
-Forward: {forward:F0}
+Up: {grabbableLockedOrientation.up:F0}
+Right: {grabbableLockedOrientation.right:F0}
+Forward: {grabbableLockedOrientation.forward:F0}
+Rotate Dim Up: {grabbableWorldAxisOrientation.up:F0}
+Rotate Dim Right: {grabbableWorldAxisOrientation.right:F0}
+Rotate Dim Forward: {grabbableWorldAxisOrientation.forward:F0}
 Rotated Grid Size: {Vector3Int.RoundToInt(rotatedGridSize)}";
-            debugObjects.center.transform.up = up;
+            debugObjects.center.transform.up = grabbableLockedOrientation.up;
             debugObjects.matrixOrigin.transform.position =
                 transform.position - 0.5f * voxelSize * (Vector3)rotatedGridSize; // Center - half of voxel size * rotatedGridSize
         }

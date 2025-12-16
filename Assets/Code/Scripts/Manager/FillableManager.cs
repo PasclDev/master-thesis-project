@@ -3,6 +3,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
+// TODO: Previously, the Rotation of the Fillable was fixed to be (0,0,0). Rework to allow rotated Fillables!
 public class FillableManager : MonoBehaviour
 {
     private Vector3Int gridSize;
@@ -68,54 +70,93 @@ public class FillableManager : MonoBehaviour
         }
 
         //Check rotation tolerance, if rotation is within tolerance, and if position is within tolerance
-        (bool isValidRotation, Vector3 up, Vector3 right, Vector3 forward) = RotationHelper.IsValidRotation(grabbableObject.transform, LevelManager.rotationTolerancePercentage);
+        
+        (bool isValidRotation, Orientation fillableLockedOrientation, Orientation grabbableDifToFillableAxisOrientation) = RotationHelper.IsValidRotation(transform, grabbableObject.transform, LevelManager.rotationTolerancePercentage);
         if (!isValidRotation)
         {
             Debug.Log("Fillable: Rotation is not within tolerance");
             return;
         }
         // Rotate the Grabbable gridSize
-        (int rotatedGrabbableSizeX, int rotatedGrabbableSizeY, int rotatedGrabbableSizeZ) = RotationHelper.RotateDimensionSize(grabbable.size[0], grabbable.size[1], grabbable.size[2], up, forward);
-        Vector3Int rotatedGridSize = new Vector3Int(rotatedGrabbableSizeX, rotatedGrabbableSizeY, rotatedGrabbableSizeZ);
-        if (rotatedGridSize.x > gridSize.x || rotatedGridSize.y > gridSize.y || rotatedGridSize.z > gridSize.z)
+        (int rotatedGrabbableSizeX, int rotatedGrabbableSizeY, int rotatedGrabbableSizeZ) = RotationHelper.RotateDimensionSize(grabbable.size[0], grabbable.size[1], grabbable.size[2], 
+            RotationHelper.worldAxes[RotationHelper.FindClosestAxis(grabbableObject.transform.up, RotationHelper.worldAxes)], 
+            RotationHelper.worldAxes[RotationHelper.FindClosestAxis(grabbableObject.transform.forward, RotationHelper.worldAxes)]);
+        Vector3Int rotatedToWorldGrabbableGridSize = new Vector3Int(rotatedGrabbableSizeX, rotatedGrabbableSizeY, rotatedGrabbableSizeZ);
+        if (rotatedToWorldGrabbableGridSize.x > gridSize.x || rotatedToWorldGrabbableGridSize.y > gridSize.y || rotatedToWorldGrabbableGridSize.z > gridSize.z)
         {
             Debug.Log("Fillable: Grabbable cannot fit in Fillable (Check 2)");
             return;
         }
 
         // no distance tolerance check, doing 100% tolerance (if the voxel-center is inside the fillable, it is valid)
-
         Vector3 fillablePosition = transform.position;
-        Vector3 fillableStartingPoint = fillablePosition - 0.5f * voxelSize * (Vector3)gridSize;
+        Vector3 fillableStartingPoint = fillablePosition - 0.5f * voxelSize * (Vector3)gridSize; // TODO: needs to be rotated as well if Fillable rotation is allowed
         Vector3 grabbablePosition = grabbableObject.transform.position;
-        Vector3 grabbableStartingPoint = grabbablePosition - 0.5f * voxelSize * (Vector3)rotatedGridSize;
+        Vector3 grabbableStartingPoint = grabbablePosition - 0.5f * voxelSize * (Vector3)rotatedToWorldGrabbableGridSize;
+        Vector3 startingPointDifference = grabbableStartingPoint - fillableStartingPoint;
+        Quaternion newRotation = RotationHelper.OrientationToQuaternion(fillableLockedOrientation); //FillablesLockedOrientation is just the rotation for the grabbable corresponding to the fillable
+
+        // TODO: rework!! Current Problem: Disregards Fillable rotation, only works for (0,0,0) rotation!! Same goes for the grid calculation
+        //TODO: Wrong calculation of grid offset, 0,0,2 gets detected as 0,0,1 when rotated by y 90
+        Debug.Log("GridOffset: Starting Point Difference: " + startingPointDifference/voxelSize+" with rotatedToWorldGrabbableGridSize: "+ rotatedToWorldGrabbableGridSize);
+        Vector3Int gridOffset = new Vector3Int(Mathf.RoundToInt(startingPointDifference.x / voxelSize), Mathf.RoundToInt(startingPointDifference.y / voxelSize), Mathf.RoundToInt(startingPointDifference.z / voxelSize));
+        // Rotate GridOffset as well = in case of (0,90,0) Fillable rotation and (1,2,0) Grabbable rotation, the gridOffset would be (2,1,0)
+        
+        // Put everything in unrotated, calculate the rotation inside RotateGridOffset
+        gridOffset = RotationHelper.RotateGridOffset(
+            gridOffset, 
+            gridSize,
+            new Vector3Int(grabbable.size[0], grabbable.size[1], grabbable.size[2]),
+            RotationHelper.worldAxes[RotationHelper.FindClosestAxis(transform.up, RotationHelper.worldAxes)],
+            RotationHelper.worldAxes[RotationHelper.FindClosestAxis(transform.forward, RotationHelper.worldAxes)], 
+            RotationHelper.worldAxes[RotationHelper.FindClosestAxis(transform.right, RotationHelper.worldAxes)]
+        );
+
+        /* Wrong as well, but at least it's something different
+         Vector3 fillablePosition = transform.position;
+        Vector3 fillableStartingPoint = fillablePosition;
+        Vector3 grabbablePosition = grabbableObject.transform.position;
+        Vector3 grabbableStartingPoint = grabbablePosition;
         Vector3 startingPointDifference = grabbableStartingPoint - fillableStartingPoint;
         Quaternion newRotation = RotationHelper.OrientationToQuaternion(up, forward, right);
 
-        // TODO: rework
-        Vector3Int gridOffset = new Vector3Int(Mathf.RoundToInt(startingPointDifference.x / voxelSize), Mathf.RoundToInt(startingPointDifference.y / voxelSize), Mathf.RoundToInt(startingPointDifference.z / voxelSize));
+        // TODO: rework!! Current Problem: Disregards Fillable rotation, only works for (0,0,0) rotation!! Same goes for the grid calculation
+        Vector3Int gridOffset = Vector3Int.RoundToInt(startingPointDifference / voxelSize);
+        // Rotate GridOffset as well = in case of (0,90,0) Fillable rotation and (1,2,0) Grabbable rotation, the gridOffset would be (2,1,0)
+        
+        gridOffset = RotationHelper.RotateGridOffset(
+            gridOffset, 
+            gridSize,
+            rotatedGrabbableGridSize,
+            RotationHelper.worldAxes[RotationHelper.FindClosestAxis(transform.up, RotationHelper.worldAxes)],
+            RotationHelper.worldAxes[RotationHelper.FindClosestAxis(transform.forward, RotationHelper.worldAxes)], 
+            RotationHelper.worldAxes[RotationHelper.FindClosestAxis(transform.right, RotationHelper.worldAxes)]
+        );
+        gridOffset += Vector3Int.RoundToInt(0.5f * (Vector3)rotatedGrabbableGridSize);
+        */
+
         if (gridOffset.x < 0 || gridOffset.y < 0 || gridOffset.z < 0)
         {
-            Debug.Log("Fillable: Grabbable is outside Fillable (Check 1)");
+            Debug.Log("Fillable: Grabbable is outside Fillable (Check 1) - GridOffset: " + gridOffset);
             return;
         }
-        // Check if Grabbable is overlapping with another Grabbable
-        int[][][] rotatedVoxels = RotationHelper.RotateMatrix(grabbable.voxels, up, right, forward);
-        for (int x = 0; x < rotatedVoxels.Length; x++)
+        // Check if grabbable is overlapping with another Grabbable
+        int[][][] rotatedGrbVoxels = RotationHelper.RotateMatrix(grabbable.voxels, grabbableDifToFillableAxisOrientation.up, grabbableDifToFillableAxisOrientation.right, grabbableDifToFillableAxisOrientation.forward);
+        for (int x = 0; x < rotatedGrbVoxels.Length; x++)
         {
-            for (int y = 0; y < rotatedVoxels[x].Length; y++)
+            for (int y = 0; y < rotatedGrbVoxels[x].Length; y++)
             {
-                for (int z = 0; z < rotatedVoxels[x][y].Length; z++)
+                for (int z = 0; z < rotatedGrbVoxels[x][y].Length; z++)
                 {
-                    if (rotatedVoxels[x][y][z] == 1)
+                    if (rotatedGrbVoxels[x][y][z] == 1)
                     {
-                        Vector3Int fillableGridPosition = new Vector3Int(x + gridOffset.x, y + gridOffset.y, z + gridOffset.z);
-                        if (fillableGridPosition.x >= gridSize.x || fillableGridPosition.y >= gridSize.y || fillableGridPosition.z >= gridSize.z)
+                        Vector3Int grbCurVoxelGridPos = new Vector3Int(x + gridOffset.x, y + gridOffset.y, z + gridOffset.z);
+                        if (grbCurVoxelGridPos.x >= gridSize.x || grbCurVoxelGridPos.y >= gridSize.y || grbCurVoxelGridPos.z >= gridSize.z)
                         {
-                            Debug.Log("Fillable: Grabbable is outside Fillable (Check 2)");
+                            Debug.Log("Fillable: Grabbable is outside Fillable (Check 2)" + "- Voxel Grid Position: " + grbCurVoxelGridPos);
                             return;
                         }
-                        if (fillableGrid[fillableGridPosition.x][fillableGridPosition.y][fillableGridPosition.z] == 1)
+                        if (fillableGrid[grbCurVoxelGridPos.x][grbCurVoxelGridPos.y][grbCurVoxelGridPos.z] == 1)
                         {
                             Debug.Log("Fillable: Grabbable is overlapping with another Grabbable");
                             AudioManager.instance.Play("Fillable_Overlap");
@@ -126,7 +167,7 @@ public class FillableManager : MonoBehaviour
             }
         }
         // If we reach here, Grabbable fits in Fillable
-        AddGrabbableToFillable(grabbableObject, gridOffset, grabbableObject.transform.rotation.eulerAngles, rotatedVoxels, rotatedGridSize, newRotation);
+        AddGrabbableToFillable(grabbableObject, gridOffset, grabbableObject.transform.rotation.eulerAngles, rotatedGrbVoxels, rotatedToWorldGrabbableGridSize, newRotation);
     }
     public void AddGrabbableToFillable(GameObject grabbableObject, Vector3Int gridOffset, Vector3 grabbableRotation, int[][][] rotatedVoxels, Vector3 rotatedVoxelGridSize, Quaternion newRotation)
     {
@@ -143,7 +184,7 @@ public class FillableManager : MonoBehaviour
         grabbableInformation.SetMaterial(false, true);
         // Move it to the corresponding position
         grabbableObject.transform.rotation = newRotation;
-        grabbableObject.transform.position = transform.position - 0.5f * voxelSize * (Vector3)gridSize + (Vector3)gridOffset * voxelSize + 0.5f * voxelSize * rotatedVoxelGridSize;
+        grabbableObject.transform.localPosition = transform.localPosition - 0.5f * voxelSize * (Vector3)gridSize + (Vector3)gridOffset * voxelSize + 0.5f * voxelSize * rotatedVoxelGridSize;
 
         /* Debug Visualizer
         GameObject visualizerParent = new GameObject(grabbableObject.GetInstanceID().ToString());
