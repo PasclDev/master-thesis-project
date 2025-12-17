@@ -43,11 +43,27 @@ public class LevelManager : MonoBehaviour
             Debug.LogError("LevelManager Error: Main camera not found!");
             return;
         }
-        // spawn level in front of camera at 0,5 unity distance on x,z plane with height aligned to camera height - 0.4f
+        // level faces camera on y-axis
+        // transform needs to rotate to look at camera position on x,z plane, but inverse (so looking away 180 degrees from camera)
         Transform camera = Camera.main.transform;
+        Vector3 cameraPosition = camera.position;
+        cameraPosition.y = transform.position.y; // keep level y position
+        transform.LookAt(cameraPosition);
+        transform.Rotate(0, 180, 0);
+        if(transform.position.y != 0) return;
         Vector3 forward = new Vector3(camera.forward.x, 0, camera.forward.z).normalized;
         transform.position = camera.position + forward * 0.5f - new Vector3(0, 0.4f, 0);
-        transform.rotation = Quaternion.Euler(0, camera.rotation.eulerAngles.y, 0); // Align level rotation with camera rotation on Y-axis, so the level is facing the camera at the start
+    }
+    public void ResetLevelPosition()
+    {
+        if (Camera.main == null)
+        {
+            Debug.LogError("LevelManager Error: Main camera not found!");
+            return;
+        }
+        // spawn level in front of camera at 0,5 unity distance on x,z plane with height aligned to camera height - 0.4f
+        
+        
     }
     
 
@@ -70,17 +86,7 @@ public class LevelManager : MonoBehaviour
         statisticsManager.levelStatistic.numberOfGrabbables = currentLevelData.grabbables.Count;
         UIManager.instance.SetCurrentUIText(levelIndex, currentLevelData.grabbables.Count, 1);
     }
-    //First camera height change sets the level to the camera height
-    private IEnumerator WaitForCameraPositionChange()
-    {
-        Vector3 cameraPosition = Camera.main.transform.position;
-        while (cameraPosition == Camera.main.transform.position && Camera.main.transform.position.y < 1)
-        {
-            yield return new WaitForSeconds(0.1f);
-            cameraPosition = Camera.main.transform.position;
-        }
-        ResetLevelTransform();
-    }
+
     public void FillablesFilled()
     {
         if (currentLevel != 0)
@@ -139,5 +145,16 @@ public class LevelManager : MonoBehaviour
             }
         }
         StartCoroutine(WaitForCameraPositionChange()); // Wait for camera position change before setting level height
+    }
+        //First camera height change sets the level to the camera height
+    public IEnumerator WaitForCameraPositionChange()
+    {
+        Vector3 cameraPosition = Camera.main.transform.position;
+        while (cameraPosition == Camera.main.transform.position && Camera.main.transform.position.y < 1)
+        {
+            yield return new WaitForSeconds(0.1f);
+            cameraPosition = Camera.main.transform.position;
+        }
+        ResetLevelTransform();
     }
 }

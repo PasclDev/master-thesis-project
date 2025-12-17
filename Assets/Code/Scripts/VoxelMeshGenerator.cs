@@ -29,12 +29,12 @@ public class VoxelMeshGenerator : MonoBehaviour
             );
             Vector3 position =
                 transform.position              // Position of LevelManager / this script
-                + grabbablePosition * voxelSize // (turn voxel movement amount into world space coordinates)
-                + new Vector3(0, 0.05f, 0);     // Offset for Height Change Interactable
+                + transform.rotation * (grabbablePosition * voxelSize) // (turn voxel movement amount into world space coordinates, rotated)
+                + transform.rotation * new Vector3(0, 0.05f, 0);     // Offset for Height Change Interactable
             GameObject grabbableObject = Instantiate(
                 grabbableBlankPrefab,
                 position,
-                Quaternion.identity,
+                transform.rotation,
                 transform
             );
             grabbableObject.name = "Grabbable_" + i;
@@ -104,15 +104,15 @@ public class VoxelMeshGenerator : MonoBehaviour
 
     public GameObject GenerateFillableObject(float voxelSize, Fillable fillable)
     {
-        GameObject fillableObject = Instantiate(fillableBlankPrefab, transform);
+        GameObject fillableObject = Instantiate(fillableBlankPrefab, transform.position, transform.rotation, transform);
         Vector3 position =
             transform.position
-            + voxelSize
+            + transform.rotation * (voxelSize
             * new Vector3(
                 fillable.position[0],
                 fillable.position[1] + (fillable.size[1] * 0.5f),
-                fillable.position[2])
-            + new Vector3(0, 0.05f, 0); // Offset for Height Change Interactable
+                fillable.position[2]))
+            + transform.rotation * new Vector3(0, 0.05f, 0); // Offset for Height Change Interactable
         Vector3Int size = new Vector3Int(fillable.size[0], fillable.size[1], fillable.size[2]);
         Vector3 gridCenter = (Vector3)size * 0.5f;
         fillableObject.name = "Fillable_0";
@@ -231,7 +231,7 @@ public class VoxelMeshGenerator : MonoBehaviour
         GameObject createdGrabbableObject = Instantiate(
             createdGrabbableBlankPrefab,
             position,
-            Quaternion.identity,
+            transform.rotation,
             transform
         );
         createdGrabbableObject.name = "CreatedGrabbable_" + id;
