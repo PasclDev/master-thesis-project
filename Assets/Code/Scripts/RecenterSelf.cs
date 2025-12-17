@@ -57,7 +57,7 @@ public class RecenterSelf : MonoBehaviour
 
         origin.RotateAround(head.position, Vector3.up, angle);
         if (LevelManager.instance != null)
-            LevelManager.instance.ResetLevelHeight();
+            LevelManager.instance.ResetLevelTransform();
     }
 
 }

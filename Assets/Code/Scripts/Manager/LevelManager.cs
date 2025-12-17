@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 public class LevelManager : MonoBehaviour
 {
     public int currentLevel = 0; // Current level index
@@ -34,9 +36,18 @@ public class LevelManager : MonoBehaviour
         voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
         levelDataProvider = GameObject.Find("LevelDataProvider").GetComponent<LevelDataProvider>();
     }
-    public void ResetLevelHeight()
+    public void ResetLevelTransform()
     {
-        transform.position = new Vector3(transform.position.x, Camera.main.transform.position.y - 0.4f, transform.position.z); // Level is upwards, so this height is the lowest point of the level - 0.05f (due to Height Change Interactable). Starting at Eye-Height - 0.4f.
+        if (Camera.main == null)
+        {
+            Debug.LogError("LevelManager Error: Main camera not found!");
+            return;
+        }
+        // spawn level in front of camera at 0,5 unity distance on x,z plane with height aligned to camera height - 0.4f
+        Transform camera = Camera.main.transform;
+        Vector3 forward = new Vector3(camera.forward.x, 0, camera.forward.z).normalized;
+        transform.position = camera.position + forward * 0.5f - new Vector3(0, 0.4f, 0);
+        transform.rotation = Quaternion.Euler(0, camera.rotation.eulerAngles.y, 0); // Align level rotation with camera rotation on Y-axis, so the level is facing the camera at the start
     }
     
 
@@ -68,7 +79,7 @@ public class LevelManager : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
             cameraPosition = Camera.main.transform.position;
         }
-        ResetLevelHeight();
+        ResetLevelTransform();
     }
     public void FillablesFilled()
     {
@@ -107,6 +118,7 @@ public class LevelManager : MonoBehaviour
         {
             StatisticManager.instance.WriteLevelLog(isCompleted);
         }
+
         // Handle loading the tutorial
         if (levelIndex == 0)
         {
@@ -114,7 +126,7 @@ public class LevelManager : MonoBehaviour
             UIManager.instance.SetCurrentUIText(0, 0, 0);
             Instantiate(tutorialManagerPrefab, transform);
         }
-        else if (levelIndex < levelDataProvider.levelCollection.levels.Count)         // Load a normal level
+        else if (levelIndex < levelDataProvider.levelCollection.levels.Count)// Load a normal level
         {
             GenerateLevel(levelIndex);
         }

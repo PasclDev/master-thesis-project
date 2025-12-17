@@ -146,9 +146,9 @@ public class FillableManager : MonoBehaviour
 
         // If all checks are passed, grabbable fits in Fillable
         Quaternion newGrabbableRotation = transform.rotation * Quaternion.LookRotation(grabbableAxisClosestForward, grabbableAxisClosestUp); 
-        AddGrabbableToFillable(grabbableObject, gridOffset, grabbableObject.transform.rotation.eulerAngles, rotatedGrbVoxels, rotatedToWorldGrabbableGridSize, newGrabbableRotation);
+        AddGrabbableToFillable(grabbableObject, gridOffset, rotatedGrbVoxels, rotatedToWorldGrabbableGridSize, newGrabbableRotation);
         }
-    public void AddGrabbableToFillable(GameObject grabbableObject, Vector3Int gridOffset, Vector3 grabbableRotation, int[][][] rotatedVoxels, Vector3 rotatedVoxelGridSize, Quaternion newRotation)
+    public void AddGrabbableToFillable(GameObject grabbableObject, Vector3Int gridOffset, int[][][] rotatedVoxels, Vector3 rotatedVoxelGridSize, Quaternion newRotation)
     {
         GrabbableManager grabbableInformation = grabbableObject.GetComponent<GrabbableManager>();
         StatisticManager.instance.levelStatistic.numberOfSnapsToFillables++;
