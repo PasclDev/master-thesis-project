@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 
 // TODO: Previously, the Rotation of the Fillable was fixed to be (0,0,0). Rework to allow rotated Fillables!
@@ -57,6 +58,71 @@ public class FillableManager : MonoBehaviour
     public void CheckIfGrabbableFitsFillable(GameObject grabbableObject)
     {
         Grabbable grabbable = grabbableObject.GetComponent<GrabbableManager>().grabbable;
+        // Check if Grabbable fits in Fillable, for example (1, 4, 1) Fillable and (4, 1, 1) Grabbable would fit, as both can be rotated
+        int[] fillableSizeList = new int[] { gridSize.x, gridSize.y, gridSize.z }.OrderByDescending(x => x).ToArray();
+        int[] grabbableSizeList = grabbable.size.OrderByDescending(x => x).ToArray();
+        for (int i = 0; i < 3; i++)
+        {
+            if (fillableSizeList[i] < grabbableSizeList[i])
+            {
+                Debug.Log("Fillable: Grabbable cannot fit in Fillable (Check 1)");
+                return;
+            }
+        }
+        //Check rotation tolerance, if rotation is within tolerance
+        if (!RotationHelper.IsValidRotation(transform, grabbableObject.transform, LevelManager.rotationTolerancePercentage))
+        {
+            Debug.Log("Fillable: Rotation is not within tolerance (Check 2)");
+            return;
+        }
+        // Check if position is within tolerance
+            // Currently unimplemented. No position tolerance check needed, always snapping to the closest position.
+
+        // Check if the grabbable can fit in the fillable at all with correct rotation
+        
+
+        /* 
+            1. Remove rotation from fillable from grabbable
+            2. Calculate grid offset from fillable to grabbable in fillable local space (local space is whats needed for accessing the matrix)
+            3. Subtract grabbable size depending on the right rotation to get the real offset
+        */
+        // Get the rotation of grabbable depending on fillable. if fillable is rotated by 90 degrees on y axis, grabbable needs to be rotated by -90 degrees on y axis to fit correctly
+        Vector3 fillablePosition = transform.position;
+        Vector3 grabbablePosition = grabbableObject.transform.position;
+        Vector3 positionDifference = grabbablePosition - fillablePosition; // Vector from fillable to grabbable center
+        Quaternion rotationDifference = Quaternion.Inverse(transform.rotation) * grabbableObject.transform.rotation; // Just to get the correct rotation difference
+        // Rotate the position difference according to the rotation difference so that it matches the fillable's local space (local space is whats needed for accessing the matrix)
+        positionDifference = Quaternion.Inverse(transform.rotation) * positionDifference; // Rotate position difference to remove fillable rotation
+     
+        //Quaternion fillableRotationInverse = Quaternion.Inverse(transform.rotation); // grabbable rotation with fillable rotation removed. so if fillable is rotated by 90 degrees on y axis, grabbable rotation gets rotated by -90 degrees on y axis so its "neutral" to fillable
+        //Vector3 rotatedPositionDifference = fillableRotationInverse * positionDifference; // Rotate the position difference into fillable local space
+        Vector3 gridOffset = positionDifference / voxelSize + 0.5f * (Vector3)gridSize; // Calculate grid offset in fillable local space
+
+        // subtract the rotated grabbable size to get the correct grid offset 
+        
+        
+        (int rotatedGrabbableSizeX, int rotatedGrabbableSizeY, int rotatedGrabbableSizeZ) = RotationHelper.RotateDimensionSize(grabbable.size[0], grabbable.size[1], grabbable.size[2],
+            RotationHelper.worldAxes[RotationHelper.FindClosestAxis(rotationDifference * Vector3.up, RotationHelper.worldAxes)],
+            RotationHelper.worldAxes[RotationHelper.FindClosestAxis(rotationDifference * Vector3.forward, RotationHelper.worldAxes)]);
+        Vector3Int rotatedToWorldGrabbableGridSize = new Vector3Int(rotatedGrabbableSizeX, rotatedGrabbableSizeY, rotatedGrabbableSizeZ);
+        Vector3 rotatedGrabbableOffset = 0.5f * (Vector3)rotatedToWorldGrabbableGridSize;
+        gridOffset -= rotatedGrabbableOffset;
+        gridOffset = Vector3Int.RoundToInt(gridOffset);
+        if (gridOffset.x < 0 || gridOffset.y < 0 || gridOffset.z < 0)
+        {
+            Debug.Log("Fillable: Grabbable is outside Fillable (Check 3) - GridOffset: " + gridOffset);
+            return;
+        }
+        Debug.Log("Fillable: Calculated GridOffset: " + gridOffset + " from normal: "+ (gridOffset+rotatedGrabbableOffset)+ "with grabOffset" + rotatedGrabbableOffset+ "|Position Difference: " + positionDifference + " and rotationDiff: "+ rotationDifference.eulerAngles);
+
+        
+
+        // Further checks are done when trying to snap the object into the Fillable
+        //AddGrabbableToFillable(grabbableObject, Vector3Int.zero, grabbableObject.transform.rotation.eulerAngles, grabbable.voxels, new Vector3Int(grabbable.size[0], grabbable.size[1], grabbable.size[2]), grabbableObject.transform.rotation);
+    }
+    public void CheckIfGrabbableFitsFillable_old(GameObject grabbableObject)
+    {
+        Grabbable grabbable = grabbableObject.GetComponent<GrabbableManager>().grabbable;
         // Check if Grabbable fits in Fillable, for example (1, 4, 1) Fillable and (4, 1, 1) Grabbable would fit, as Grabbable can be rotated
         int[] fillableSizeList = new int[] { gridSize.x, gridSize.y, gridSize.z }.OrderByDescending(x => x).ToArray();
         int[] grabbableSizeList = grabbable.size.OrderByDescending(x => x).ToArray();
@@ -71,7 +137,7 @@ public class FillableManager : MonoBehaviour
 
         //Check rotation tolerance, if rotation is within tolerance, and if position is within tolerance
         
-        (bool isValidRotation, Orientation fillableLockedOrientation, Orientation grabbableDifToFillableAxisOrientation) = RotationHelper.IsValidRotation(transform, grabbableObject.transform, LevelManager.rotationTolerancePercentage);
+        (bool isValidRotation, Orientation fillableLockedOrientation, Orientation grabbableDifToFillableAxisOrientation) = RotationHelper.IsValidRotation_old(transform, grabbableObject.transform, LevelManager.rotationTolerancePercentage);
         if (!isValidRotation)
         {
             Debug.Log("Fillable: Rotation is not within tolerance");

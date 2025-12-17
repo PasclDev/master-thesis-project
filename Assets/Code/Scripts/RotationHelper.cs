@@ -183,7 +183,22 @@ public class RotationHelper
         return (0, 0, 0);
     }
     // Checks if the orientation of the object is within the rotationTolerancePercentage
-    public static (bool, Orientation, Orientation) IsValidRotation(Transform fillable, Transform grabbable, float rotationTolerancePercentage)
+    public static bool IsValidRotation(Transform fillable, Transform grabbable, float rotationTolerancePercentage)
+    {
+        // Get the object's transform axes directly
+        Vector3 right = grabbable.right;     // Local X
+        Vector3 up = grabbable.up;           // Local Y
+        Vector3 forward = grabbable.forward; // Local Z
+
+        // Check if the object is aligned with fillable axes
+        return(
+            IsAxisAligned(right, fillable, rotationTolerancePercentage) &&
+            IsAxisAligned(up, fillable, rotationTolerancePercentage) &&
+            IsAxisAligned(forward, fillable, rotationTolerancePercentage)
+        );
+
+    }
+    public static (bool, Orientation, Orientation) IsValidRotation_old(Transform fillable, Transform grabbable, float rotationTolerancePercentage)
     {
         // Get the object's transform axes directly
         Vector3 right = grabbable.right;     // Local X

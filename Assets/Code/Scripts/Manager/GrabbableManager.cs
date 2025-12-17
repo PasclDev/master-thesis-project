@@ -90,7 +90,7 @@ public class GrabbableManager : MonoBehaviour
             );
             Vector3 grabbableRotation = transform.rotation.eulerAngles;
             (bool isValidRotation, Orientation grabbableLockedOrientation, Orientation grabbableWorldAxisOrientation) =
-                RotationHelper.IsValidRotation(transform, transform, LevelManager.rotationTolerancePercentage); // Currently "disabled" with same transform input
+                RotationHelper.IsValidRotation_old(transform, transform, LevelManager.rotationTolerancePercentage); // Currently "disabled" with same transform input
             debugObjects.matrixOrigin.GetComponent<Renderer>().material.color = isValidRotation
                 ? Color.green
                 : Color.red;
