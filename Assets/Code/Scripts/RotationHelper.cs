@@ -198,6 +198,7 @@ public class RotationHelper
         );
 
     }
+    [Obsolete("Use IsValidRotation instead")]
     public static (bool, Orientation, Orientation) IsValidRotation_old(Transform fillable, Transform grabbable, float rotationTolerancePercentage)
     {
         // Get the object's transform axes directly
