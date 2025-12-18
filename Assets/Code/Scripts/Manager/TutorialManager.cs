@@ -27,7 +27,7 @@ public class TutorialManager : MonoBehaviour
         "Gut gemacht! In jedem Level muss die Gitterbox <b>komplett</b> mit den Farbformen gefüllt werden.\nEs darf also kein Feld leer bleiben!\n\nLege die Farbform in die Gitterbox, um alle Felder zu füllen.",
         "Manchmal können Farbformen\nzu weit weg sein.\nStrecke deinen Arm aus, <color=#CF2821><b>greife</b></color> die Farbform und ziehe dann deinen Arm zu dir, um die Farbform in deine Hand zu ziehen.\n\nLege sie dann in die Gitterbox.",
         "Manchmal ist es schwer zu erkennen, wo noch leere Felder in der Gitterbox sind.\nDafür gibt es die <color=#E3C420><b>gelbe Triggertaste</b></color>.\n\nDas Halten der <color=#E3C420><b>Triggertaste</b></color>:\n<i>macht alle Farbformen in der Gitterbox durchsichtig\n&\nmarkiert die leeren Felder, die noch gefüllt werden müssen",
-        "Super! Um die Höhe des Levels anzupassen, <color=#CF2821><b>greife</b></color> die Kugel unter der Gitterbox und ziehe sie nach oben oder unten.",
+        "Super! Um die Gitterbox zu bewegen, <color=#CF2821><b>greife</b></color> den Kreis unter der Gitterbox und bewege deine Hand.",
         "Das war es mit der Einführung!\nUm die Einführung zu beenden, platziere die letzte Farbform in die leeren Felder der Gitterbox.\n\n<size=7><i>Erinnerung: Die <color=#E3C420><b>Triggertaste</b></color> markiert die Lücken!\n\n</i></size><size=7><i>Tipp zum Rotieren:\n<color=#CF2821><b>Greife</b></color> die Farmform, drehe dein Handgelenk, lasse los, drehe zurück und <color=#CF2821><b>greife</b></color> erneut. \nJe näher die Farbform an dir dran ist, desto leichter lässt sie sich drehen!</i></size>",
     };
 
@@ -47,7 +47,7 @@ public class TutorialManager : MonoBehaviour
             (tutorialStep == 2 && logString == "LevelManager: Fillables filled!") ||
             (tutorialStep == 3 && logString == "LevelManager: Fillables filled!") ||
             (tutorialStep == 4 && logString == "Fillable: Highlight activated") ||
-            (tutorialStep == 5 && logString == "HeightInteractable: Grabbed") ||
+            (tutorialStep == 5 && logString == "Grabbable: Grabbed") ||
             (tutorialStep == 6 && logString == "LevelManager: Fillables filled!"))
         {
             NextTutorialStep();
@@ -64,7 +64,7 @@ public class TutorialManager : MonoBehaviour
         textboxBackgroundColor = TextboxBackground.color;
         UpdateTutorialText();
         InitializeGameObjects();
-        heightInteractableObject = LevelManager.instance.GetComponent<YAxisGrabInteractable>().attachTransform.gameObject; // Secure way to find it even when it is deactivated
+        heightInteractableObject = LevelManager.instance.GetComponent<OutlineGrabInteractable>().attachTransform.gameObject; // Secure way to find it even when it is deactivated
         Debug.Log("TutorialManager: HeightInteractable found:" + heightInteractableObject.name);
         heightInteractableObject.SetActive(false);
     }
