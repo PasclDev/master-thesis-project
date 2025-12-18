@@ -14,8 +14,10 @@ public class LevelManager : MonoBehaviour
     public GameObject lastLevelWindow;
     public GameObject tutorialManagerPrefab;
 
+    private Vector3 lastCenterPosition = Vector3.zero; // Center of last level's fillable object, used to calculate position of next level to make it seem that the fillable is the center
     //Single instance of LevelManager
     public static LevelManager instance;
+    
 
     private void Awake()
     {
@@ -55,6 +57,15 @@ public class LevelManager : MonoBehaviour
         if(transform.position.y == 0) {
         Vector3 forward = new Vector3(camera.forward.x, 0, camera.forward.z).normalized;
         transform.position = camera.position + forward * 0.5f - new Vector3(0, 0.4f, 0);
+        }
+        else
+        {
+            LevelData levelData = levelDataProvider.levelCollection.levels[currentLevel];
+            if (lastCenterPosition != Vector3.zero)
+            {
+                transform.position = lastCenterPosition - levelData.fillable.size[1] * 0.5f * levelData.voxelSize * Vector3.up - new Vector3(0, 0.05f, 0);
+                lastCenterPosition = Vector3.zero;
+            }
         }
         Vector3 cameraPosition = camera.position;
         cameraPosition.y = transform.position.y; // keep level y position
@@ -122,6 +133,7 @@ public class LevelManager : MonoBehaviour
     }
     public void LoadLevel(int levelIndex, bool isCompleted = true)
     {
+        lastCenterPosition = transform.Find("Fillable_0") != null ? transform.Find("Fillable_0").position : Vector3.zero;
         Debug.Log("LevelManager: Loading Level: " + levelIndex);
         UnloadCurrentLevel();
         //Reset lastLevel Window
