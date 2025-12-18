@@ -48,11 +48,11 @@ public class OutlineGrabInteractable : XRGrabInteractable
         if (xrOrigin != null)
         {
             float distance = Vector3.Distance(transform.position, xrOrigin.transform.position);
-            if (distance > 4f)
+            if (distance > 2f)
             {
                 // Clamp position to 4 units from XR Origin
                 Vector3 direction = (transform.position - xrOrigin.transform.position).normalized;
-                transform.position = xrOrigin.transform.position + direction * 4f;
+                transform.position = xrOrigin.transform.position + direction * 2f;
             }
         }
         

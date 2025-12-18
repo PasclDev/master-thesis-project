@@ -22,11 +22,13 @@ public class FillableManager : MonoBehaviour
     public void Initialize(Vector3 position, Vector3Int gridSize, float voxelSize, VoxelMeshGenerator voxelMeshGenerator)
     {
         transform.position = position;
-        GetComponent<BoxCollider>().size = (Vector3)gridSize * voxelSize;
+        Vector3 size = (Vector3)gridSize * voxelSize;
+        GetComponent<BoxCollider>().size = size;
         this.gridSize = gridSize;
         this.voxelSize = voxelSize;
         this.voxelMeshGenerator = voxelMeshGenerator;
         InitializeFillableGrid();
+        transform.parent.Find("LevelGrabbable").localScale = new Vector3(size.z, size.x, 0.02f); // Adjusted to match rotated LevelGrabbable
     }
     void OnEnable()
     {
