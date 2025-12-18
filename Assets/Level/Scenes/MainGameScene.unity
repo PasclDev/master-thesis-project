@@ -365,7 +365,8 @@ MonoBehaviour:
   m_LimitAngularVelocity: 0
   m_MaxLinearVelocityDelta: 10
   m_MaxAngularVelocityDelta: 20
-  HeightInteractableOutline: {fileID: 1627271430}
+  outline: {fileID: 1627271430}
+  initializeOutlineOnStart: 1
 --- !u!1 &474763988
 GameObject:
   m_ObjectHideFlags: 0

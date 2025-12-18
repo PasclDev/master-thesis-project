@@ -25,12 +25,11 @@ public class GrabbableManager : MonoBehaviour
     public float voxelSize;
     public InsideFillable insideFillable;
     private bool isGrabbed = false;
-    private bool isHovered = false;
+
     public int isInHand = 0; // 1 for left hand, 2 for right hand
     public DebugObjects debugObjects;
     public Material transparentMaterial;
     public Material defaultMaterial;
-    private Outline outline;
     public Material insideMaterial; // Material for when the object is inside a fillable. Pastel-like version of the default material
     private int lastMaterial = 0; //0 is off, 1 is to defaultMaterial, 2 is to insideMaterial, 3 is transparentMaterial
     private int targetMaterial = 0;
@@ -44,11 +43,7 @@ public class GrabbableManager : MonoBehaviour
         //Create a component of the outline script and add it to the object
         defaultMaterial = new Material(GetComponent<Renderer>().material);
         GenerateInsideMaterial(defaultMaterial);
-
-        outline = gameObject.AddComponent<Outline>();
-        outline.OutlineWidth = 5;
-        outline.enabled = false; // Disable the outline by default
-        //Debug.Log(transform.forward + " IS FORWARD" + transform.up + " IS UP" + transform.right + " IS RIGHT");
+        GetComponent<OutlineGrabInteractable>().InitializeOutline(); // Add Outline after mesh generation
     }
 
     public void FixedUpdate()
@@ -209,25 +204,16 @@ Rotated Grid Size: {Vector3Int.RoundToInt(rotatedGridSize)}";
 
     public void OnHoverEnter(HoverEnterEventArgs args)
     {
-        //Always gets executed AFTER OnSelectExit
-        isHovered = true;
-        outline.OutlineColor = Color.gray;
-        outline.enabled = true;
     }
 
     public void OnHoverExit(HoverExitEventArgs args)
     {
-        isHovered = false;
-        if (!isGrabbed)
-            outline.enabled = false;
     }
 
     // Triggers whenever the grabbable gets grabbed by the player
     public void OnSelectEnter(SelectEnterEventArgs args)
     {
         isGrabbed = true;
-        outline.OutlineColor = Color.white;
-        outline.enabled = true;
         isInHand = args.interactorObject.transform.name.Contains("Left") ? 1 : 2;
         StatisticManager.instance.levelStatistic.numberOfGrabs++;
         StatisticManager.instance.SetTimeTilFirstGrab();
@@ -248,20 +234,11 @@ Rotated Grid Size: {Vector3Int.RoundToInt(rotatedGridSize)}";
         }
     }
 
-    public void OnSelectExit()
+    public void OnSelectExit(SelectExitEventArgs args)
     {
         isGrabbed = false;
         isInHand = 0;
-        StartCoroutine(WaitAndCheckHover());
-        // OnHoverEnter gets executed after OnSelectExit, so just disabling it would lead to flickering, waiting for the next frame solved that issue
-        IEnumerator WaitAndCheckHover()
-        {
-            yield return new WaitForEndOfFrame();
-            if (!isHovered)
-            {
-                outline.enabled = false;
-            }
-        }
+        
         SetMaterial(false, false);
         Debug.Log("Grabbable: " + gameObject.name + " has been dropped!");
         if (lastTouchedFillable != null)

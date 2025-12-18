@@ -6,14 +6,25 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 public class OutlineGrabInteractable : XRGrabInteractable
 {
     private bool isGrabbing = false;
-    public Outline HeightInteractableOutline; // Reference to the outline component
-
+    public Outline outline;
+    public bool initializeOutlineOnStart = true;
+    void Start()
+    {
+        if (initializeOutlineOnStart) InitializeOutline();
+    }
+    // For FarbFormen Objects it needs to get initialized from GrabbableManager after mesh generation //
+    public void InitializeOutline()
+    {
+        outline = gameObject.AddComponent<Outline>();
+        outline.OutlineWidth = 5;
+        outline.enabled = false; // Disable the outline by default
+    }
     protected override void OnSelectEntering(SelectEnterEventArgs args)
     {
         base.OnSelectEntering(args);
         isGrabbing = true;
-        HeightInteractableOutline.OutlineColor = Color.white;
-        HeightInteractableOutline.enabled = true;
+        outline.OutlineColor = Color.white;
+        outline.enabled = true;
         Debug.Log("Grabbable: Grabbed"); // Warning: Used in tutorial-logic
     }
 
@@ -21,21 +32,44 @@ public class OutlineGrabInteractable : XRGrabInteractable
     {
         base.OnSelectExiting(args);
         isGrabbing = false;
-        HeightInteractableOutline.enabled = false; // Disable the outline when not grabbing
+        outline.enabled = false; // Disable the outline when not grabbing
+        /*         
+        StartCoroutine(WaitAndCheckHover());
+        IEnumerator WaitAndCheckHover()
+        {
+            yield return new WaitForEndOfFrame();
+            if (!isHovered)
+            {
+                outline.enabled = false;
+            }
+        }*/
+        // Check distance to XR Origin and clamp if necessary
+        GameObject xrOrigin = GameObject.Find("XR Origin (XR Rig)");
+        if (xrOrigin != null)
+        {
+            float distance = Vector3.Distance(transform.position, xrOrigin.transform.position);
+            if (distance > 4f)
+            {
+                // Clamp position to 4 units from XR Origin
+                Vector3 direction = (transform.position - xrOrigin.transform.position).normalized;
+                transform.position = xrOrigin.transform.position + direction * 4f;
+            }
+        }
+        
         Debug.Log("Grabbable: Released");
     }
     protected override void OnHoverEntering(HoverEnterEventArgs args)
     {
         base.OnHoverEntering(args);
-        HeightInteractableOutline.OutlineColor = Color.gray;
-        HeightInteractableOutline.enabled = true; // Enable the outline when hovering
+        outline.OutlineColor = Color.gray;
+        outline.enabled = true; // Enable the outline when hovering
         Debug.Log("Grabbable: Hovering"); // Warning: Used in tutorial-logic
     }
     protected override void OnHoverExiting(HoverExitEventArgs args)
     {
         base.OnHoverExiting(args);
         if (!isGrabbing)
-            HeightInteractableOutline.enabled = false; // Disable the outline when not hovering
+            outline.enabled = false; // Disable the outline when not hovering
         Debug.Log("Grabbable: Not Hovering"); // Warning: Used in tutorial-logic
     }
 }
