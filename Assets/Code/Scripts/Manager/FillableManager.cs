@@ -28,7 +28,7 @@ public class FillableManager : MonoBehaviour
         this.voxelSize = voxelSize;
         this.voxelMeshGenerator = voxelMeshGenerator;
         InitializeFillableGrid();
-        transform.parent.Find("LevelGrabbable").localScale = new Vector3(size.z, size.x, 0.02f); // Adjusted to match rotated LevelGrabbable
+        LevelManager.instance.transform.Find("LevelGrabbable").localScale = new Vector3(size.z, size.x, 0.02f); // Adjusted to match rotated LevelGrabbable
     }
     void OnEnable()
     {

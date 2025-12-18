@@ -1,11 +1,10 @@
-using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
 public class LevelManager : MonoBehaviour
 {
     public int currentLevel = 0; // Current level index
     public GameObject fillablePrefab; // fillableObject prefab
+    public GameObject levelGrabbable; // LevelGrabbable element to grab the level
     public static bool isDebug = true; // Debug mode
     public static float rotationTolerancePercentage = 1.00f; // 20% tolerance for rotation
     public static float distanceTolerancePercentage = 0.20f; // 20% tolerance for position
@@ -17,16 +16,21 @@ public class LevelManager : MonoBehaviour
 
     //Single instance of LevelManager
     public static LevelManager instance;
-    private void Start()
+
+    private void Awake()
     {
         if (instance == null)
         {
             instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
+    }
+    private void Start()
+    {
         Debug.Log("LevelManager: Start");
         if (fillablePrefab == null)
         {
@@ -35,9 +39,11 @@ public class LevelManager : MonoBehaviour
         }
         voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
         levelDataProvider = GameObject.Find("LevelDataProvider").GetComponent<LevelDataProvider>();
+        UnityEngine.SceneManagement.SceneManager.sceneUnloaded += (scene) => UnloadScene(); // unload current level on scene change
     }
     public void ResetLevelTransform()
     {
+        Debug.Log("LevelManager-extra: ResetLevelTransform");
         if (Camera.main == null)
         {
             Debug.LogError("LevelManager Error: Main camera not found!");
@@ -46,26 +52,16 @@ public class LevelManager : MonoBehaviour
         // level faces camera on y-axis
         // transform needs to rotate to look at camera position on x,z plane, but inverse (so looking away 180 degrees from camera)
         Transform camera = Camera.main.transform;
+        if(transform.position.y == 0) {
+        Vector3 forward = new Vector3(camera.forward.x, 0, camera.forward.z).normalized;
+        transform.position = camera.position + forward * 0.5f - new Vector3(0, 0.4f, 0);
+        }
         Vector3 cameraPosition = camera.position;
         cameraPosition.y = transform.position.y; // keep level y position
         transform.LookAt(cameraPosition);
         transform.Rotate(0, 180, 0);
-        if(transform.position.y != 0) return;
-        Vector3 forward = new Vector3(camera.forward.x, 0, camera.forward.z).normalized;
-        transform.position = camera.position + forward * 0.5f - new Vector3(0, 0.4f, 0);
-    }
-    public void ResetLevelPosition()
-    {
-        if (Camera.main == null)
-        {
-            Debug.LogError("LevelManager Error: Main camera not found!");
-            return;
-        }
-        // spawn level in front of camera at 0,5 unity distance on x,z plane with height aligned to camera height - 0.4f
-        
         
     }
-    
 
     private void GenerateLevel(int levelIndex)
     {
@@ -106,17 +102,28 @@ public class LevelManager : MonoBehaviour
     {
         LoadLevel(currentLevel + 1); // Load next level
     }
-    public void LoadLevel(int levelIndex, bool isCompleted = true)
+    public void UnloadScene()
     {
-        Debug.Log("LevelManager: Loading Level: " + levelIndex);
-        // Unload previous level
+        levelGrabbable.SetActive(false);
+        transform.position = Vector3.zero;
+        transform.rotation = Quaternion.identity;
+        UnloadCurrentLevel();
+    }
+    public void UnloadCurrentLevel()
+    {
+        Debug.Log("LevelManager: Unloading Current Level: " + currentLevel);
         foreach (Transform child in transform)
         {
             if (child.gameObject.CompareTag("Grabbable"))
                 child.gameObject.GetComponent<GrabbableManager>().Despawn();
             else if (child.gameObject.CompareTag("Fillable") || child.gameObject.CompareTag("Tutorial"))
                 Destroy(child.gameObject);
-        }
+        } 
+    }
+    public void LoadLevel(int levelIndex, bool isCompleted = true)
+    {
+        Debug.Log("LevelManager: Loading Level: " + levelIndex);
+        UnloadCurrentLevel();
         //Reset lastLevel Window
         lastLevelWindow.SetActive(false);
         //Write Level Log
@@ -135,6 +142,7 @@ public class LevelManager : MonoBehaviour
         else if (levelIndex < levelDataProvider.levelCollection.levels.Count)// Load a normal level
         {
             GenerateLevel(levelIndex);
+            levelGrabbable.SetActive(true);
         }
         else
         {
