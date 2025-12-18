@@ -94,6 +94,7 @@ public class VoxelMeshGenerator : MonoBehaviour
             Mesh mesh = GetMesh(vertices, triangles, uvs);
             meshFilter.mesh = mesh;
             meshCollider.sharedMesh = mesh;
+            meshCollider.convex = true; // Enable convex to allow interaction from inside
             // Initialize GrabbableManager after mesh is generated so that the outline is generated correctly //
             grabbableObject.GetComponent<GrabbableManager>().Initialize(grabbable, voxelSize);
             // Save mesh as an asset for fixed usage //
