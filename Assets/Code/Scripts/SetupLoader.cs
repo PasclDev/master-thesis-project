@@ -9,6 +9,7 @@ public class SetupLoader : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+            if(SceneManager.GetActiveScene().name == "MainMenuScene") return;
             // Reload the current scene to ensure SetupScene is loaded first, prevents XR setup issues.
             var sceneName = SceneManager.GetActiveScene().name.ToString();
             SceneManager.LoadScene("SetupScene");
