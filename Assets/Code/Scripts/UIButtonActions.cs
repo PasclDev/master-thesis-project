@@ -59,7 +59,7 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
         if (SceneManager.GetActiveScene().name != "MainGameScene")
         {
             SceneManager.sceneLoaded += OnMainGameSceneLoaded;
-            SceneManager.LoadScene("MainGameScene");
+            AdditiveSceneLoader.Instance.LoadScene("MainGameScene");
         }
         else
         {
@@ -101,7 +101,7 @@ public class UIButtonActions : MonoBehaviour, IPointerEnterHandler, IPointerExit
     public void OnLoadSceneButton(string sceneName)
     {
         Debug.Log("UIButtonActions: Load Scene " + sceneName);
-        SceneManager.LoadScene(sceneName);
+        AdditiveSceneLoader.Instance.LoadScene(sceneName);
         //SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
         //SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 

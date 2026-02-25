@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour
 {
     public int currentLevel = 0; // Current level index
@@ -17,6 +18,7 @@ public class LevelManager : MonoBehaviour
     private Vector3 lastCenterPosition = Vector3.zero; // Center of last level's fillable object, used to calculate position of next level to make it seem that the fillable is the center
     //Single instance of LevelManager
     public static LevelManager instance;
+    private const string MainGameSceneName = "MainGameScene";
     
 
     private void Awake()
@@ -41,7 +43,18 @@ public class LevelManager : MonoBehaviour
         }
         voxelMeshGenerator = GetComponent<VoxelMeshGenerator>();
         levelDataProvider = GameObject.Find("LevelDataProvider").GetComponent<LevelDataProvider>();
-        UnityEngine.SceneManagement.SceneManager.sceneUnloaded += (scene) => UnloadScene(); // unload current level on scene change
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneUnloaded -= OnSceneUnloaded;
+    }
+
+    private void OnSceneUnloaded(Scene scene)
+    {
+        if (scene.name != MainGameSceneName) return;
+        UnloadScene();
     }
     public void ResetLevelTransform()
     {

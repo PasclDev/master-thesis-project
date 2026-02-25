@@ -23,17 +23,19 @@ public class UIManager : MonoBehaviour
         else Destroy(gameObject);
         DontDestroyOnLoad(this);
         HideAllUI();
-        ChangeSceneMainUI(SceneManager.GetSceneAt(0).name);
+        ChangeSceneMainUI(SceneManager.GetSceneAt(SceneManager.sceneCount - 1).name);
         toggleCurrentUIAction.action.performed += ToggleUIInput;
-        SceneManager.activeSceneChanged += ChangeSceneMainUI;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
     void OnDestroy()
     {
         toggleCurrentUIAction.action.performed -= ToggleUIInput;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
-    private void ChangeSceneMainUI(Scene _, Scene loading)
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        string name = loading.name;
+        string name = scene.name;
         Debug.Log("UI: New Active Scene is: "+name+". Changing Default UI accordingly");
         ChangeSceneMainUI(name);
     }
