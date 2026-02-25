@@ -14,9 +14,6 @@
         android:largeScreens="true"
         android:xlargeScreens="true" />
 
-    <uses-permission
-        android:name="android.permission.INTERNET" />
-
     <uses-feature
         android:name="android.hardware.vulkan.version"
         android:required="true" />
@@ -70,7 +67,7 @@
         android:required="true"/>
     
 
-    <application>
+    <application android:allowBackup="false">
         <!--Used when Application Entry is set to Activity, otherwise remove this activity block-->
         <activity android:name="com.unity3d.player.UnityPlayerGameActivity"
                   android:theme="@style/BaseUnityGameActivityTheme"
