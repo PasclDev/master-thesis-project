@@ -44,18 +44,14 @@ public class OutlineGrabInteractable : XRGrabInteractable
             }
         }*/
         // Check distance to XR Origin and clamp if necessary
-        GameObject xrOrigin = GameObject.Find("XR Origin (XR Rig)");
-        if (xrOrigin != null)
+        Vector3 cameraPos = Camera.main.transform.position;
+        float distance = Vector3.Distance(transform.position, cameraPos);
+        if (distance > 2f)
         {
-            float distance = Vector3.Distance(transform.position, xrOrigin.transform.position);
-            if (distance > 2f)
-            {
-                // Clamp position to 4 units from XR Origin
-                Vector3 direction = (transform.position - xrOrigin.transform.position).normalized;
-                transform.position = xrOrigin.transform.position + direction * 2f;
-            }
+            // Clamp position to 4 units from XR Origin
+            Vector3 direction = (transform.position - cameraPos).normalized;
+            transform.position = cameraPos + direction * 2f;
         }
-        
         Debug.Log("Grabbable: Released");
     }
     protected override void OnHoverEntering(HoverEnterEventArgs args)
