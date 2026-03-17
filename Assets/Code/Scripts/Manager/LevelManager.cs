@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour
@@ -9,6 +10,7 @@ public class LevelManager : MonoBehaviour
     public static bool isDebug = false; // Debug mode
     public static float rotationTolerancePercentage = 1.00f; // 20% tolerance for rotation
     public static float distanceTolerancePercentage = 0.20f; // 20% tolerance for position
+    private List<GameObject> currentLevelGrabbableObjects = new List<GameObject>(); // List of grabbable objects in the current level
 
     private LevelDataProvider levelDataProvider;
     private VoxelMeshGenerator voxelMeshGenerator;
@@ -98,7 +100,7 @@ public class LevelManager : MonoBehaviour
         currentLevel = levelIndex;
 
         LevelData currentLevelData = levelDataProvider.levelCollection.levels[levelIndex];
-        voxelMeshGenerator.GenerateGrabbableObjects(currentLevelData);
+        currentLevelGrabbableObjects = voxelMeshGenerator.GenerateGrabbableObjects(currentLevelData);
         voxelMeshGenerator.GenerateFillableObject(currentLevelData.voxelSize, currentLevelData.fillable);
         StatisticManager statisticsManager = StatisticManager.instance;
         statisticsManager.levelStatistic.levelId = levelIndex;
@@ -136,13 +138,23 @@ public class LevelManager : MonoBehaviour
     public void UnloadCurrentLevel()
     {
         Debug.Log("LevelManager: Unloading Current Level: " + currentLevel);
+        foreach (GameObject grabbable in currentLevelGrabbableObjects)
+        {
+            if (grabbable != null)
+            {
+                grabbable.GetComponent<GrabbableManager>().Despawn();
+            }
+        }
+        currentLevelGrabbableObjects.Clear();
+        
         foreach (Transform child in transform)
         {
-            if (child.gameObject.CompareTag("Grabbable"))
-                child.gameObject.GetComponent<GrabbableManager>().Despawn();
-            else if (child.gameObject.CompareTag("Fillable") || child.gameObject.CompareTag("Tutorial"))
+            
+            if (child.gameObject.CompareTag("Fillable") || child.gameObject.CompareTag("Tutorial"))
                 Destroy(child.gameObject);
-        } 
+            else if (child.gameObject.CompareTag("Grabbable")) // Still check for grabbables that might not be in the list (e.g. from tutorial)
+                child.gameObject.GetComponent<GrabbableManager>().Despawn();
+        }
     }
     public void LoadLevel(int levelIndex, bool isCompleted = true)
     {

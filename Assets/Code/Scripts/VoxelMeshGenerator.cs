@@ -9,9 +9,10 @@ public class VoxelMeshGenerator : MonoBehaviour
     public GameObject fillableMissingHighlightPrefab;
     public GameObject createdGrabbableBlankPrefab; // Only used for level creation
 
-    public void GenerateGrabbableObjects(LevelData currentLevelData)
+    public List<GameObject> GenerateGrabbableObjects(LevelData currentLevelData)
     {
         float voxelSize = currentLevelData.voxelSize;
+        List<GameObject> grabbableObjects = new List<GameObject>();
 
         for (int i = 0; i < currentLevelData.grabbables.Count; i++)
         {
@@ -37,6 +38,7 @@ public class VoxelMeshGenerator : MonoBehaviour
                 transform.rotation,
                 transform
             );
+            grabbableObjects.Add(grabbableObject);
             grabbableObject.name = "Grabbable_" + i;
             Material normalMaterial = grabbableObject.GetComponent<Renderer>().material;
             Material transparentMaterial = new Material(
@@ -101,6 +103,7 @@ public class VoxelMeshGenerator : MonoBehaviour
             /* string path = "Assets/Resources/TutorialMeshes/Grabbable_" + i + ".asset";
             UnityEditor.AssetDatabase.CreateAsset(mesh, path); */
         }
+        return grabbableObjects;
     }
 
     public GameObject GenerateFillableObject(float voxelSize, Fillable fillable)
