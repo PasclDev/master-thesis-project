@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour
@@ -7,6 +8,8 @@ public class LevelManager : MonoBehaviour
     public int currentLevel = 0; // Current level index
     public GameObject fillablePrefab; // fillableObject prefab
     public GameObject levelGrabbable; // LevelGrabbable element to grab the level
+    public TextMeshPro currentLevelTextFront; // Text element to display current level. Can also be done via Shader
+    public TextMeshPro currentLevelTextBack; // Text element to display current level on the back of the level
     public static bool isDebug = false; // Debug mode
     public static float rotationTolerancePercentage = 1.00f; // 20% tolerance for rotation
     public static float distanceTolerancePercentage = 0.20f; // 20% tolerance for position
@@ -107,6 +110,8 @@ public class LevelManager : MonoBehaviour
         statisticsManager.levelStatistic.numberOfFillables = 1; // Currently still only one fillable per level
         statisticsManager.levelStatistic.numberOfGrabbables = currentLevelData.grabbables.Count;
         UIManager.instance.SetCurrentUIText(levelIndex, currentLevelData.grabbables.Count, 1);
+        currentLevelTextFront.text = levelIndex.ToString();
+        currentLevelTextBack.text = levelIndex.ToString();
     }
 
     public void FillablesFilled()
@@ -155,6 +160,8 @@ public class LevelManager : MonoBehaviour
             else if (child.gameObject.CompareTag("Grabbable")) // Still check for grabbables that might not be in the list (e.g. from tutorial)
                 child.gameObject.GetComponent<GrabbableManager>().Despawn();
         }
+        currentLevelTextFront.text = "";
+        currentLevelTextBack.text = "";
     }
     public void LoadLevel(int levelIndex, bool isCompleted = true)
     {

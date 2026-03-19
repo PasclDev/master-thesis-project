@@ -64,7 +64,7 @@ public class TutorialManager : MonoBehaviour
         textboxBackgroundColor = TextboxBackground.color;
         UpdateTutorialText();
         InitializeGameObjects();
-        heightInteractableObject = LevelManager.instance.GetComponent<OutlineGrabInteractable>().attachTransform.gameObject; // Secure way to find it even when it is deactivated
+        heightInteractableObject = LevelManager.instance.GetComponent<OutlineGrabInteractable>().attachTransform.parent.gameObject; // Secure way to find it even when it is deactivated
         Debug.Log("TutorialManager: HeightInteractable found:" + heightInteractableObject.name);
         heightInteractableObject.SetActive(false);
     }

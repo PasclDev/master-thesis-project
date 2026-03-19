@@ -233,6 +233,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 152866274cb317843b7d6eefe2669785, type: 3}
+--- !u!114 &512637965 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2858900601659447779, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+  m_PrefabInstance: {fileID: 531046899}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshPro
 --- !u!1001 &531046899
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -241,6 +252,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 432106473372778075, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 432106473372778075, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 432106473372778075, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 481548845453645119, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: m_Name
+      value: CurrentLevelTextBack
+      objectReference: {fileID: 0}
     - target: {fileID: 802000208549373566, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -285,14 +312,64 @@ PrefabInstance:
       propertyPath: m_Name
       value: LevelManager
       objectReference: {fileID: 0}
-    - target: {fileID: 8180489093641288555, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
-      propertyPath: m_IsActive
+    - target: {fileID: 2858900601659447779, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: m_text
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 2858900601659447779, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: checkPaddingRequired
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2858900601659447779, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: m_enableExtraPadding
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3678555829315679448, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4230986447040731500, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: m_Name
+      value: CurrentLevelTextFront
+      objectReference: {fileID: 0}
+    - target: {fileID: 4475544491521633046, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+    - target: {fileID: 5331114127980171167, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: initializeOutlineOnStart
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6732065455401931602, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6732065455401931602, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7417207541967823846, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8180489093641288555, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8485240171658281153, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      propertyPath: currentLevelText
+      value: 
+      objectReference: {fileID: 512637965}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4230986447040731500, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 481548845453645119, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: b6494f5e622332d4e9c13331c652571b, type: 3}
 --- !u!1 &794230062
 GameObject:
@@ -465,6 +542,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 186602817253737847, guid: 3e46092e15bd37d42ad8686e94b98c25, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.04
+      objectReference: {fileID: 0}
     - target: {fileID: 1077829524306305338, guid: 3e46092e15bd37d42ad8686e94b98c25, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -512,6 +593,10 @@ PrefabInstance:
     - target: {fileID: 1496539693124343656, guid: 3e46092e15bd37d42ad8686e94b98c25, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2551735785295602030, guid: 3e46092e15bd37d42ad8686e94b98c25, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.04
       objectReference: {fileID: 0}
     - target: {fileID: 3511126981128576146, guid: 3e46092e15bd37d42ad8686e94b98c25, type: 3}
       propertyPath: m_IsActive
@@ -1071,9 +1156,9 @@ SceneRoots:
   m_Roots:
   - {fileID: 465491752}
   - {fileID: 1741020484}
-  - {fileID: 531046899}
   - {fileID: 1409820497}
   - {fileID: 357821340}
   - {fileID: 1194845600}
   - {fileID: 2120654939}
   - {fileID: 1545682620}
+  - {fileID: 531046899}
